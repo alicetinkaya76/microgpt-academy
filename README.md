@@ -7,7 +7,8 @@
 
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)](https://reactjs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/nicatceek/microgpt-academy/pulls)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/alicetinkaya76/microgpt-academy/pulls)
+[![Based on](https://img.shields.io/badge/Based%20on-Karpathy%2Fmicrogpt-orange)](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95)
 
 [🇹🇷 Türkçe](#-türkçe) · [🇬🇧 English](#-english) · [🚀 Demo](#-canlı-demo--live-demo)
 
@@ -16,6 +17,16 @@
 <img src="docs/screenshot-main.png" alt="microGPT Academy Screenshot" width="800"/>
 
 </div>
+
+---
+
+## 📌 Hakkında / About
+
+> 🇹🇷 Bu proje, **Andrej Karpathy**'nin [microgpt.py](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95) adlı — sıfır bağımlılıkla saf Python'da yazılmış minimal GPT implementasyonu — üzerine inşa edilmiş **interaktif bir eğitim platformudur**. Karpathy'nin 243 satırlık kodunu satır satır, görselleştirmeler ve Türkçe açıklamalarla öğretmeyi amaçlar.
+>
+> 🇬🇧 This project is an **interactive educational platform** built on top of **Andrej Karpathy**'s [microgpt.py](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95) — a minimal GPT implementation in pure Python with zero dependencies. It aims to teach Karpathy's 243-line code line by line, with visualizations and bilingual explanations.
+
+**Orijinal Kaynak / Original Source:** [karpathy/microgpt.py](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95) — *"This is the full algorithmic content of what is needed. Everything else is just for efficiency."* — Andrej Karpathy
 
 ---
 
@@ -29,7 +40,7 @@
 
 ### Ne Bu?
 
-243 satırlık saf Python GPT kodunu **satır satır, interaktif olarak** öğreten bir web uygulaması. Harici kütüphane yok — sadece `os`, `math`, `random`. Her hafta bir kavram, her kavram canlı görselleştirmelerle.
+Andrej Karpathy'nin 243 satırlık saf Python GPT kodunu ([microgpt.py](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95)) **satır satır, interaktif olarak** öğreten bir web uygulaması. Harici kütüphane yok — sadece `os`, `math`, `random`. Her hafta bir kavram, her kavram canlı görselleştirmelerle.
 
 ### Özellikler
 
@@ -54,7 +65,7 @@
 ### Kurulum
 
 ```bash
-git clone https://github.com/nicatceek/microgpt-academy.git
+git clone https://github.com/alicetinkaya76/microgpt-academy.git
 cd microgpt-academy
 npm install
 npm start
@@ -77,19 +88,13 @@ Tarayıcıda `http://localhost:3000` açılır.
 | 8 | 📄 "Attention Is All You Need" | Orijinal makale deep-dive, encoder-decoder, positional encoding |
 | 9 | 🚀 Araştırma Sınırları | MoE, RLHF, LoRA, flash attention, açık kaynak ekosistemi |
 
-### Teknolojiler
-
-- **React 18** — Tek dosya, sıfır bağımlılık (UI kütüphanesi yok)
-- **Vanilla JS** — Tüm matematik ve model hesaplamaları saf JavaScript
-- **CSS-in-JS** — Inline style, ek CSS dosyası yok
-
 ---
 
 ## 🇬🇧 English
 
 ### What Is This?
 
-An interactive web app that teaches a 243-line pure Python GPT implementation **line by line**. No external libraries — just `os`, `math`, `random`. Each week covers a concept with live visualizations.
+An interactive web app that teaches Andrej Karpathy's 243-line pure Python GPT implementation ([microgpt.py](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95)) **line by line**. No external libraries — just `os`, `math`, `random`. Each week covers a concept with live visualizations.
 
 ### Features
 
@@ -114,7 +119,7 @@ An interactive web app that teaches a 243-line pure Python GPT implementation **
 ### Getting Started
 
 ```bash
-git clone https://github.com/nicatceek/microgpt-academy.git
+git clone https://github.com/alicetinkaya76/microgpt-academy.git
 cd microgpt-academy
 npm install
 npm start
@@ -137,12 +142,6 @@ Opens `http://localhost:3000` in your browser.
 | 8 | 📄 "Attention Is All You Need" | Original paper deep-dive, encoder-decoder, positional encoding |
 | 9 | 🚀 Research Frontiers | MoE, RLHF, LoRA, flash attention, open source ecosystem |
 
-### Tech Stack
-
-- **React 18** — Single file, zero dependencies (no UI libraries)
-- **Vanilla JS** — All math and model computations in pure JavaScript
-- **CSS-in-JS** — Inline styles, no external CSS
-
 ---
 
 ## 📐 Mimari / Architecture
@@ -163,6 +162,26 @@ src/
 > **Neden tek dosya?** Eğitim amaçlı — tüm kodu tek yerde görmek, bağımlılıkları anlamayı kolaylaştırır. Production için bölünmesi önerilir.
 >
 > **Why single file?** Educational purpose — seeing all code in one place makes understanding dependencies easier. Splitting recommended for production.
+
+---
+
+## 🔗 Orijinal Proje / Original Project
+
+Bu platform aşağıdaki çalışma üzerine inşa edilmiştir / This platform is built on top of:
+
+| | |
+|---|---|
+| **Proje / Project** | [microgpt.py](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95) |
+| **Yazar / Author** | [Andrej Karpathy](https://karpathy.ai/) |
+| **Açıklama / Description** | 🇹🇷 Saf Python'da, sıfır bağımlılıkla yazılmış en minimal GPT implementasyonu. 243 satır, harici kütüphane yok. |
+| | 🇬🇧 The most minimal GPT implementation in pure Python with zero dependencies. 243 lines, no external libraries. |
+| **Alıntı / Quote** | *"This is the full algorithmic content of what is needed. Everything else is just for efficiency. I cannot simplify this any further."* |
+
+### İlgili Karpathy Projeleri / Related Karpathy Projects
+- [micrograd](https://github.com/karpathy/micrograd) — Autograd motoru (Value sınıfı buradan esinlenmiştir)
+- [makemore](https://github.com/karpathy/makemore) — Karakter seviyesi dil modeli
+- [nanoGPT](https://github.com/karpathy/nanoGPT) — En basit, en hızlı orta ölçekli GPT eğitimi
+- [Neural Networks: Zero to Hero](https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ) — YouTube ders serisi
 
 ---
 
@@ -190,10 +209,15 @@ git push origin feature/amazing-feature
 
 MIT License — detaylar için [LICENSE](LICENSE) dosyasına bakın.
 
+Orijinal [microgpt.py](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95) Andrej Karpathy tarafından oluşturulmuştur.
+
+Original [microgpt.py](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95) created by Andrej Karpathy.
+
 ---
 
 ## 🙏 İlham & Referanslar / Inspiration & References
 
+- [Andrej Karpathy — microgpt.py](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95) ⭐ *Bu projenin temel aldığı kaynak / The foundation of this project*
 - [Andrej Karpathy — micrograd](https://github.com/karpathy/micrograd)
 - [Andrej Karpathy — makemore](https://github.com/karpathy/makemore)
 - [Vaswani et al. — "Attention Is All You Need" (2017)](https://arxiv.org/abs/1706.03762)
@@ -202,8 +226,10 @@ MIT License — detaylar için [LICENSE](LICENSE) dosyasına bakın.
 
 <div align="center">
 
-**microGPT Academy** — *Transformer'ı anlamak için en iyi yol, onu satır satır yazmaktır.*
+**microGPT Academy** — *Karpathy'nin microgpt.py'sini anlamak için en iyi yol, onu satır satır keşfetmektir.*
 
-*The best way to understand a Transformer is to write it line by line.*
+*The best way to understand Karpathy's microgpt.py is to explore it line by line.*
+
+⭐ Bu projeyi beğendiyseniz yıldız vermeyi unutmayın! / Star this repo if you find it useful!
 
 </div>
