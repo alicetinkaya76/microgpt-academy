@@ -7,7 +7,7 @@
 
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)](https://reactjs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/alicetinkaya76/microgpt-academy/pulls)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/microgpt-academy/microgpt-academy/pulls)
 [![Based on](https://img.shields.io/badge/Based%20on-Karpathy%2Fmicrogpt-orange)](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95)
 
 [🇹🇷 Türkçe](#-türkçe) · [🇬🇧 English](#-english) · [🚀 Demo](#-canlı-demo--live-demo)
@@ -65,7 +65,7 @@ Andrej Karpathy'nin 243 satırlık saf Python GPT kodunu ([microgpt.py](https://
 ### Kurulum
 
 ```bash
-git clone https://github.com/alicetinkaya76/microgpt-academy.git
+git clone https://github.com/microgpt-academy/microgpt-academy.git
 cd microgpt-academy
 npm install
 npm start
@@ -119,7 +119,7 @@ An interactive web app that teaches Andrej Karpathy's 243-line pure Python GPT i
 ### Getting Started
 
 ```bash
-git clone https://github.com/alicetinkaya76/microgpt-academy.git
+git clone https://github.com/microgpt-academy/microgpt-academy.git
 cd microgpt-academy
 npm install
 npm start

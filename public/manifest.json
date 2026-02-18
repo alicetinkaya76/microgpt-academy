@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "MicroGPT Academy",
+  "name": "MicroGPT Academy — Interactive AI & Transformer Education",
   "icons": [
     {
       "src": "favicon.ico",
@@ -20,6 +20,7 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#0F172A",
+  "background_color": "#0F172A",
+  "description": "Interactive educational platform for learning GPT and Transformer architecture through hands-on visualizations"
 }
