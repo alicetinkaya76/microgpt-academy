@@ -270,4 +270,4 @@ const VideoEmbed = ({ videoId, title, caption }) => (
   </div>
 );
 
-export { Spark, InfoCard, ProbDist, AttnMat, MLPViz, EmbedViz, Pipeline, CodeBlock, DimFlow, VB, VizBox, FlowArrow, FlowBox, StatBox };
+export { Spark, InfoCard, ProbDist, AttnMat, MLPViz, EmbedViz, Pipeline, CodeBlock, DimFlow, VB, VizBox, VideoEmbed, FlowArrow, FlowBox, StatBox };
