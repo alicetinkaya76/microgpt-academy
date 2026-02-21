@@ -16,7 +16,7 @@ const t = (tr, en, lang) => lang === "tr" ? tr : en;
 /* ═══════════════════════════════════════════
    CHAPTERS
    ═══════════════════════════════════════════ */
-const CHAPTERS_TR = [
+export const LA_CHAPTERS_TR = [
   { icon: "📖", label: "Hikâye", color: P.indigo },
   { icon: "📍", label: "Vektör", color: P.teal },
   { icon: "📐", label: "Dot Product", color: P.violet },
@@ -26,7 +26,7 @@ const CHAPTERS_TR = [
   { icon: "🧪", label: "Laboratuvar", color: P.emerald },
   { icon: "🏆", label: "Quiz", color: P.rose },
 ];
-const CHAPTERS_EN = [
+export const LA_CHAPTERS_EN = [
   { icon: "📖", label: "Story", color: P.indigo },
   { icon: "📍", label: "Vector", color: P.teal },
   { icon: "📐", label: "Dot Product", color: P.violet },
@@ -59,6 +59,9 @@ function S({ emoji, text, color, delay = 0 }) {
    ═══════════════════════════════════════════ */
 function VectorPlayground({ lang }) {
   const [v, setV] = useState([3, 2]);
+  const [v2, setV2] = useState([1, -2]);
+  const [showAdd, setShowAdd] = useState(false);
+  const vSum = [v[0] + v2[0], v[1] + v2[1]];
   const W = 260, H = 260, mid = W / 2;
   const scale = 20;
   const mag = Math.sqrt(v[0] * v[0] + v[1] * v[1]);
@@ -102,6 +105,33 @@ function VectorPlayground({ lang }) {
           </div>
         ))}
       </div>
+      {/* Toggle vector addition */}
+      <button onClick={() => setShowAdd(!showAdd)} style={{
+        marginTop: 8, padding: "7px 14px", borderRadius: 8, border: `1px solid ${showAdd ? P.emerald + "40" : P.border}`,
+        background: showAdd ? P.emerald + "10" : "transparent", color: showAdd ? P.emerald : P.muted,
+        fontSize: 13, fontWeight: 600, cursor: "pointer", width: "100%",
+      }}>{showAdd ? t("✓ Vektör Toplama Aktif","✓ Vector Addition Active",lang) : t("+ Vektör Toplama Göster","+ Show Vector Addition",lang)}</button>
+      {showAdd && (
+        <div style={{ marginTop: 6, padding: "8px 10px", borderRadius: 8, background: P.pink + "08", border: `1px solid ${P.pink}15` }}>
+          <div style={{ fontSize: 13, color: P.pink, fontWeight: 700, marginBottom: 4 }}>b {t("vektörü","vector",lang)}</div>
+          <div style={{ display: "flex", gap: 12 }}>
+            {[["x", 0, P.pink], ["y", 1, P.violet]].map(([label, idx, color]) => (
+              <div key={label} style={{ flex: 1 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}>
+                  <span style={{ color: P.muted, fontSize: 11, fontWeight: 700 }}>{label}</span>
+                  <span style={{ color, fontSize: 13, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>{v2[idx].toFixed(1)}</span>
+                </div>
+                <input type="range" min="-5" max="5" step="0.1" value={v2[idx]}
+                  onChange={e => { const n = [...v2]; n[idx] = +e.target.value; setV2(n); }}
+                  style={{ width: "100%" }} />
+              </div>
+            ))}
+          </div>
+          <div style={{ marginTop: 6, fontSize: 13, color: P.emerald, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", textAlign: "center" }}>
+            a + b = [{vSum[0].toFixed(1)}, {vSum[1].toFixed(1)}]
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -581,14 +611,16 @@ function Body({ step, lang, onConverge }) {
 /* ═══════════════════════════════════════════
    MAIN COMPONENT
    ═══════════════════════════════════════════ */
-const LinearAlgebraLesson = () => {
+const LinearAlgebraLesson = ({ embedded, externalStep, onStepChange }) => {
   const lang = useLang();
-  const [step, setStep] = useState(0);
-  const CHAPTERS = lang === "tr" ? CHAPTERS_TR : CHAPTERS_EN;
+  const [internalStep, setInternalStep] = useState(0);
+  const step = embedded ? (externalStep || 0) : internalStep;
+  const setStep = embedded ? (s => { const v = typeof s === "function" ? s(step) : s; onStepChange?.(v); }) : setInternalStep;
+  const CHAPTERS = lang === "tr" ? LA_CHAPTERS_TR : LA_CHAPTERS_EN;
   const ch = CHAPTERS[step];
 
   return (
-    <div style={{ minHeight: "100vh", background: P.bg, color: P.text, fontFamily: "'DM Sans', sans-serif", display: "flex", flexDirection: "column" }}>
+    <div style={{ minHeight: embedded ? "auto" : "100vh", background: P.bg, color: P.text, fontFamily: "'DM Sans', sans-serif", display: "flex", flexDirection: "column" }}>
       <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
       <style>{`
         @keyframes fadeSlideIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
@@ -599,16 +631,17 @@ const LinearAlgebraLesson = () => {
       `}</style>
 
       {/* Header */}
-      <header style={{ padding: "14px 16px 10px", borderBottom: `1px solid ${P.border}` }}>
+      {!embedded && <header style={{ padding: "14px 16px 10px", borderBottom: `1px solid ${P.border}` }}>
         <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 3, color: P.dim, textTransform: "uppercase" }}>{t("İnteraktif Ders", "Interactive Lesson", lang)}</div>
         <h1 style={{
           margin: "3px 0 0", fontSize: 26, fontWeight: 900, letterSpacing: -0.5,
           background: `linear-gradient(135deg, ${P.teal}, ${P.blue}, ${P.pink})`,
           WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
         }}>{t("Lineer Cebir Temelleri", "Linear Algebra Basics", lang)}</h1>
-      </header>
+      </header>}
 
       {/* Nav */}
+      {!embedded &&
       <nav style={{ display: "flex", gap: 2, padding: "8px 12px", overflowX: "auto", scrollbarWidth: "none" }}>
         {CHAPTERS.map((c, i) => (
           <button key={i} onClick={() => setStep(i)} style={{
@@ -623,7 +656,7 @@ const LinearAlgebraLesson = () => {
             <span style={{ fontSize: 14 }}>{c.icon}</span><span>{c.label}</span>
           </button>
         ))}
-      </nav>
+      </nav>}
 
       {/* Title */}
       <div style={{ padding: "8px 16px 2px" }}>
@@ -638,7 +671,7 @@ const LinearAlgebraLesson = () => {
       </section>
 
       {/* Footer */}
-      <footer style={{ padding: "6px 16px 12px", borderTop: `1px solid ${P.border}`, background: P.bg }}>
+      {!embedded && <footer style={{ padding: "6px 16px 12px", borderTop: `1px solid ${P.border}`, background: P.bg }}>
         <div style={{ display: "flex", gap: 6 }}>
           <button onClick={() => setStep(s => Math.max(0, s - 1))} disabled={step === 0}
             style={{ flex: 1, padding: "10px", borderRadius: 8, border: `1px solid ${P.border}`, background: "transparent", color: step === 0 ? P.dim : P.text, fontSize: 15, fontWeight: 600, cursor: step === 0 ? "default" : "pointer" }}>
@@ -663,7 +696,7 @@ const LinearAlgebraLesson = () => {
             }} />
           ))}
         </div>
-      </footer>
+      </footer>}
     </div>
   );
 };

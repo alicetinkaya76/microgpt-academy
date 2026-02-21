@@ -39,6 +39,48 @@ import AdminPanel from './admin/AdminPanel';
 const BackpropLesson = React.lazy(() => import('./lectures/microgpt/components/BackpropLesson'));
 const LinearAlgebraLesson = React.lazy(() => import('./lectures/microgpt/components/LinearAlgebraLesson'));
 const ProbabilityLesson = React.lazy(() => import('./lectures/microgpt/components/ProbabilityLesson'));
+// Prereq chapter metadata (imported statically for sidebar)
+const PREREQ_LESSONS = {
+  linalg: {
+    icon: "🔢", color: "#2dd4bf", week: "W1, W3, W4",
+    tr: { title: "Lineer Cebir Temelleri", chapters: [
+      { icon: "📖", label: "Hikâye" }, { icon: "📍", label: "Vektör" }, { icon: "📐", label: "Dot Product" },
+      { icon: "🔢", label: "Matris" }, { icon: "✖️", label: "Matris Çarpımı" }, { icon: "🔄", label: "Transpoz" },
+      { icon: "🧪", label: "Laboratuvar" }, { icon: "🏆", label: "Quiz" },
+    ]},
+    en: { title: "Linear Algebra Basics", chapters: [
+      { icon: "📖", label: "Story" }, { icon: "📍", label: "Vector" }, { icon: "📐", label: "Dot Product" },
+      { icon: "🔢", label: "Matrix" }, { icon: "✖️", label: "Matrix Mul" }, { icon: "🔄", label: "Transpose" },
+      { icon: "🧪", label: "Lab" }, { icon: "🏆", label: "Quiz" },
+    ]},
+  },
+  prob: {
+    icon: "📊", color: "#fbbf24", week: "W5, W6",
+    tr: { title: "Olasılık & Bilgi Teorisi", chapters: [
+      { icon: "📖", label: "Hikâye" }, { icon: "🎲", label: "Olasılık" }, { icon: "📊", label: "Dağılım" },
+      { icon: "🔀", label: "Softmax" }, { icon: "📏", label: "Entropi" }, { icon: "🎯", label: "Cross-Entropy" },
+      { icon: "🧪", label: "Laboratuvar" }, { icon: "🏆", label: "Quiz" },
+    ]},
+    en: { title: "Probability & Information Theory", chapters: [
+      { icon: "📖", label: "Story" }, { icon: "🎲", label: "Probability" }, { icon: "📊", label: "Distribution" },
+      { icon: "🔀", label: "Softmax" }, { icon: "📏", label: "Entropy" }, { icon: "🎯", label: "Cross-Entropy" },
+      { icon: "🧪", label: "Lab" }, { icon: "🏆", label: "Quiz" },
+    ]},
+  },
+  backprop: {
+    icon: "⛓️", color: "#a78bfa", week: "W2",
+    tr: { title: "Backpropagation", chapters: [
+      { icon: "📖", label: "Hikâye" }, { icon: "🎲", label: "Başlat" }, { icon: "🔮", label: "Sigmoid" },
+      { icon: "➜", label: "İleri" }, { icon: "🎯", label: "Hata" }, { icon: "⬅", label: "Geri Yay" },
+      { icon: "🔧", label: "Güncelle" }, { icon: "🧪", label: "Laboratuvar" }, { icon: "🏆", label: "Quiz" },
+    ]},
+    en: { title: "Backpropagation", chapters: [
+      { icon: "📖", label: "Story" }, { icon: "🎲", label: "Init" }, { icon: "🔮", label: "Sigmoid" },
+      { icon: "➜", label: "Forward" }, { icon: "🎯", label: "Error" }, { icon: "⬅", label: "Backprop" },
+      { icon: "🔧", label: "Update" }, { icon: "🧪", label: "Lab" }, { icon: "🏆", label: "Quiz" },
+    ]},
+  },
+};
 
 // ─── COURSE REGISTRY ─────────────────────────────────────────────
 // To add a new course: import its data and add to COURSES array
@@ -56,7 +98,8 @@ const COURSES = [
 export default function App() {
   const [lang, setLang] = useState('tr');
   const [tab, setTab] = useState("lecture");
-  const [prereqSub, setPrereqSub] = useState(null);
+  const [prereqSub, setPrereqSub] = useState("linalg");
+  const [prereqStep, setPrereqStep] = useState(0);
   const [model] = useState(() => {
     const rng = (s) => () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; };
     const orig = Math.random; Math.random = rng(42); const m = createModel(); Math.random = orig; return m;
@@ -265,53 +308,91 @@ export default function App() {
         {/* PREREQ TAB                                                */}
         {/* ═══════════════════════════════════════════════════════════ */}
         {tab === "prereq" && (() => {
-          const PREREQS = [
-            { id: "linalg", icon: "🔢", title: lang === "tr" ? "Lineer Cebir Temelleri" : "Linear Algebra Basics", desc: lang === "tr" ? "Vektör, dot product, matris çarpımı, transpoz" : "Vector, dot product, matrix multiplication, transpose", color: "#2dd4bf", week: "W1, W3, W4" },
-            { id: "prob", icon: "📊", title: lang === "tr" ? "Olasılık & Bilgi Teorisi" : "Probability & Information Theory", desc: lang === "tr" ? "Olasılık dağılımı, softmax, entropi, cross-entropy" : "Probability distribution, softmax, entropy, cross-entropy", color: "#fbbf24", week: "W5, W6" },
-            { id: "backprop", icon: "⛓️", title: "Backpropagation", desc: lang === "tr" ? "Sinir ağı, sigmoid, ileri/geri yayılım, ağırlık güncelleme" : "Neural network, sigmoid, forward/backward pass, weight update", color: "#a78bfa", week: "W2" },
-          ];
-          const prereqLesson = prereqSub || null;
+          const lessonKeys = Object.keys(PREREQ_LESSONS);
+          const activeLessonKey = prereqSub || "linalg";
+          const activeLesson = PREREQ_LESSONS[activeLessonKey];
+          const loc = lang === "tr" ? activeLesson.tr : activeLesson.en;
+          const chapters = loc.chapters;
           return (
-          <div style={{ maxWidth: 480, margin: "0 auto", padding: "0 10px" }}>
-            {!prereqLesson ? (<>
-              <div style={{ marginBottom: 16, padding: "16px 20px", borderRadius: 14, background: "rgba(129,140,248,0.06)", border: "1px solid rgba(129,140,248,0.15)" }}>
-                <div style={{ fontSize: 15, fontWeight: 700, color: "#818CF8", marginBottom: 6 }}>{lang === "tr" ? "🧩 Ön Gereksinim Dersleri" : "🧩 Prerequisite Lessons"}</div>
-                <div style={{ fontSize: 14, color: "#94A3B8", lineHeight: 1.7 }}>
-                  {lang === "tr"
-                    ? "Bu interaktif dersler, microGPT Academy'nin ana müfredatına başlamadan önce temel kavramları öğretir."
-                    : "These interactive lessons teach fundamental concepts before starting the main microGPT Academy curriculum."}
+          <div style={{ display: "flex", gap: 20 }}>
+            {/* ─── Left Sidebar ─── */}
+            <div style={{ width: 220, flexShrink: 0 }}>
+              <div style={{ fontSize: 13, color: "#475569", textTransform: "uppercase", letterSpacing: ".14em", marginBottom: 10, fontWeight: 600 }}>{lang === "tr" ? "Ön Gereksinimler" : "Prerequisites"}</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 16 }}>
+                {lessonKeys.map(key => {
+                  const les = PREREQ_LESSONS[key];
+                  const lLoc = lang === "tr" ? les.tr : les.en;
+                  const isActive = key === activeLessonKey;
+                  return (
+                    <button key={key} onClick={() => { setPrereqSub(key); setPrereqStep(0); }} style={{
+                      display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", borderRadius: 10, border: "none", cursor: "pointer",
+                      background: isActive ? `${les.color}15` : "transparent",
+                      transition: "all .25s", textAlign: "left", fontFamily: "inherit", width: "100%"
+                    }}>
+                      <div style={{
+                        width: 34, height: 34, borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 17,
+                        background: isActive ? les.color : "rgba(255,255,255,0.04)", color: isActive ? "#fff" : "#475569",
+                        transition: "all .3s", flexShrink: 0
+                      }}>{les.icon}</div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: isActive ? "#e2e8f0" : "#94A3B8", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{lLoc.title}</div>
+                        <div style={{ fontSize: 10, color: "#64748B", marginTop: 2 }}>{les.week}</div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Chapter list for active lesson */}
+              <div style={{ fontSize: 11, color: "#475569", textTransform: "uppercase", letterSpacing: ".14em", marginBottom: 8, fontWeight: 600 }}>{lang === "tr" ? "Bölümler" : "Chapters"}</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                {chapters.map((ch, i) => {
+                  const isActive = i === prereqStep;
+                  return (
+                    <button key={i} onClick={() => setPrereqStep(i)} style={{
+                      display: "flex", alignItems: "center", gap: 8, padding: "7px 10px", borderRadius: 8, border: "none", cursor: "pointer",
+                      background: isActive ? `${activeLesson.color}12` : "transparent",
+                      transition: "all .2s", textAlign: "left", fontFamily: "inherit", width: "100%"
+                    }}>
+                      <span style={{ fontSize: 14, width: 22, textAlign: "center", flexShrink: 0 }}>{ch.icon}</span>
+                      <span style={{ fontSize: 12, fontWeight: isActive ? 700 : 500, color: isActive ? activeLesson.color : "#94A3B8", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ch.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* ─── Right Content ─── */}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              {/* Active lesson title */}
+              <div style={{ marginBottom: 14, padding: "12px 16px", borderRadius: 12, background: `${activeLesson.color}08`, border: `1px solid ${activeLesson.color}18` }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ fontSize: 22 }}>{activeLesson.icon}</span>
+                  <div>
+                    <div style={{ fontSize: 17, fontWeight: 800, color: activeLesson.color }}>{loc.title}</div>
+                    <div style={{ fontSize: 12, color: "#64748B", marginTop: 2 }}>{chapters[prereqStep]?.icon} {chapters[prereqStep]?.label}</div>
+                  </div>
                 </div>
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                {PREREQS.map(pr => (
-                  <button key={pr.id} onClick={() => setPrereqSub(pr.id)} style={{
-                    padding: "16px 18px", borderRadius: 14, border: `1px solid ${pr.color}25`,
-                    background: `linear-gradient(135deg, ${pr.color}08, transparent)`,
-                    cursor: "pointer", textAlign: "left", transition: "all 0.2s",
-                  }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                      <span style={{ fontSize: 28 }}>{pr.icon}</span>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: 14, fontWeight: 700, color: pr.color }}>{pr.title}</div>
-                        <div style={{ fontSize: 12, color: "#94A3B8", marginTop: 2 }}>{pr.desc}</div>
-                        <div style={{ fontSize: 10, color: "#64748B", marginTop: 4 }}>{lang === "tr" ? "Kullanıldığı haftalar" : "Used in weeks"}: <strong style={{ color: pr.color }}>{pr.week}</strong></div>
-                      </div>
-                      <span style={{ color: pr.color, fontSize: 18 }}>›</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </>) : (<>
-              <button onClick={() => setPrereqSub(null)} style={{
-                marginBottom: 10, padding: "6px 12px", borderRadius: 8, border: `1px solid #1c2030`,
-                background: "transparent", color: "#94A3B8", fontSize: 12, fontWeight: 600, cursor: "pointer",
-              }}>‹ {lang === "tr" ? "Ders Listesine Dön" : "Back to Lessons"}</button>
+
               <React.Suspense fallback={<div style={{ textAlign: "center", padding: 40, color: "#64748B" }}>Loading...</div>}>
-                {prereqLesson === "linalg" && <LinearAlgebraLesson />}
-                {prereqLesson === "prob" && <ProbabilityLesson />}
-                {prereqLesson === "backprop" && <BackpropLesson />}
+                {activeLessonKey === "linalg" && <LinearAlgebraLesson embedded externalStep={prereqStep} onStepChange={setPrereqStep} />}
+                {activeLessonKey === "prob" && <ProbabilityLesson embedded externalStep={prereqStep} onStepChange={setPrereqStep} />}
+                {activeLessonKey === "backprop" && <BackpropLesson embedded externalStep={prereqStep} onStepChange={setPrereqStep} />}
               </React.Suspense>
-            </>)}
+
+              {/* Navigation buttons */}
+              <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
+                <button onClick={() => setPrereqStep(s => Math.max(0, s - 1))} disabled={prereqStep === 0}
+                  style={{ flex: 1, padding: "10px", borderRadius: 8, border: "1px solid #1c2030", background: "transparent", color: prereqStep === 0 ? "#374151" : "#e2e8f0", fontSize: 13, fontWeight: 600, cursor: prereqStep === 0 ? "default" : "pointer" }}>
+                  ‹ {lang === "tr" ? "Geri" : "Back"}
+                </button>
+                <button onClick={() => setPrereqStep(s => Math.min(chapters.length - 1, s + 1))} disabled={prereqStep === chapters.length - 1}
+                  style={{ flex: 1.3, padding: "10px", borderRadius: 8, border: "none", background: prereqStep === chapters.length - 1 ? "#10131a" : `linear-gradient(135deg, ${activeLesson.color}90, ${activeLesson.color})`, color: prereqStep === chapters.length - 1 ? "#374151" : "#fff", fontSize: 13, fontWeight: 700, cursor: prereqStep === chapters.length - 1 ? "default" : "pointer" }}>
+                  {lang === "tr" ? "İleri" : "Next"} ›
+                </button>
+              </div>
+            </div>
           </div>
           );
         })()}

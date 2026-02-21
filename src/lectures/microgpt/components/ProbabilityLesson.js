@@ -9,13 +9,13 @@ const P = {
 };
 const L=(tr,en,lang)=>lang==="tr"?tr:en;
 
-const CH_TR=[
+export const PR_CHAPTERS_TR=[
   {icon:"📖",label:"Hikâye",color:P.indigo},{icon:"🎲",label:"Olasılık",color:P.teal},
   {icon:"📊",label:"Dağılım",color:P.violet},{icon:"🔀",label:"Softmax",color:P.blue},
   {icon:"📏",label:"Entropi",color:P.pink},{icon:"🎯",label:"Cross-Entropy",color:P.amber},
   {icon:"🧪",label:"Laboratuvar",color:P.emerald},{icon:"🏆",label:"Quiz",color:P.rose},
 ];
-const CH_EN=[
+export const PR_CHAPTERS_EN=[
   {icon:"📖",label:"Story",color:P.indigo},{icon:"🎲",label:"Probability",color:P.teal},
   {icon:"📊",label:"Distribution",color:P.violet},{icon:"🔀",label:"Softmax",color:P.blue},
   {icon:"📏",label:"Entropy",color:P.pink},{icon:"🎯",label:"Cross-Entropy",color:P.amber},
@@ -49,6 +49,7 @@ function DiceExplorer({lang}){
       <div style={{display:"flex",gap:6,justifyContent:"center"}}>
         <button onClick={roll} style={{padding:"8px 16px",borderRadius:8,border:"none",background:`linear-gradient(135deg,${P.teal},${P.emerald})`,color:"#fff",fontSize: 15,fontWeight:700,cursor:"pointer"}}>{L("🎲 Zar At","🎲 Roll",lang)}</button>
         <button onClick={rollMany} style={{padding:"8px 16px",borderRadius:8,border:`1px solid ${P.border}`,background:"transparent",color:P.text,fontSize: 15,fontWeight:600,cursor:"pointer"}}>{L("×50","×50",lang)}</button>
+        <button onClick={()=>{setRolls(p=>[...p,...Array.from({length:200},()=>Math.floor(Math.random()*6)+1)].slice(-500));}} style={{padding:"8px 12px",borderRadius:8,border:`1px solid ${P.border}`,background:"transparent",color:P.muted,fontSize:13,fontWeight:600,cursor:"pointer"}}>{L("×200","×200",lang)}</button>
         <button onClick={()=>setRolls([])} style={{padding:"8px 12px",borderRadius:8,border:`1px solid ${P.border}`,background:"transparent",color:P.muted,fontSize: 14,cursor:"pointer"}}>↺</button>
       </div>
     </div>
@@ -149,6 +150,30 @@ function SoftmaxExplorer({lang}){
     </div>
     <div style={{marginTop:8,padding:"8px 10px",borderRadius:8,background:P.blue+"08",border:`1px solid ${P.blue}15`,fontSize: 14,color:P.muted,lineHeight:1.6}}>
       💡 {L("T→0: greedy. T=1: standart. T→∞: uniform. GPT inference'da temperature budur!","T→0: greedy. T=1: standard. T→∞: uniform. This is temperature in GPT inference!",lang)}
+      </div>
+      {/* Token Sampling Simulator */}
+      <div style={{marginTop:8,background:P.card,borderRadius:10,border:`1px solid ${P.border}`,padding:"10px 12px"}}>
+        <div style={{color:P.dim,fontSize:10,fontWeight:700,letterSpacing:1.5,marginBottom:6}}>{L("TOKEN ÖRNEKLEME","TOKEN SAMPLING",lang)}</div>
+        <div style={{fontSize:13,color:P.muted,marginBottom:6,lineHeight:1.6}}>
+          {L("Bu dağılımdan 20 token sample et — temperature ne kadar yüksekse sonuçlar o kadar çeşitli!","Sample 20 tokens from this distribution — higher temperature = more variety!",lang)}
+        </div>
+        {(()=>{
+          const samples=Array.from({length:20},()=>{
+            const r=Math.random();let cum=0;
+            for(let i=0;i<pr.length;i++){cum+=pr[i];if(r<cum)return toks[i];}
+            return toks[toks.length-1];
+          });
+          return <div style={{display:"flex",flexWrap:"wrap",gap:3}}>
+            {samples.map((s,i)=>{
+              const idx=toks.indexOf(s);
+              return <span key={i} style={{
+                padding:"3px 8px",borderRadius:6,fontSize:13,fontWeight:700,
+                background:cols[idx]+"15",color:cols[idx],border:`1px solid ${cols[idx]}25`,
+                fontFamily:"'JetBrains Mono',monospace",animation:`fadeSlideIn 0.2s ${i*0.03}s both`
+              }}>{s}</span>;
+            })}
+          </div>;
+        })()}
     </div>
   </div>;
 }
@@ -188,6 +213,28 @@ function EntropyViz({lang}){
     </div>
     <div style={{marginTop:8,padding:"8px 10px",borderRadius:8,background:P.pink+"08",border:`1px solid ${P.pink}15`,fontSize: 14,color:P.muted,lineHeight:1.6}}>
       💡 H = -Σ p(x)log₂p(x). {L("Rastgele model: H≈4.75. İyi model: H≈1.7.","Random model: H≈4.75. Good model: H≈1.7.",lang)}
+      </div>
+      {/* Per-token surprise */}
+      <div style={{marginTop:8,background:P.card,borderRadius:10,border:`1px solid ${P.border}`,padding:"10px 12px"}}>
+        <div style={{color:P.dim,fontSize:10,fontWeight:700,letterSpacing:1.5,marginBottom:6}}>{L("TOKEN BAŞINA SÜRPRİZ","PER-TOKEN SURPRISE",lang)}</div>
+        <div style={{display:"flex",gap:4}}>
+          {probs.map((p,i)=>{
+            const surprise=p>0.001?-Math.log2(p):10;
+            const maxSurp=Math.log2(5);
+            return <div key={i} style={{flex:1,textAlign:"center"}}>
+              <div style={{color:cols[i],fontSize:14,fontWeight:800}}>{toks[i]}</div>
+              <div style={{height:50,display:"flex",alignItems:"flex-end",justifyContent:"center",marginTop:4}}>
+                <div style={{width:"70%",borderRadius:"4px 4px 0 0",height:`${(surprise/maxSurp)*45}px`,
+                  background:`linear-gradient(180deg,${cols[i]},${cols[i]}40)`,transition:"height 0.3s"}}/>
+              </div>
+              <div style={{color:P.muted,fontSize:10,fontWeight:700,fontFamily:"'JetBrains Mono',monospace",marginTop:2}}>{surprise.toFixed(1)}</div>
+              <div style={{color:P.dim,fontSize:9}}>bits</div>
+            </div>;
+          })}
+        </div>
+        <div style={{fontSize:13,color:P.muted,marginTop:6,lineHeight:1.6}}>
+          {L("Düşük olasılık = yüksek sürpriz (çok bit). -log₂(p) formülü her token'ın bilgi içeriğini ölçer.","Low probability = high surprise (more bits). -log₂(p) measures each token's information content.",lang)}
+        </div>
     </div>
   </div>;
 }
@@ -283,6 +330,22 @@ function FullLab({lang}){
     </div>
     <div style={{marginTop:8,padding:"8px 10px",borderRadius:8,background:P.emerald+"08",border:`1px solid ${P.emerald}15`,fontSize: 14,color:P.muted,lineHeight:1.6}}>
       💡 {L("Doğru token='a'. Logit↑→olasılık↑→loss↓. Temperature↓→daha emin. GPT eğitiminin ÖZÜ!","Correct='a'. Logit↑→prob↑→loss↓. Temperature↓→more confident. ESSENCE of GPT training!",lang)}
+      </div>
+      {/* Auto-train button */}
+      <div style={{marginTop:8,background:P.card,borderRadius:10,border:`1px solid ${P.border}`,padding:"10px 12px",textAlign:"center"}}>
+        <button onClick={()=>{
+          const n=[...logits];
+          n[ci]+=0.3;
+          for(let i=0;i<n.length;i++){if(i!==ci)n[i]-=0.1;}
+          setLogits(n);
+        }} style={{
+          padding:"8px 20px",borderRadius:8,border:"none",
+          background:`linear-gradient(135deg,${P.emerald}90,${P.emerald})`,
+          color:"#fff",fontSize:14,fontWeight:700,cursor:"pointer"
+        }}>{L("🧠 1 Eğitim Adımı Simüle Et","🧠 Simulate 1 Training Step",lang)}</button>
+        <div style={{fontSize:12,color:P.muted,marginTop:6}}>
+          {L("Her tıklamada: doğru token logit'i ↑, diğerleri ↓","Each click: correct token logit ↑, others ↓",lang)}
+        </div>
     </div>
   </div>;
 }
@@ -360,22 +423,24 @@ function Body({step,lang}){
 }
 
 /* ═══ Main ═══ */
-const ProbabilityLesson=()=>{
+const ProbabilityLesson=({ embedded, externalStep, onStepChange })=>{
   const lang=useLang();
-  const[step,setStep]=useState(0);
-  const CH=lang==="tr"?CH_TR:CH_EN;const ch=CH[step];
-  return <div style={{minHeight:"100vh",background:P.bg,color:P.text,fontFamily:"'DM Sans',sans-serif",display:"flex",flexDirection:"column"}}>
+  const[internalStep,setInternalStep]=useState(0);
+  const step=embedded?(externalStep||0):internalStep;
+  const setStep=embedded?(s=>{const v=typeof s==="function"?s(step):s;onStepChange?.(v);}):setInternalStep;
+  const CH=lang==="tr"?PR_CHAPTERS_TR:PR_CHAPTERS_EN;const ch=CH[step];
+  return <div style={{minHeight:embedded?"auto":"100vh",background:P.bg,color:P.text,fontFamily:"'DM Sans',sans-serif",display:"flex",flexDirection:"column"}}>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <style>{`@keyframes fadeSlideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}} *{box-sizing:border-box} input[type=range]{-webkit-appearance:none;background:transparent;width:100%} input[type=range]::-webkit-slider-track{height:3px;background:${P.border};border-radius:2px} input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:${P.amber};margin-top:-5.5px;cursor:pointer;border:2px solid ${P.bg}}`}</style>
-    <header style={{padding:"14px 16px 10px",borderBottom:`1px solid ${P.border}`}}>
+    {!embedded && <header style={{padding:"14px 16px 10px",borderBottom:`1px solid ${P.border}`}}>
       <div style={{fontSize: 10,fontWeight:700,letterSpacing:3,color:P.dim,textTransform:"uppercase"}}>{L("İnteraktif Ders","Interactive Lesson",lang)}</div>
       <h1 style={{margin:"3px 0 0",fontSize: 26,fontWeight:900,letterSpacing:-0.5,background:`linear-gradient(135deg,${P.amber},${P.pink},${P.violet})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>{L("Olasılık & Bilgi Teorisi","Probability & Information Theory",lang)}</h1>
-    </header>
-    <nav style={{display:"flex",gap:2,padding:"8px 12px",overflowX:"auto",scrollbarWidth:"none"}}>
+    </header>}
+    {!embedded && <nav style={{display:"flex",gap:2,padding:"8px 12px",overflowX:"auto",scrollbarWidth:"none"}}>
       {CH.map((c,i)=><button key={i} onClick={()=>setStep(i)} style={{flex:"0 0 auto",display:"flex",alignItems:"center",gap:4,padding:"4px 9px",borderRadius:14,border:i===step?`1px solid ${c.color}35`:"1px solid transparent",background:i===step?c.color+"10":"transparent",color:i===step?c.color:i<step?P.text:P.dim,fontSize: 13,fontWeight:i===step?700:500,cursor:"pointer",whiteSpace:"nowrap",transition:"all 0.25s"}}>
         <span style={{fontSize: 14}}>{c.icon}</span><span>{c.label}</span>
       </button>)}
-    </nav>
+    </nav>}
     <div style={{padding:"8px 16px 2px"}}>
       <h2 style={{margin:0,fontSize: 18,fontWeight:800,color:ch.color,display:"flex",alignItems:"center",gap:6}}>
         <span>{ch.icon}</span>{ch.label}
@@ -384,7 +449,7 @@ const ProbabilityLesson=()=>{
     <section style={{flex:1,padding:"6px 16px 10px",overflowY:"auto",minHeight:0}}>
       <Body step={step} lang={lang}/>
     </section>
-    <footer style={{padding:"6px 16px 12px",borderTop:`1px solid ${P.border}`,background:P.bg}}>
+    {!embedded && <footer style={{padding:"6px 16px 12px",borderTop:`1px solid ${P.border}`,background:P.bg}}>
       <div style={{display:"flex",gap:6}}>
         <button onClick={()=>setStep(s=>Math.max(0,s-1))} disabled={step===0} style={{flex:1,padding:"10px",borderRadius:8,border:`1px solid ${P.border}`,background:"transparent",color:step===0?P.dim:P.text,fontSize: 15,fontWeight:600,cursor:step===0?"default":"pointer"}}>
           ‹ {L("Geri","Back",lang)}
@@ -396,7 +461,7 @@ const ProbabilityLesson=()=>{
       <div style={{display:"flex",justifyContent:"center",gap:3,marginTop:8}}>
         {CH.map((_,i)=><div key={i} onClick={()=>setStep(i)} style={{width:i===step?18:5,height:3.5,borderRadius:2,background:i===step?CH[i].color:i<step?CH[i].color+"35":P.border,transition:"all 0.3s",cursor:"pointer"}}/>)}
       </div>
-    </footer>
+    </footer>}
   </div>;
 };
 

@@ -30,7 +30,7 @@ const L = (tr, en, lang) => lang === "tr" ? tr : en;
 /* ═══════════════════════════════════════════
    CHAPTERS
    ═══════════════════════════════════════════ */
-const CH_TR = [
+export const BP_CHAPTERS_TR = [
   { icon: "📖", label: "Hikâye", color: P.indigo },
   { icon: "🎲", label: "Başlat", color: P.teal },
   { icon: "🔮", label: "Sigmoid", color: P.violet },
@@ -41,7 +41,7 @@ const CH_TR = [
   { icon: "🧪", label: "Laboratuvar", color: P.emerald },
   { icon: "🏆", label: "Quiz", color: P.rose },
 ];
-const CH_EN = [
+export const BP_CHAPTERS_EN = [
   { icon: "📖", label: "Story", color: P.indigo },
   { icon: "🎲", label: "Init", color: P.teal },
   { icon: "🔮", label: "Sigmoid", color: P.violet },
@@ -592,19 +592,21 @@ function Body({ step, net, result, onConverge, lang }) {
 /* ═══════════════════════════════════════════
    MAIN
    ═══════════════════════════════════════════ */
-const BackpropLesson = () => {
+const BackpropLesson = ({ embedded, externalStep, onStepChange }) => {
   const lang = useLang();
-  const [step, setStep] = useState(0);
+  const [internalStep, setInternalStep] = useState(0);
+  const step = embedded ? (externalStep || 0) : internalStep;
+  const setStep = embedded ? (s => { const v = typeof s === "function" ? s(step) : s; onStepChange?.(v); }) : setInternalStep;
   const [net] = useState(initNet);
   const result = useMemo(() => fwdPass(net, 1, 0), [net]);
   const [confetti, setConfetti] = useState(false);
-  const CHAPTERS = lang === "tr" ? CH_TR : CH_EN;
+  const CHAPTERS = lang === "tr" ? BP_CHAPTERS_TR : BP_CHAPTERS_EN;
   const ch = CHAPTERS[step];
 
   const onConverge = () => { setConfetti(true); setTimeout(() => setConfetti(false), 3000); };
 
   return (
-    <div style={{ minHeight: "100vh", background: P.bg, color: P.text, fontFamily: "'DM Sans', sans-serif", display: "flex", flexDirection: "column" }}>
+    <div style={{ minHeight: embedded ? "auto" : "100vh", background: P.bg, color: P.text, fontFamily: "'DM Sans', sans-serif", display: "flex", flexDirection: "column" }}>
       <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
       <style>{`
         @keyframes fadeSlideIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
@@ -617,17 +619,17 @@ const BackpropLesson = () => {
       <Confetti active={confetti} />
 
       {/* Header */}
-      <header style={{ padding: "14px 16px 10px", borderBottom: `1px solid ${P.border}` }}>
+      {!embedded && <header style={{ padding: "14px 16px 10px", borderBottom: `1px solid ${P.border}` }}>
         <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 3, color: P.dim, textTransform: "uppercase" }}>{L("İnteraktif Ders","Interactive Lesson",lang)}</div>
         <h1 style={{
           margin: "3px 0 0", fontSize: 26, fontWeight: 900, letterSpacing: -0.5,
           background: `linear-gradient(135deg, ${P.indigo}, ${P.teal}, ${P.violet})`,
           WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
         }}>Backpropagation</h1>
-      </header>
+      </header>}
 
       {/* Nav */}
-      <nav style={{ display: "flex", gap: 2, padding: "8px 12px", overflowX: "auto", scrollbarWidth: "none" }}>
+      {!embedded && <nav style={{ display: "flex", gap: 2, padding: "8px 12px", overflowX: "auto", scrollbarWidth: "none" }}>
         {CHAPTERS.map((c, i) => {
           const act = i === step;
           return (
@@ -644,7 +646,7 @@ const BackpropLesson = () => {
             </button>
           );
         })}
-      </nav>
+      </nav>}
 
       {/* Network */}
       {step <= 6 && (
@@ -666,7 +668,7 @@ const BackpropLesson = () => {
       </section>
 
       {/* Footer */}
-      <footer style={{ padding: "6px 16px 12px", borderTop: `1px solid ${P.border}`, background: P.bg }}>
+      {!embedded && <footer style={{ padding: "6px 16px 12px", borderTop: `1px solid ${P.border}`, background: P.bg }}>
         <div style={{ display: "flex", gap: 6 }}>
           <button onClick={() => setStep(s => Math.max(0, s - 1))} disabled={step === 0}
             style={{ flex: 1, padding: "10px", borderRadius: 8, border: `1px solid ${P.border}`, background: "transparent", color: step === 0 ? P.dim : P.text, fontSize: 15, fontWeight: 600, cursor: step === 0 ? "default" : "pointer" }}>
@@ -692,7 +694,7 @@ const BackpropLesson = () => {
             }} />
           ))}
         </div>
-      </footer>
+      </footer>}
     </div>
   );
 }
