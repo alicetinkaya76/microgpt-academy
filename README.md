@@ -260,6 +260,27 @@ This platform is built on top of:
 
 ---
 
+## 👨‍🏫 Author
+
+<table>
+<tr>
+<td>
+
+**Dr. Öğr. Üyesi Ali Çetinkaya** (Asst. Prof.)<br/>
+Selçuk Üniversitesi — Bilgisayar Mühendisliği Bölümü<br/>
+Selçuk University — Department of Computer Engineering
+
+[![Email](https://img.shields.io/badge/Email-ali.cetinkaya%40selcuk.edu.tr-0EA5E9?style=flat-square&logo=gmail&logoColor=white)](mailto:ali.cetinkaya@selcuk.edu.tr)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-alicetinkaya76-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/alicetinkaya76/)
+[![Google Scholar](https://img.shields.io/badge/Google_Scholar-Profile-4285F4?style=flat-square&logo=google-scholar&logoColor=white)](https://scholar.google.com/citations?user=uMskfSMAAAAJ)
+[![GitHub](https://img.shields.io/badge/GitHub-alicetinkaya76-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/alicetinkaya76)
+
+</td>
+</tr>
+</table>
+
+---
+
 ## 🤝 Contributing
 
 Contributions welcome!

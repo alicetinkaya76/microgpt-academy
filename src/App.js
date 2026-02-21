@@ -947,8 +947,45 @@ export default function App() {
         )}
 
         {/* Footer */}
-        <div style={{ textAlign: "center", marginTop: 28, padding: "14px 0", borderTop: "1px solid rgba(255,255,255,0.04)" }}>
-          <p style={{ margin: 0, fontSize: 13, color: "#1E293B" }}>{lang === 'tr' ? 'microGPT Akademi v21 — İki Dilli Sürüm' : 'microGPT Academy v21 — Bilingual Edition'}</p>
+        <div style={{ marginTop: 32, borderTop: "1px solid rgba(255,255,255,0.06)", padding: "24px 0 16px" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 24, marginBottom: 16 }}>
+            <div style={{ textAlign: "center", minWidth: 240 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#0EA5E9", letterSpacing: ".06em", textTransform: "uppercase", marginBottom: 6 }}>
+                {lang === "tr" ? "👨‍🏫 Geliştirici" : "👨‍🏫 Created by"}
+              </div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: "#E2E8F0" }}>Dr. Öğr. Üyesi Ali Çetinkaya</div>
+              <div style={{ fontSize: 12, color: "#64748B", marginTop: 2 }}>
+                {lang === "tr" ? "Selçuk Üniversitesi — Bilgisayar Mühendisliği Bölümü" : "Selçuk University — Computer Engineering Department"}
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap", justifyContent: "center" }}>
+              <a href="mailto:ali.cetinkaya@selcuk.edu.tr" style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 12px", borderRadius: 8, background: "rgba(14,165,233,0.06)", border: "1px solid rgba(14,165,233,0.15)", color: "#0EA5E9", fontSize: 12, fontWeight: 600, textDecoration: "none" }}
+                onMouseEnter={e => e.currentTarget.style.background = "rgba(14,165,233,0.12)"}
+                onMouseLeave={e => e.currentTarget.style.background = "rgba(14,165,233,0.06)"}>
+                📧 Email
+              </a>
+              <a href="https://www.linkedin.com/in/alicetinkaya76/" target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 12px", borderRadius: 8, background: "rgba(59,130,246,0.06)", border: "1px solid rgba(59,130,246,0.15)", color: "#3B82F6", fontSize: 12, fontWeight: 600, textDecoration: "none" }}
+                onMouseEnter={e => e.currentTarget.style.background = "rgba(59,130,246,0.12)"}
+                onMouseLeave={e => e.currentTarget.style.background = "rgba(59,130,246,0.06)"}>
+                💼 LinkedIn
+              </a>
+              <a href="https://scholar.google.com/citations?user=uMskfSMAAAAJ" target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 12px", borderRadius: 8, background: "rgba(139,92,246,0.06)", border: "1px solid rgba(139,92,246,0.15)", color: "#8B5CF6", fontSize: 12, fontWeight: 600, textDecoration: "none" }}
+                onMouseEnter={e => e.currentTarget.style.background = "rgba(139,92,246,0.12)"}
+                onMouseLeave={e => e.currentTarget.style.background = "rgba(139,92,246,0.06)"}>
+                🎓 Google Scholar
+              </a>
+              <a href="https://github.com/alicetinkaya76/microgpt-academy" target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 12px", borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", color: "#94A3B8", fontSize: 12, fontWeight: 600, textDecoration: "none" }}
+                onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.06)"}
+                onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.03)"}>
+                ⭐ GitHub
+              </a>
+            </div>
+          </div>
+          <div style={{ textAlign: "center", fontSize: 11, color: "#334155" }}>
+            {lang === "tr"
+              ? "microGPT Academy — Karpathy'nin microgpt.py'si üzerine inşa edilmiş interaktif eğitim platformu · MIT Lisans · 2025"
+              : "microGPT Academy — Interactive education platform built on Karpathy's microgpt.py · MIT License · 2025"}
+          </div>
         </div>
       </div>
 
