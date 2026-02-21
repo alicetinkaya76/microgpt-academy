@@ -731,6 +731,136 @@ const EMBEDDED_SLIDES = {
       keyPoint: {tr:"Sadece NLP değil: görüntü (ViT), protein (AlphaFold), müzik (MusicGen), kod (Copilot), robotik...", en:"Not just NLP: vision (ViT), protein (AlphaFold), music (MusicGen), code (Copilot), robotics..."}
     }
   ],
+
+  "week8_s0": [
+    {
+      title: {tr:"BPE = Bilgi-Teorik Sıkıştırma", en:"BPE = Information-Theoretic Compression"},
+      desc: {tr:"Byte Pair Encoding en sık komşu çifti birleştirir — bu, Minimum Description Length (MDL) prensibine göre optimal sıkıştırmadır. Her birleştirme corpus entropy'sini düşürür.", en:"Byte Pair Encoding merges the most frequent adjacent pair — this is optimal compression according to the Minimum Description Length (MDL) principle. Each merge reduces corpus entropy."},
+      formula: "ΔH = H(corpus_before) - H(corpus_after) > 0",
+      code: "# Her merge'ün entropi etkisi:\npair_freq = count_pairs(corpus)\nbest = max(pair_freq, key=pair_freq.get)\n# merge(best) → vocab_size++ , seq_length--\n# Net etki: toplam bit sayısı ↓",
+      keyPoint: {tr:"microGPT karakter-düzeyi tokenizer kullanır (H≈3.3 bit). GPT-4'ün BPE tokenizer'ı H≈1.8 bit — %45 daha verimli kodlama!", en:"microGPT uses character-level tokenizer (H≈3.3 bits). GPT-4's BPE tokenizer achieves H≈1.8 bits — 45% more efficient encoding!"},
+    },
+  ],
+  "week8_s1": [
+    {
+      title: {tr:"Hessian Matrisi — Yüzey Eğriliği", en:"Hessian Matrix — Surface Curvature"},
+      desc: {tr:"Gradient hangi yöne gideceğini söyler. Hessian yüzeyin şeklini söyler: düz mü, keskin mi, eyer noktası mı? Eigenvalue'lar eğriliği verir.", en:"Gradient tells which direction to go. Hessian tells the shape of the surface: flat, sharp, saddle point? Eigenvalues give curvature."},
+      formula: "H_{ij} = ∂²L / ∂w_i∂w_j",
+      code: "# Eigenvalue spektrumu:\nλ_max → keskinlik (sharpness)\nλ_min → düzlük (flatness)\nλ < 0 → eyer noktası (saddle point)\n\n# microGPT: H ∈ ℝ^{3648×3648}",
+      keyPoint: {tr:"Hesaplamak O(n²) — GPT-2 için H boyutu 117M × 117M! Yaklaşık yöntemler şart: Fisher bilgi matrisi, Hutchinson trace estimator.", en:"Computing is O(n²) — for GPT-2, H is 117M × 117M! Approximations are essential: Fisher information matrix, Hutchinson trace estimator."},
+    },
+  ],
+  "week8_s2": [
+    {
+      title: {tr:"Attention Head Pruning", en:"Attention Head Pruning"},
+      desc: {tr:"Taylor birinci mertebe yaklaşımı ile her head'in loss'a katkısı ölçülür: I(h) = |∂L/∂h · h|. Düşük skorlu headlar çıkarılır — model küçülür, hız artar.", en:"Taylor first-order approximation measures each head's contribution to loss: I(h) = |∂L/∂h · h|. Low-scoring heads are removed — model shrinks, speed increases."},
+      formula: "I(h_i) = |∂L/∂h_i · h_i|",
+      keyPoint: {tr:"GPT-2 Medium'da %35 head prune → %15 hızlanma, loss artışı sadece +0.02. Her head eşit önemli DEĞİL!", en:"Pruning 35% of heads in GPT-2 Medium → 15% speedup, loss increase only +0.02. Not all heads are equally important!"},
+    },
+  ],
+  "week8_s3": [
+    {
+      title: {tr:"Embedding İzotropi Problemi", en:"The Embedding Isotropy Problem"},
+      desc: {tr:"İdeal: embedding vektörleri uzayda eşit dağılmış (izotrop). Gerçek: çoğu LLM'de dar bir konide toplanmış (anizotrop). Bu, cosine similarity'yi anlamsızlaştırır.", en:"Ideal: embedding vectors uniformly distributed in space (isotropic). Reality: most LLMs have embeddings clustered in a narrow cone (anisotropic). This makes cosine similarity meaningless."},
+      formula: "Isotropy = 1 - E[cos(e_i, e_j)] where i≠j",
+      keyPoint: {tr:"Çözümler: (1) Whitening: kovaryans matrisini birim matrise dönüştür (2) All-but-the-top: ilk birkaç PCA bileşenini çıkar (3) Contrastive fine-tuning", en:"Solutions: (1) Whitening: transform covariance to identity (2) All-but-the-top: remove first few PCA components (3) Contrastive fine-tuning"},
+    },
+  ],
+  "week8_s4": [
+    {
+      title: {tr:"Float16 Softmax Trick'i", en:"Float16 Softmax Trick"},
+      desc: {tr:"Float16 max değer 65,504. exp(12) = 162,755 → OVERFLOW! Çözüm: x' = x - max(x) yapınca en büyük exp(0)=1 olur. Matematiksel olarak aynı sonuç.", en:"Float16 max value 65,504. exp(12) = 162,755 → OVERFLOW! Solution: x' = x - max(x) makes the largest value exp(0)=1. Mathematically identical result."},
+      formula: "softmax(x)_i = exp(x_i - max(x)) / Σ exp(x_j - max(x))",
+      code: "# microGPT satır 142:\nmax_x = max(x)\nexps = [math.exp(xi - max_x) for xi in x]\ntotal = sum(exps)\nreturn [e / total for e in exps]",
+      keyPoint: {tr:"Bu 3 satır kod, milyar dolarlık GPU kümelerinde çalışan her LLM'nin temelinde var. Basit ama kritik!", en:"These 3 lines of code are at the foundation of every LLM running on billion-dollar GPU clusters. Simple but critical!"},
+    },
+  ],
+  "week8_s5": [
+    {
+      title: {tr:"Ablation Study Tasarımı", en:"Ablation Study Design"},
+      desc: {tr:"Bilimsel deney = kontrollü ortam. Her seferinde tek değişken değiştir. Tekrarla (n≥3). İstatistik raporla (ortalama ± std, p-value). Tablo ve grafikle sun.", en:"Scientific experiment = controlled environment. Change one variable at a time. Repeat (n≥3). Report statistics (mean ± std, p-value). Present with tables and graphs."},
+      code: "# Ablation rapor formatı:\n# | Config | Loss (mean±std) | Params | vs Full p-val |\n# | Full   | 2.18 ± 0.04     | 3,648  | —             |\n# | −head  | 2.31 ± 0.06     | 3,520  | 0.003         |",
+      keyPoint: {tr:"Ablation olmadan hiçbir iddia bilimsel değildir. 'X iyi çalışıyor' yetmez — 'X olmadan loss Y±Z artar (p<0.05)' gerekir.", en:"No claim is scientific without ablation. 'X works well' is insufficient — 'Without X, loss increases by Y±Z (p<0.05)' is required."},
+    },
+  ],
+  "week8_s6": [
+    {
+      title: {tr:"Akademik Makale Yapısı", en:"Academic Paper Structure"},
+      desc: {tr:"IMRaD: Introduction, Method, Results, Discussion. Related Work her alanı tara, boşluğu göster, katkını konumla. Her cümle arkasında referans olmalı.", en:"IMRaD: Introduction, Method, Results, Discussion. Related Work surveys the field, identifies gaps, positions your contribution. Every claim needs a citation."},
+      keyPoint: {tr:"Related Work yazmak 'başkalarını övmek' değil — alandaki boşluğu göstermek ve kendi katkınızı o boşluğa yerleştirmektir.", en:"Writing Related Work is not 'praising others' — it's showing the gap in the field and positioning your contribution in that gap."},
+    },
+  ],
+  "week8_s7": [
+    {
+      title: {tr:"Lab: microGPT Ablation Deneyi", en:"Lab: microGPT Ablation Experiment"},
+      desc: {tr:"n_embd ∈ {8,16,32,64} × 3 seed → 12 deney. Sonuçları tablo ve grafikle raporlayın. p-value hesaplayın. YL tez deney bölümünün prototipi.", en:"n_embd ∈ {8,16,32,64} × 3 seeds → 12 experiments. Report results with tables and graphs. Calculate p-values. A prototype for your thesis experiment section."},
+      code: "# Deney komutu:\nfor e in 8 16 32 64; do\n  for s in 42 123 456; do\n    python3 microgpt.py --n_embd $e --seed $s --steps 1000\n  done\ndone",
+      keyPoint: {tr:"12 deney = 12 veri noktası = 1 güçlü tablo. Bu tablo tek başına bir poster sunumunu taşıyabilir.", en:"12 experiments = 12 data points = 1 strong table. This table alone can carry a poster presentation."},
+    },
+  ],
+  "week9_s0": [
+    {
+      title: {tr:"Neural Architecture Search — Pareto Optimizasyon", en:"Neural Architecture Search — Pareto Optimization"},
+      desc: {tr:"Mimari hiperparametreleri (katman, head, n_embd) sistematik arama ile optimize et. Pareto frontı: performans ↑ ve maliyet ↓ arasında optimal trade-off noktaları.", en:"Optimize architectural hyperparameters (layers, heads, n_embd) via systematic search. Pareto front: optimal trade-off points between performance ↑ and cost ↓."},
+      formula: "Pareto-optimal: ∄ x' s.t. f₁(x') ≤ f₁(x) ∧ f₂(x') < f₂(x)",
+      keyPoint: {tr:"Pareto frontında her nokta 'en iyidir' kendi trade-off seviyesinde. Seçim araştırmacıya kalır: 3K param ile loss 2.4 mü, 14K param ile 2.1 mi?", en:"Every point on the Pareto front is 'best' at its own trade-off level. The choice is yours: 3K params with loss 2.4, or 14K params with 2.1?"},
+    },
+  ],
+  "week9_s1": [
+    {
+      title: {tr:"Knowledge Distillation — Soft Bilgi Transferi", en:"Knowledge Distillation — Soft Knowledge Transfer"},
+      desc: {tr:"Teacher model'in soft probability çıktısı student'a zengin bilgi aktarır. Temperature T↑ → dağılım düzleşir → 'neredeyse doğru' alternatifler de öğrenilir.", en:"Teacher model's soft probability output transfers rich knowledge to student. Temperature T↑ → distribution flattens → 'almost correct' alternatives are also learned."},
+      formula: "L = α·KL(σ(z_s/T) || σ(z_t/T))·T² + (1-α)·CE(z_s, y)",
+      keyPoint: {tr:"T=1: sadece doğru cevap. T=5: 'a %40, e %30, i %20...' → student ilişkileri öğrenir, sadece cevabı değil.", en:"T=1: only correct answer. T=5: 'a 40%, e 30%, i 20%...' → student learns relationships, not just answers."},
+    },
+  ],
+  "week9_s2": [
+    {
+      title: {tr:"RoPE — Rotary Position Embedding", en:"RoPE — Rotary Position Embedding"},
+      desc: {tr:"Learned PE sabit vektör → context uzunluğu dışına çıkamaz. RoPE vektörü pozisyona göre döndürür → göreceli mesafe çarpma içinde gömülü, sonsuz extrapolation.", en:"Learned PE is a fixed vector → can't extrapolate beyond context length. RoPE rotates vectors by position → relative distance embedded in multiplication, infinite extrapolation."},
+      formula: "RoPE(x, pos) = R(pos)·x where R = [[cos θ, -sin θ],[sin θ, cos θ]]",
+      code: "# 2D rotasyon sezgisi:\n# pos=0: döndürme yok\n# pos=1: θ kadar döndür\n# pos=2: 2θ kadar döndür\n# q_m · k_n = f(m-n) → mesafe bilgisi otomatik",
+      keyPoint: {tr:"LLaMA, Mistral, Qwen, DeepSeek — hepsi RoPE kullanır. microGPT'nin learned PE'si en basit ama en az esnek yöntemdir.", en:"LLaMA, Mistral, Qwen, DeepSeek — all use RoPE. microGPT's learned PE is the simplest but least flexible method."},
+    },
+  ],
+  "week9_s3": [
+    {
+      title: {tr:"Sparse Attention — Verimli Dikkat", en:"Sparse Attention — Efficient Attention"},
+      desc: {tr:"Full attention O(n²) — uzun metinler için ölçeklenmez. Sparse: lokal pencere + birkaç global token → O(n·w). %50 sparsity ≈ %50 FLOPs tasarrufu.", en:"Full attention is O(n²) — doesn't scale for long texts. Sparse: local window + few global tokens → O(n·w). 50% sparsity ≈ 50% FLOPs savings."},
+      formula: "FLOPs_sparse ≈ 2 × n × w × d (w << n)",
+      keyPoint: {tr:"Longformer: lokal+global. BigBird: lokal+global+random. Mistral: sliding window 4096. Flash Attention: sparse değil ama bellek-optimal.", en:"Longformer: local+global. BigBird: local+global+random. Mistral: sliding window 4096. Flash Attention: not sparse but memory-optimal."},
+    },
+  ],
+  "week9_s4": [
+    {
+      title: {tr:"Grokking — Gecikmeli Genelleme", en:"Grokking — Delayed Generalization"},
+      desc: {tr:"Eğitim loss'u 0 olduktan BİNLERCE epoch sonra test loss'u aniden düşer. Model önce ezberler, sonra yapıyı keşfeder. Weight decay tetikleyici.", en:"Test loss suddenly drops THOUSANDS of epochs after training loss reaches 0. Model first memorizes, then discovers structure. Weight decay is the trigger."},
+      formula: "train_loss → 0 at epoch ~300, test_loss → 0 at epoch ~3000",
+      keyPoint: {tr:"Grokking erken durdurma (early stopping) ile kaçırılır! Eğer sadece train loss'a bakarsanız 'model yakınsadı' dersiniz — ama daha çok epoch gerekebilir.", en:"Grokking is missed with early stopping! If you only watch train loss you'd say 'model converged' — but more epochs might be needed."},
+    },
+  ],
+  "week9_s5": [
+    {
+      title: {tr:"Flat vs Sharp Minima", en:"Flat vs Sharp Minima"},
+      desc: {tr:"Flat minimum: geniş vadi, ağırlıkları biraz oynatsanız da loss çok artmaz → iyi genelleme. Sharp minimum: dar çukur, küçük pertürbasyon büyük kayıp → overfit.", en:"Flat minimum: wide valley, perturbing weights slightly doesn't increase loss much → good generalization. Sharp minimum: narrow pit, small perturbation = big loss increase → overfit."},
+      formula: "Sharpness = max_{||ε||≤ρ} L(w+ε) - L(w)",
+      keyPoint: {tr:"SAM optimizer flat minima arar. Büyük batch → sharp, küçük batch → flat. Stochastic noise (SGD) doğal olarak düzleştirir.", en:"SAM optimizer seeks flat minima. Large batch → sharp, small batch → flat. Stochastic noise (SGD) naturally smooths."},
+    },
+  ],
+  "week9_s6": [
+    {
+      title: {tr:"Ablation — Her Bileşeni Kanıtla", en:"Ablation — Prove Every Component"},
+      desc: {tr:"Full model → bileşenleri teker teker çıkar → her birinin katkısını ölç. En az 3 seed, t-test ile p-value. Sonuçları tabloyla sun.", en:"Full model → remove components one by one → measure each one's contribution. At least 3 seeds, p-value via t-test. Present results in tables."},
+      keyPoint: {tr:"Güçlü ablation = güçlü tez. 'Multi-head attention olmadan loss %5.9 artar (p<0.01)' bir tez cümlesidir.", en:"Strong ablation = strong thesis. 'Without multi-head attention loss increases by 5.9% (p<0.01)' is a thesis-worthy statement."},
+    },
+  ],
+  "week9_s7": [
+    {
+      title: {tr:"YL Proje Yol Haritası", en:"Graduate Project Roadmap"},
+      desc: {tr:"12 haftalık plan: literatür (2h), baseline (2h), deneyler (4h), yazım (2h), review (1h), savunma (1h). Her hafta 1 tablo/grafik üret → tez kendiliğinden yazılır.", en:"12-week plan: literature (2w), baseline (2w), experiments (4w), writing (2w), review (1w), defense (1w). Produce 1 table/graph per week → thesis writes itself."},
+      keyPoint: {tr:"Altın kural: 'Veri olmadan fikir, fikir olmadan veri' — ikisi birlikte ilerlemeli. Her hafta somut çıktı üretin.", en:"Golden rule: 'Ideas without data, data without ideas' — both must progress together. Produce concrete output every week."},
+    },
+  ],
 };
 
 const SlideRefPanel = ({ weekIdx, sectionIdx }) => {

@@ -2530,8 +2530,470 @@ const ConceptMapViz = () => {
 
 
 
+
+
+// ═══ W8: ADVANCED TECHNIQUES ═══
+
+const BpeInfoTheoryViz = () => {
+  const lang = useLang();
+  const [merges, setMerges] = useState(0);
+  const corpus0 = "t h e _ c a t _ s a t _ o n _ t h e _ m a t".split(" ");
+  const mergeSteps = [
+    { pair: "t h", result: "th", freq: 3 },
+    { pair: "th e", result: "the", freq: 2 },
+    { pair: "a t", result: "at", freq: 2 },
+    { pair: "_ the", result: "_the", freq: 2 },
+  ];
+  const getCorpus = (step) => {
+    let tokens = [...corpus0];
+    for (let i = 0; i < Math.min(step, mergeSteps.length); i++) {
+      const [a, b] = mergeSteps[i].pair.split(" ");
+      const merged = [];
+      for (let j = 0; j < tokens.length; j++) {
+        if (j < tokens.length - 1 && tokens[j] === a && tokens[j+1] === b) {
+          merged.push(mergeSteps[i].result); j++;
+        } else merged.push(tokens[j]);
+      }
+      tokens = merged;
+    }
+    return tokens;
+  };
+  const cur = getCorpus(merges);
+  const vocabSize = new Set(cur).size;
+  const entropy = -[...new Set(cur)].reduce((s, t) => {
+    const p = cur.filter(x => x === t).length / cur.length;
+    return s + p * Math.log2(p);
+  }, 0);
+
+  return (<VizBox title={lang === "tr" ? "BPE Bilgi-Teorik Sıkıştırma" : "BPE Information-Theoretic Compression"} color="#E11D48">
+    <div style={{ fontSize: 13, color: VB.muted, marginBottom: 10 }}>{lang === "tr" ? "Her merge entropi'yi düşürür. Kaydırıcı ile BPE adımlarını takip edin:" : "Each merge reduces entropy. Track BPE steps with the slider:"}</div>
+    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+      <span style={{ color: "#E11D48", fontSize: 13, fontWeight: 700, minWidth: 70 }}>Merge: {merges}/{mergeSteps.length}</span>
+      <input type="range" min="0" max={mergeSteps.length} value={merges} onChange={e => setMerges(+e.target.value)} style={{ flex: 1 }} />
+    </div>
+    {merges > 0 && <div style={{ padding: "6px 10px", borderRadius: 8, background: "#E11D4808", border: "1px solid #E11D4820", marginBottom: 8, fontSize: 13 }}>
+      <span style={{ color: "#E11D48", fontWeight: 700 }}>Merge {merges}:</span>
+      <span style={{ color: VB.txt, marginLeft: 6 }}>"{mergeSteps[merges-1].pair}" → "{mergeSteps[merges-1].result}" (×{mergeSteps[merges-1].freq})</span>
+    </div>}
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 3, padding: "10px", background: VB.card, borderRadius: 10, border: `1px solid ${VB.border}`, marginBottom: 10 }}>
+      {cur.map((t, i) => <span key={i} style={{ padding: "3px 7px", borderRadius: 5, fontSize: 14, fontWeight: 700, fontFamily: "'Fira Code', monospace", background: t.length > 1 ? "#E11D4815" : "#1e293b", color: t.length > 1 ? "#E11D48" : VB.txt, border: `1px solid ${t.length > 1 ? "#E11D4830" : VB.border}` }}>{t}</span>)}
+    </div>
+    <div style={{ display: "flex", gap: 8 }}>
+      <StatBox value={cur.length} label={lang === "tr" ? "Token sayısı" : "Token count"} color="#0EA5E9" />
+      <StatBox value={vocabSize} label="Vocab" color="#8B5CF6" />
+      <StatBox value={entropy.toFixed(2)} label={lang === "tr" ? "Entropi (bit)" : "Entropy (bits)"} color="#E11D48" />
+    </div>
+  </VizBox>);
+};
+
+const HessianLandscapeViz = () => {
+  const lang = useLang();
+  const [sharpness, setSharpness] = useState(1.0);
+  const W = 240, H = 120;
+  const points = Array.from({length: 60}, (_, i) => {
+    const x = (i - 30) / 10;
+    const y = sharpness * x * x;
+    return { x: W/2 + x * 8, y: H - 15 - Math.min(y * 8, H - 25) };
+  });
+  const pts = points.map(p => `${p.x},${p.y}`).join(" ");
+  const eigenLabel = sharpness > 2 ? (lang === "tr" ? "⚠️ Keskin (overfit riski)" : "⚠️ Sharp (overfit risk)") 
+    : sharpness > 0.5 ? (lang === "tr" ? "✓ Orta" : "✓ Medium")
+    : (lang === "tr" ? "✅ Düz (iyi genelleme)" : "✅ Flat (good generalization)");
+  const color = sharpness > 2 ? "#F43F5E" : sharpness > 0.5 ? "#FBBF24" : "#10B981";
+
+  return (<VizBox title={lang === "tr" ? "Hessian — Loss Yüzeyi Eğriliği" : "Hessian — Loss Surface Curvature"} color="#F59E0B">
+    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+      <span style={{ color: VB.muted, fontSize: 12, fontWeight: 700, minWidth: 90 }}>λ_max = {sharpness.toFixed(1)}</span>
+      <input type="range" min="0.1" max="4" step="0.1" value={sharpness} onChange={e => setSharpness(+e.target.value)} style={{ flex: 1 }} />
+    </div>
+    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", display: "block", background: VB.card, borderRadius: 10 }}>
+      <polyline points={pts} fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx={W/2} cy={H-15} r="5" fill={color} opacity="0.8" />
+      <text x={W/2} y={H-3} textAnchor="middle" fill={VB.dim} fontSize="8">w*</text>
+      <text x={W/2} y={12} textAnchor="middle" fill={color} fontSize="9" fontWeight="700">{eigenLabel}</text>
+    </svg>
+    <div style={{ fontSize: 12, color: VB.muted, marginTop: 6, textAlign: "center" }}>
+      {lang === "tr" ? "λ_max küçük = düz minimum = iyi genelleme. λ_max büyük = keskin = overfit." : "Small λ_max = flat minimum = good generalization. Large λ_max = sharp = overfit."}
+    </div>
+  </VizBox>);
+};
+
+const HeadPruningViz = () => {
+  const lang = useLang();
+  const [pruneThresh, setPruneThresh] = useState(0.3);
+  const heads = Array.from({length: 12}, (_, i) => ({
+    id: i, importance: [0.92, 0.85, 0.12, 0.78, 0.05, 0.67, 0.15, 0.88, 0.03, 0.71, 0.45, 0.22][i],
+    label: `H${i}`
+  }));
+  const pruned = heads.filter(h => h.importance < pruneThresh);
+  const kept = heads.filter(h => h.importance >= pruneThresh);
+
+  return (<VizBox title={lang === "tr" ? "Attention Head Pruning — Taylor Skoru" : "Attention Head Pruning — Taylor Score"} color="#EC4899">
+    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+      <span style={{ color: VB.muted, fontSize: 12, fontWeight: 700, minWidth: 110 }}>{lang === "tr" ? "Eşik" : "Threshold"}: {pruneThresh.toFixed(2)}</span>
+      <input type="range" min="0.05" max="0.9" step="0.05" value={pruneThresh} onChange={e => setPruneThresh(+e.target.value)} style={{ flex: 1 }} />
+    </div>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 4, marginBottom: 10 }}>
+      {heads.map(h => {
+        const isPruned = h.importance < pruneThresh;
+        return <div key={h.id} style={{
+          padding: "6px 4px", borderRadius: 8, textAlign: "center",
+          background: isPruned ? "#F43F5E08" : "#10B98108",
+          border: `1.5px solid ${isPruned ? "#F43F5E30" : "#10B98130"}`,
+          opacity: isPruned ? 0.5 : 1, transition: "all 0.3s",
+        }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: isPruned ? "#F43F5E" : "#10B981" }}>{h.label}</div>
+          <div style={{ fontSize: 13, fontWeight: 800, color: isPruned ? "#F43F5E" : VB.txt, fontFamily: "'Fira Code', monospace" }}>{h.importance.toFixed(2)}</div>
+          <div style={{ fontSize: 9, color: isPruned ? "#F43F5E" : "#10B981", fontWeight: 700 }}>{isPruned ? "✕ PRUNE" : "✓ KEEP"}</div>
+        </div>;
+      })}
+    </div>
+    <div style={{ display: "flex", gap: 8 }}>
+      <StatBox value={kept.length} label={lang === "tr" ? "Kalan" : "Kept"} color="#10B981" />
+      <StatBox value={pruned.length} label={lang === "tr" ? "Çıkarılan" : "Pruned"} color="#F43F5E" />
+      <StatBox value={`${Math.round(pruned.length/12*100)}%`} label={lang === "tr" ? "Hız kazancı" : "Speedup"} color="#FBBF24" />
+    </div>
+  </VizBox>);
+};
+
+const IsotropyViz = () => {
+  const lang = useLang();
+  const [mode, setMode] = useState(0);
+  const modes = [
+    { name: lang === "tr" ? "Anizotrop (kötü)" : "Anisotropic (bad)", avgSim: 0.92, spread: 15 },
+    { name: lang === "tr" ? "Whitening sonrası" : "After whitening", avgSim: 0.31, spread: 60 },
+    { name: lang === "tr" ? "İzotrop (ideal)" : "Isotropic (ideal)", avgSim: 0.05, spread: 90 },
+  ];
+  const m = modes[mode];
+  const W = 200, H = 200, cx = W/2, cy = H/2;
+  const vectors = Array.from({length: 20}, (_, i) => {
+    const baseAngle = (i / 20) * 2 * Math.PI;
+    const spread = (m.spread / 90) * Math.PI;
+    const angle = (mode === 0 ? 0.3 : 0) + baseAngle * (spread / Math.PI);
+    const r = 40 + Math.random() * 30;
+    return { x: cx + Math.cos(angle) * r, y: cy + Math.sin(angle) * r };
+  });
+
+  return (<VizBox title={lang === "tr" ? "Embedding İzotropi" : "Embedding Isotropy"} color="#8B5CF6">
+    <div style={{ display: "flex", gap: 4, marginBottom: 8 }}>
+      {modes.map((md, i) => <button key={i} onClick={() => setMode(i)} style={{
+        flex: 1, padding: "6px", borderRadius: 8, border: `1px solid ${mode === i ? "#8B5CF630" : VB.border}`,
+        background: mode === i ? "#8B5CF610" : "transparent", color: mode === i ? "#8B5CF6" : VB.muted,
+        fontSize: 11, fontWeight: 700, cursor: "pointer"
+      }}>{md.name}</button>)}
+    </div>
+    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", maxWidth: W, display: "block", background: VB.card, borderRadius: 10, margin: "0 auto" }}>
+      <circle cx={cx} cy={cy} r={2} fill={VB.dim} />
+      {vectors.map((v, i) => <g key={i}>
+        <line x1={cx} y1={cy} x2={v.x} y2={v.y} stroke="#8B5CF6" strokeWidth="1.5" opacity="0.5" />
+        <circle cx={v.x} cy={v.y} r="3" fill="#8B5CF6" />
+      </g>)}
+    </svg>
+    <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+      <StatBox value={m.avgSim.toFixed(2)} label={lang === "tr" ? "Ort. cos sim" : "Avg cos sim"} color={m.avgSim > 0.5 ? "#F43F5E" : "#10B981"} />
+      <StatBox value={(1 - m.avgSim).toFixed(2)} label={lang === "tr" ? "İzotropi skoru" : "Isotropy score"} color="#8B5CF6" />
+    </div>
+  </VizBox>);
+};
+
+const NumericalStabilityViz = () => {
+  const lang = useLang();
+  const [logits, setLogits] = useState([3.0, 1.0, 0.5]);
+  const [scale, setScale] = useState(1);
+  const scaled = logits.map(l => l * scale);
+  const maxVal = Math.max(...scaled);
+  const naiveExps = scaled.map(x => Math.exp(Math.min(x, 80)));
+  const naiveSum = naiveExps.reduce((a, b) => a + b, 0);
+  const naiveProbs = naiveExps.map(e => e / naiveSum);
+  const safeExps = scaled.map(x => Math.exp(x - maxVal));
+  const safeSum = safeExps.reduce((a, b) => a + b, 0);
+  const safeProbs = safeExps.map(e => e / safeSum);
+  const overflow = scaled.some(x => x > 11);
+
+  return (<VizBox title={lang === "tr" ? "Float16 Softmax — Numerik Stabilite" : "Float16 Softmax — Numerical Stability"} color="#F59E0B">
+    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+      <span style={{ color: VB.muted, fontSize: 12, fontWeight: 700, minWidth: 80 }}>{lang === "tr" ? "Ölçek" : "Scale"}: ×{scale}</span>
+      <input type="range" min="1" max="10" step="1" value={scale} onChange={e => setScale(+e.target.value)} style={{ flex: 1 }} />
+    </div>
+    {overflow && <div style={{ padding: "6px 10px", borderRadius: 8, background: "#F43F5E10", border: "1px solid #F43F5E30", marginBottom: 8, fontSize: 12, color: "#F43F5E", fontWeight: 700 }}>
+      ⚠️ {lang === "tr" ? `exp(${scaled[0].toFixed(0)}) = ${Math.exp(Math.min(scaled[0], 80)).toExponential(1)} — Float16 OVERFLOW!` : `exp(${scaled[0].toFixed(0)}) = ${Math.exp(Math.min(scaled[0], 80)).toExponential(1)} — Float16 OVERFLOW!`}
+    </div>}
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+      <div style={{ padding: 8, borderRadius: 8, background: overflow ? "#F43F5E08" : VB.card, border: `1px solid ${overflow ? "#F43F5E20" : VB.border}` }}>
+        <div style={{ fontSize: 10, fontWeight: 700, color: overflow ? "#F43F5E" : VB.dim, letterSpacing: 1, marginBottom: 6 }}>{lang === "tr" ? "NAİF YÖNTEM" : "NAIVE METHOD"}</div>
+        {scaled.map((x, i) => <div key={i} style={{ fontSize: 12, fontFamily: "'Fira Code', monospace", color: overflow ? "#F43F5E" : VB.txt, marginBottom: 2 }}>
+          exp({x.toFixed(1)}) = {naiveExps[i] > 1e10 ? "∞" : naiveExps[i].toFixed(1)} → {overflow ? "NaN" : (naiveProbs[i]*100).toFixed(1)+"%"}
+        </div>)}
+      </div>
+      <div style={{ padding: 8, borderRadius: 8, background: "#10B98108", border: "1px solid #10B98120" }}>
+        <div style={{ fontSize: 10, fontWeight: 700, color: "#10B981", letterSpacing: 1, marginBottom: 6 }}>{lang === "tr" ? "GÜVENLİ YÖNTEM" : "SAFE METHOD"}</div>
+        {scaled.map((x, i) => <div key={i} style={{ fontSize: 12, fontFamily: "'Fira Code', monospace", color: VB.txt, marginBottom: 2 }}>
+          exp({(x-maxVal).toFixed(1)}) = {safeExps[i].toFixed(2)} → {(safeProbs[i]*100).toFixed(1)}%
+        </div>)}
+      </div>
+    </div>
+  </VizBox>);
+};
+
+const AblationDesignViz = () => {
+  const lang = useLang();
+  const [selected, setSelected] = useState(new Set([0,1,2,3]));
+  const components = [
+    { name: "Multi-head Attn", loss: 0.00, color: "#0EA5E9" },
+    { name: "Layer Norm", loss: 0.24, color: "#8B5CF6" },
+    { name: "Residual", loss: 0.49, color: "#10B981" },
+    { name: "n_embd=16", loss: 0.27, color: "#F59E0B" },
+  ];
+  const baseLoss = 2.18;
+  const currentLoss = baseLoss + components.reduce((s, c, i) => s + (selected.has(i) ? 0 : c.loss), 0);
+
+  return (<VizBox title={lang === "tr" ? "İnteraktif Ablation Deneyi" : "Interactive Ablation Experiment"} color="#10B981">
+    <div style={{ fontSize: 12, color: VB.muted, marginBottom: 8 }}>{lang === "tr" ? "Bileşenleri tıklayarak çıkarın — loss'a etkisini görün:" : "Click to remove components — see the effect on loss:"}</div>
+    <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 10 }}>
+      {components.map((comp, i) => {
+        const active = selected.has(i);
+        return <button key={i} onClick={() => {
+          const n = new Set(selected);
+          if (n.has(i)) n.delete(i); else n.add(i);
+          setSelected(n);
+        }} style={{
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+          padding: "8px 12px", borderRadius: 8, border: `1.5px solid ${active ? comp.color+"30" : "#F43F5E30"}`,
+          background: active ? `${comp.color}08` : "#F43F5E08", cursor: "pointer",
+          opacity: active ? 1 : 0.6, transition: "all 0.3s",
+        }}>
+          <span style={{ fontSize: 13, fontWeight: 700, color: active ? comp.color : "#F43F5E" }}>
+            {active ? "✓ " : "✕ "}{comp.name}
+          </span>
+          {!active && <span style={{ fontSize: 12, color: "#F43F5E", fontFamily: "'Fira Code', monospace" }}>+{comp.loss.toFixed(2)} loss</span>}
+        </button>;
+      })}
+    </div>
+    <div style={{ display: "flex", gap: 8 }}>
+      <StatBox value={currentLoss.toFixed(2)} label="Loss" color={currentLoss > 2.5 ? "#F43F5E" : currentLoss > 2.3 ? "#FBBF24" : "#10B981"} />
+      <StatBox value={`${selected.size}/4`} label={lang === "tr" ? "Aktif" : "Active"} color="#0EA5E9" />
+      <StatBox value={`+${(currentLoss - baseLoss).toFixed(2)}`} label="ΔLoss" color={currentLoss > baseLoss ? "#F43F5E" : "#10B981"} />
+    </div>
+  </VizBox>);
+};
+
+// ═══ W9: RESEARCH FRONTIERS ═══
+
+const NasParetoViz = () => {
+  const lang = useLang();
+  const configs = [
+    { name: "tiny", params: 512, loss: 2.8, color: "#0EA5E9" },
+    { name: "small", params: 1024, loss: 2.5, color: "#8B5CF6" },
+    { name: "base", params: 3648, loss: 2.18, color: "#10B981" },
+    { name: "wide", params: 7200, loss: 2.05, color: "#F59E0B" },
+    { name: "deep", params: 14400, loss: 1.95, color: "#EC4899" },
+    { name: "huge", params: 28000, loss: 1.90, color: "#E11D48" },
+    { name: "bad1", params: 5000, loss: 2.6, color: "#475569" },
+    { name: "bad2", params: 10000, loss: 2.4, color: "#475569" },
+    { name: "bad3", params: 20000, loss: 2.1, color: "#475569" },
+  ];
+  const pareto = configs.filter(c => !configs.some(c2 => c2.params <= c.params && c2.loss < c.loss && c2 !== c));
+  const W = 260, H = 180;
+  const xScale = (p) => 15 + (Math.log2(p) - Math.log2(400)) / (Math.log2(30000) - Math.log2(400)) * (W - 30);
+  const yScale = (l) => H - 15 - ((l - 1.8) / (3.0 - 1.8)) * (H - 30);
+  const paretoSorted = [...pareto].sort((a, b) => a.params - b.params);
+
+  return (<VizBox title={lang === "tr" ? "NAS — Pareto Front Optimizasyon" : "NAS — Pareto Front Optimization"} color="#7C3AED">
+    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", display: "block", background: VB.card, borderRadius: 10 }}>
+      <text x={W/2} y={H-2} textAnchor="middle" fill={VB.dim} fontSize="7">{lang === "tr" ? "Parametre sayısı (log) →" : "Parameter count (log) →"}</text>
+      <text x={5} y={H/2} fill={VB.dim} fontSize="7" transform={`rotate(-90,5,${H/2})`}>Loss ↓</text>
+      {paretoSorted.length > 1 && <polyline points={paretoSorted.map(c => `${xScale(c.params)},${yScale(c.loss)}`).join(" ")} fill="none" stroke="#7C3AED" strokeWidth="1.5" strokeDasharray="4 2" opacity="0.6" />}
+      <rect x={xScale(paretoSorted[0]?.params || 500)-2} y={yScale(paretoSorted[0]?.loss || 2.8)} width={xScale(paretoSorted[paretoSorted.length-1]?.params || 28000) - xScale(paretoSorted[0]?.params || 500)+4} height={yScale(paretoSorted[paretoSorted.length-1]?.loss || 1.9) - yScale(paretoSorted[0]?.loss || 2.8)} fill="#7C3AED" opacity="0.03" rx="4" />
+      {configs.map((c, i) => {
+        const isPareto = pareto.includes(c);
+        return <g key={i}>
+          <circle cx={xScale(c.params)} cy={yScale(c.loss)} r={isPareto ? 5 : 3.5} fill={isPareto ? c.color : "#47556940"} stroke={isPareto ? c.color : "none"} strokeWidth="1" />
+          {isPareto && <text x={xScale(c.params)} y={yScale(c.loss)-8} textAnchor="middle" fill={c.color} fontSize="6" fontWeight="700">{c.name}</text>}
+        </g>;
+      })}
+      <text x={W-8} y={15} textAnchor="end" fill="#7C3AED" fontSize="7" fontWeight="700">Pareto Front</text>
+    </svg>
+    <div style={{ fontSize: 12, color: VB.muted, marginTop: 6, textAlign: "center" }}>{lang === "tr" ? "Renkli noktalar = Pareto-optimal. Gri noktalar = daha iyi bir alternatif var." : "Colored = Pareto-optimal. Gray = a better alternative exists."}</div>
+  </VizBox>);
+};
+
+const DistillationFlowViz = () => {
+  const lang = useLang();
+  const [temp, setTemp] = useState(1.0);
+  const teacherLogits = [3.5, 1.2, 0.8, 0.3, -0.5];
+  const toks = ["a", "e", "m", "r", "z"];
+  const soften = (logits, t) => {
+    const scaled = logits.map(l => l / t);
+    const mx = Math.max(...scaled);
+    const exps = scaled.map(x => Math.exp(x - mx));
+    const sum = exps.reduce((a, b) => a + b, 0);
+    return exps.map(e => e / sum);
+  };
+  const probs = soften(teacherLogits, temp);
+
+  return (<VizBox title={lang === "tr" ? "Knowledge Distillation — Temperature Etkisi" : "Knowledge Distillation — Temperature Effect"} color="#F59E0B">
+    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+      <span style={{ color: "#F59E0B", fontSize: 13, fontWeight: 700, minWidth: 55 }}>T = {temp.toFixed(1)}</span>
+      <input type="range" min="0.5" max="10" step="0.5" value={temp} onChange={e => setTemp(+e.target.value)} style={{ flex: 1 }} />
+    </div>
+    <div style={{ fontSize: 11, color: VB.muted, marginBottom: 6, textAlign: "center" }}>
+      {temp <= 1 ? (lang === "tr" ? "🎯 Keskin — sadece doğru cevabı öğren" : "🎯 Sharp — learn only the right answer") :
+       temp <= 3 ? (lang === "tr" ? "📊 Dengeli — ilişkileri de öğren" : "📊 Balanced — learn relationships too") :
+       (lang === "tr" ? "🌊 Yumuşak — tüm token ilişkilerini öğren" : "🌊 Soft — learn all token relationships")}
+    </div>
+    <div style={{ display: "flex", gap: 4, alignItems: "flex-end", height: 100, padding: "0 8px" }}>
+      {toks.map((t, i) => {
+        const h = probs[i] * 90;
+        const colors = ["#10B981", "#0EA5E9", "#8B5CF6", "#F59E0B", "#F43F5E"];
+        return <div key={i} style={{ flex: 1, textAlign: "center" }}>
+          <div style={{ height: 90, display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
+            <div style={{ height: Math.max(h, 2), background: `${colors[i]}80`, borderRadius: "4px 4px 0 0", transition: "height 0.3s" }} />
+          </div>
+          <div style={{ fontSize: 13, fontWeight: 800, color: colors[i], marginTop: 2 }}>{t}</div>
+          <div style={{ fontSize: 11, color: VB.muted, fontFamily: "'Fira Code', monospace" }}>{(probs[i]*100).toFixed(1)}%</div>
+        </div>;
+      })}
+    </div>
+  </VizBox>);
+};
+
+const RopeViz = () => {
+  const lang = useLang();
+  const [pos, setPos] = useState(0);
+  const W = 220, H = 220, cx = W/2, cy = H/2, r = 70;
+  const angle = pos * 0.5;
+  const x1 = cx + r * Math.cos(angle), y1 = cy - r * Math.sin(angle);
+  const x2 = cx + r * 0.6 * Math.cos(angle * 2), y2 = cy - r * 0.6 * Math.sin(angle * 2);
+
+  return (<VizBox title={lang === "tr" ? "RoPE — Rotary Position Embedding" : "RoPE — Rotary Position Embedding"} color="#6366F1">
+    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+      <span style={{ color: "#6366F1", fontSize: 13, fontWeight: 700, minWidth: 70 }}>pos = {pos}</span>
+      <input type="range" min="0" max="20" step="1" value={pos} onChange={e => setPos(+e.target.value)} style={{ flex: 1 }} />
+    </div>
+    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", maxWidth: W, display: "block", background: VB.card, borderRadius: 10, margin: "0 auto" }}>
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke={VB.border} strokeWidth="1" />
+      <circle cx={cx} cy={cy} r={r*0.6} fill="none" stroke={VB.border} strokeWidth="0.5" strokeDasharray="3 3" />
+      <line x1={cx} y1={cy} x2={x1} y2={y1} stroke="#6366F1" strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx={x1} cy={y1} r="5" fill="#6366F1" />
+      <text x={x1 + 8} y={y1 - 5} fill="#6366F1" fontSize="8" fontWeight="700">{lang === "tr" ? "Düşük frek" : "Low freq"}</text>
+      <line x1={cx} y1={cy} x2={x2} y2={y2} stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" />
+      <circle cx={x2} cy={y2} r="4" fill="#F59E0B" />
+      <text x={x2 + 8} y={y2 - 5} fill="#F59E0B" fontSize="8" fontWeight="700">{lang === "tr" ? "Yüksek frek" : "High freq"}</text>
+      <circle cx={cx} cy={cy} r="2" fill={VB.dim} />
+      <text x={cx} y={cy + r + 15} textAnchor="middle" fill={VB.muted} fontSize="7">θ = pos × freq_i</text>
+    </svg>
+    <div style={{ fontSize: 12, color: VB.muted, marginTop: 6, textAlign: "center" }}>{lang === "tr" ? "Her pozisyon vektörü farklı açıyla döndürür. Düşük frekans = yavaş rotasyon, yüksek frekans = hızlı." : "Each position rotates the vector by a different angle. Low freq = slow rotation, high freq = fast."}</div>
+  </VizBox>);
+};
+
+const SparseAttentionViz = () => {
+  const lang = useLang();
+  const [pattern, setPattern] = useState(0);
+  const n = 8;
+  const patterns = [
+    { name: "Full", mask: Array.from({length: n}, (_, i) => Array.from({length: n}, (_, j) => j <= i)) },
+    { name: "Local (w=3)", mask: Array.from({length: n}, (_, i) => Array.from({length: n}, (_, j) => j <= i && i - j < 3)) },
+    { name: "Local+Global", mask: Array.from({length: n}, (_, i) => Array.from({length: n}, (_, j) => (j <= i && i - j < 3) || j === 0)) },
+    { name: "Sliding Window", mask: Array.from({length: n}, (_, i) => Array.from({length: n}, (_, j) => Math.abs(i - j) < 3)) },
+  ];
+  const m = patterns[pattern];
+  const total = n * (n + 1) / 2;
+  const active = m.mask.flat().filter(Boolean).length;
+
+  return (<VizBox title={lang === "tr" ? "Sparse Attention Maskeleri" : "Sparse Attention Masks"} color="#14B8A6">
+    <div style={{ display: "flex", gap: 4, marginBottom: 8, flexWrap: "wrap" }}>
+      {patterns.map((p, i) => <button key={i} onClick={() => setPattern(i)} style={{
+        padding: "5px 10px", borderRadius: 7, border: `1px solid ${pattern === i ? "#14B8A630" : VB.border}`,
+        background: pattern === i ? "#14B8A610" : "transparent", color: pattern === i ? "#14B8A6" : VB.muted,
+        fontSize: 11, fontWeight: 700, cursor: "pointer"
+      }}>{p.name}</button>)}
+    </div>
+    <div style={{ display: "inline-grid", gridTemplateColumns: `repeat(${n}, 1fr)`, gap: 2, margin: "0 auto" }}>
+      {m.mask.map((row, i) => row.map((active, j) => (
+        <div key={`${i}-${j}`} style={{
+          width: 24, height: 24, borderRadius: 3,
+          background: active ? "#14B8A640" : VB.card,
+          border: `1px solid ${active ? "#14B8A620" : VB.border}`,
+          transition: "all 0.2s",
+        }} />
+      )))}
+    </div>
+    <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+      <StatBox value={active} label={lang === "tr" ? "Aktif hücre" : "Active cells"} color="#14B8A6" />
+      <StatBox value={`${Math.round((1 - active/total) * 100)}%`} label={lang === "tr" ? "Tasarruf" : "Savings"} color="#F59E0B" />
+      <StatBox value={`O(n${pattern === 0 ? "²" : "·w"})`} label="FLOPs" color="#8B5CF6" />
+    </div>
+  </VizBox>);
+};
+
+const GrokkingViz = () => {
+  const lang = useLang();
+  const [epoch, setEpoch] = useState(0);
+  const maxEpoch = 50;
+  const trainLoss = (e) => Math.max(0, 3.0 * Math.exp(-e * 0.5));
+  const testLoss = (e) => e < 30 ? 3.0 - 0.5 * Math.min(e / 30, 1) + 0.3 * Math.sin(e * 0.2) : Math.max(0.1, 2.5 * Math.exp(-(e - 30) * 0.3));
+  const W = 260, H = 120;
+
+  return (<VizBox title={lang === "tr" ? "Grokking — Gecikmeli Genelleme" : "Grokking — Delayed Generalization"} color="#F43F5E">
+    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+      <span style={{ color: VB.muted, fontSize: 12, fontWeight: 700, minWidth: 95 }}>Epoch: {epoch * 100}</span>
+      <input type="range" min="0" max={maxEpoch} step="1" value={epoch} onChange={e => setEpoch(+e.target.value)} style={{ flex: 1 }} />
+    </div>
+    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", display: "block", background: VB.card, borderRadius: 10 }}>
+      {/* Train loss curve */}
+      <polyline points={Array.from({length: epoch+1}, (_, i) => `${10 + (i/maxEpoch)*(W-20)},${10 + (trainLoss(i)/3.5)*(H-25)}`).join(" ")} fill="none" stroke="#0EA5E9" strokeWidth="2" strokeLinecap="round" />
+      {/* Test loss curve */}
+      <polyline points={Array.from({length: epoch+1}, (_, i) => `${10 + (i/maxEpoch)*(W-20)},${10 + (testLoss(i)/3.5)*(H-25)}`).join(" ")} fill="none" stroke="#F43F5E" strokeWidth="2" strokeLinecap="round" />
+      {/* Grokking zone */}
+      {epoch >= 28 && <rect x={10 + (28/maxEpoch)*(W-20)} y={5} width={(5/maxEpoch)*(W-20)} height={H-15} fill="#F43F5E" opacity="0.05" rx="3" />}
+      {epoch >= 30 && <text x={10 + (30/maxEpoch)*(W-20)} y={15} fill="#F43F5E" fontSize="7" fontWeight="700">GROKKING!</text>}
+      <text x={W-5} y={10 + (trainLoss(epoch)/3.5)*(H-25)} fill="#0EA5E9" fontSize="7" fontWeight="700">train</text>
+      <text x={W-5} y={10 + (testLoss(epoch)/3.5)*(H-25)} fill="#F43F5E" fontSize="7" fontWeight="700">test</text>
+    </svg>
+    <div style={{ display: "flex", gap: 8, marginTop: 6 }}>
+      <StatBox value={trainLoss(epoch).toFixed(2)} label="Train Loss" color="#0EA5E9" />
+      <StatBox value={testLoss(epoch).toFixed(2)} label="Test Loss" color="#F43F5E" />
+      <StatBox value={epoch < 30 ? (lang === "tr" ? "Ezberleme" : "Memorizing") : (lang === "tr" ? "Genelleme!" : "Generalizing!")} label={lang === "tr" ? "Durum" : "Phase"} color={epoch >= 30 ? "#10B981" : "#FBBF24"} />
+    </div>
+  </VizBox>);
+};
+
+const LossLandscapeViz = () => {
+  const lang = useLang();
+  const [optimizer, setOptimizer] = useState(0);
+  const opts = [
+    { name: "SGD", sharpness: 1.5, label: lang === "tr" ? "Orta keskinlik" : "Medium sharpness" },
+    { name: "Adam", sharpness: 2.5, label: lang === "tr" ? "Keskin minimum" : "Sharp minimum" },
+    { name: "SAM", sharpness: 0.5, label: lang === "tr" ? "Düz minimum ✓" : "Flat minimum ✓" },
+    { name: lang === "tr" ? "Küçük Batch" : "Small Batch", sharpness: 0.8, label: lang === "tr" ? "Doğal düzleşme" : "Natural smoothing" },
+  ];
+  const opt = opts[optimizer];
+  const W = 240, H = 100;
+  const pts = Array.from({length: 60}, (_, i) => {
+    const x = (i - 30) / 10;
+    const y = opt.sharpness * x * x + 0.3 * Math.sin(x * 3) * (opt.sharpness > 1 ? 1 : 0.2);
+    return `${W/2 + x * 8},${H - 10 - Math.min(y * 6, H - 20)}`;
+  }).join(" ");
+
+  return (<VizBox title={lang === "tr" ? "Loss Landscape — Flat vs Sharp" : "Loss Landscape — Flat vs Sharp"} color="#8B5CF6">
+    <div style={{ display: "flex", gap: 4, marginBottom: 8, flexWrap: "wrap" }}>
+      {opts.map((o, i) => <button key={i} onClick={() => setOptimizer(i)} style={{
+        padding: "5px 10px", borderRadius: 7, border: `1px solid ${optimizer === i ? "#8B5CF630" : VB.border}`,
+        background: optimizer === i ? "#8B5CF610" : "transparent", color: optimizer === i ? "#8B5CF6" : VB.muted,
+        fontSize: 11, fontWeight: 700, cursor: "pointer"
+      }}>{o.name}</button>)}
+    </div>
+    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", display: "block", background: VB.card, borderRadius: 10 }}>
+      <polyline points={pts} fill="none" stroke="#8B5CF6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx={W/2} cy={H-10} r="4" fill={opt.sharpness < 1 ? "#10B981" : opt.sharpness < 2 ? "#FBBF24" : "#F43F5E"} />
+      <text x={W/2} y={15} textAnchor="middle" fill={opt.sharpness < 1 ? "#10B981" : opt.sharpness < 2 ? "#FBBF24" : "#F43F5E"} fontSize="9" fontWeight="700">{opt.label}</text>
+    </svg>
+  </VizBox>);
+};
+
+
 // ═══ TRANSFORMER PAPER — RICH INTERACTIVE COMPONENTS (from transformer_explorer.jsx) ═══
 
 
 
-export { NeuralNetBasicsViz, LangModelConceptViz, VectorConceptViz, MatrixMulViz, DerivativeViz, TopoSortViz, RnnToAttnViz, DotProductViz, NormCompareViz, ActivationViz, DimensionFlowViz, GradDescentViz, LrDecayViz, CrossEntropyGraphViz, SamplingViz, WhatsMissingViz, WeightInitViz, WhyBox, BridgeBox, AnalogyBox, ConcreteBox, TryItTokenizer, TryItSoftmax, TryItDotProduct, TryItGradient, TryItEmbedding, StepByStepCalc, TryItParams, TrainingEvolutionViz, GPTScaleTowerViz, FrameworkCompareViz, LivePipelineViz, TokenizerPlaygroundViz, AutogradPlaygroundViz, AttentionPlaygroundViz, TransformerBlockFlowViz, TrainingSimViz, GenerationPlaygroundViz, ScalingLawsViz, EvolutionTimelineViz, HardwareEvolutionViz, TrainingPipelineViz, TokenEvolutionViz, AttentionEvolutionViz, OpensourceMapViz, TrendsRadarViz, ConceptMapViz };
+export { BpeInfoTheoryViz, HessianLandscapeViz, HeadPruningViz, IsotropyViz, NumericalStabilityViz, AblationDesignViz, NasParetoViz, DistillationFlowViz, RopeViz, SparseAttentionViz, GrokkingViz, LossLandscapeViz, NeuralNetBasicsViz, LangModelConceptViz, VectorConceptViz, MatrixMulViz, DerivativeViz, TopoSortViz, RnnToAttnViz, DotProductViz, NormCompareViz, ActivationViz, DimensionFlowViz, GradDescentViz, LrDecayViz, CrossEntropyGraphViz, SamplingViz, WhatsMissingViz, WeightInitViz, WhyBox, BridgeBox, AnalogyBox, ConcreteBox, TryItTokenizer, TryItSoftmax, TryItDotProduct, TryItGradient, TryItEmbedding, StepByStepCalc, TryItParams, TrainingEvolutionViz, GPTScaleTowerViz, FrameworkCompareViz, LivePipelineViz, TokenizerPlaygroundViz, AutogradPlaygroundViz, AttentionPlaygroundViz, TransformerBlockFlowViz, TrainingSimViz, GenerationPlaygroundViz, ScalingLawsViz, EvolutionTimelineViz, HardwareEvolutionViz, TrainingPipelineViz, TokenEvolutionViz, AttentionEvolutionViz, OpensourceMapViz, TrendsRadarViz, ConceptMapViz };

@@ -527,6 +527,21 @@ const getCodeMapSections = (lang) => [
   { name: "Adam Optimizer Setup", lines: [183, 186], color: "#EF4444", week: 5 },
   { name: lang==="tr"?"Eğitim Döngüsü":"Training Loop", lines: [188, 216], color: "#EF4444", week: 5 },
   { name: "Inference & Sampling", lines: [219, 232], color: "#6366F1", week: 6 },
+
+  // W8: Advanced Techniques
+  { week: 8, id: "bpe_entropy", title: { tr: "BPE Entropi Hesaplama", en: "BPE Entropy Calculation" },
+    code: `# BPE merge'ün entropi etkisi:\nimport math\nfrom collections import Counter\n\ndef corpus_entropy(tokens):\n    freq = Counter(tokens)\n    total = sum(freq.values())\n    return -sum((c/total) * math.log2(c/total) for c in freq.values())\n\n# Merge öncesi\ntokens = list("the cat sat on the mat")\nH_before = corpus_entropy(tokens)\nprint(f"Merge öncesi: {len(set(tokens))} unique, H={H_before:.3f} bits")\n\n# 'th' merge sonrası\nmerged = []\nfor i in range(len(tokens)):\n    if i < len(tokens)-1 and tokens[i]=='t' and tokens[i+1]=='h':\n        merged.append('th'); i += 1\n    else: merged.append(tokens[i])\nH_after = corpus_entropy(merged)\nprint(f"Merge sonrası: {len(set(merged))} unique, H={H_after:.3f} bits")\nprint(f"ΔH = {H_after - H_before:.4f} bits")`,
+    language: "python" },
+  { week: 8, id: "safe_softmax", title: { tr: "Numerik Stabil Softmax", en: "Numerically Stable Softmax" },
+    code: `# microGPT satır 142 — Float16-safe softmax\nimport math\n\ndef naive_softmax(x):\n    """⚠️ OVERFLOW RİSKİ!"""\n    exps = [math.exp(xi) for xi in x]  # exp(100) = inf!\n    s = sum(exps)\n    return [e/s for e in exps]\n\ndef safe_softmax(x):\n    """✓ microGPT'nin kullandığı yöntem"""\n    max_x = max(x)\n    exps = [math.exp(xi - max_x) for xi in x]  # max exp = 1.0\n    s = sum(exps)\n    return [e/s for e in exps]\n\n# Test:\nlogits = [100.0, 99.0, 98.0]\ntry:\n    print("Naive:", naive_softmax(logits))\nexcept OverflowError:\n    print("Naive: OverflowError!")\nprint("Safe: ", safe_softmax(logits))\n# İkisi de aynı sonucu verir — ama safe version patlamaz!`,
+    language: "python" },
+  // W9: Research Frontiers
+  { week: 9, id: "rope_impl", title: { tr: "RoPE İmplementasyonu", en: "RoPE Implementation" },
+    code: `# RoPE: Rotary Position Embedding\nimport math\n\ndef apply_rope(x, pos, d_model):\n    """2D rotasyon ile pozisyon kodlama"""\n    result = list(x)  # kopyala\n    for i in range(0, d_model, 2):\n        freq = 1.0 / (10000 ** (i / d_model))\n        angle = pos * freq\n        cos_a = math.cos(angle)\n        sin_a = math.sin(angle)\n        # 2D rotasyon: [cos -sin; sin cos]\n        x_even = x[i]\n        x_odd = x[i+1] if i+1 < len(x) else 0\n        result[i] = x_even * cos_a - x_odd * sin_a\n        if i+1 < len(x):\n            result[i+1] = x_even * sin_a + x_odd * cos_a\n    return result\n\n# Test: aynı vektör, farklı pozisyonlar\nv = [1.0, 0.0, 0.5, 0.5]\nfor p in [0, 1, 5, 10]:\n    rotated = apply_rope(v, p, len(v))\n    print(f"pos={p:2d}: {[f'{x:.3f}' for x in rotated]}")`,
+    language: "python" },
+  { week: 9, id: "distillation", title: { tr: "Knowledge Distillation Loss", en: "Knowledge Distillation Loss" },
+    code: `# Knowledge Distillation — Teacher → Student\nimport math\n\ndef softmax_t(logits, T=1.0):\n    """Temperature-scaled softmax"""\n    scaled = [l/T for l in logits]\n    mx = max(scaled)\n    exps = [math.exp(x - mx) for x in scaled]\n    s = sum(exps)\n    return [e/s for e in exps]\n\ndef kl_div(p, q):\n    """KL divergence: KL(p || q)"""\n    return sum(pi * math.log(pi / qi) for pi, qi in zip(p, q) if pi > 0)\n\n# Teacher çıktısı (büyük model)\nteacher_logits = [3.5, 1.2, 0.8, 0.3, -0.5]\n# Student çıktısı (küçük model)\nstudent_logits = [2.0, 1.5, 0.5, 0.2, -0.3]\n\nfor T in [1.0, 2.0, 5.0, 10.0]:\n    p_t = softmax_t(teacher_logits, T)\n    p_s = softmax_t(student_logits, T)\n    loss = kl_div(p_t, p_s) * T * T\n    print(f"T={T:4.1f}: KL={loss:.4f}  teacher_probs={[f'{p:.2f}' for p in p_t]}")`,
+    language: "python" },
 ];
 
 const RealCodeBlock = ({ data, weekColor }) => {

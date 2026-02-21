@@ -639,6 +639,129 @@ values[layer_idx].append(v)
     ]
   },
 
+
+  {
+    id: "advanced", week: 8, title: { tr: "İleri Düzey Teknikler & Araştırma Yöntemleri", en: "Advanced Techniques & Research Methods" }, icon: "🔬", color: "#E11D48",
+    subtitle: { tr: "BPE bilgi teorisi, Hessian, pruning, isotropy, numerik stabilite, akademik yazım", en: "BPE information theory, Hessian, pruning, isotropy, numerical stability, academic writing" },
+    sections: [
+      {
+        title: { tr: "BPE'nin Bilgi-Teorik Temeli", en: "Information-Theoretic Foundation of BPE" },
+        viz: "bpeInfoTheory",
+        content: "BPE neden 'en sık komşu çifti' birleştirir? Çünkü sık çiftler → düşük entropi → minimum description length (MDL). Bu, Huffman kodlama ile aynı sezgidir: sık olanı kısa tut.",
+        highlight: "BPE = greedy MDL sıkıştırma. Her birleştirme toplam entropi'yi düşürür: H(corpus) ↓ = daha verimli kodlama.",
+        code: "# BPE Merge = Entropi Düşüşü:\n# merge('e','s') → 'es' (freq=1847)\n# H_before = -Σ p_i log p_i = 4.23 bits\n# H_after  = -Σ p_i log p_i = 4.18 bits\n# ΔH = -0.05 bits → daha verimli!\n\n# Optimal vocab büyüklüğü:\n# Too small: H↑ (uzun diziler)\n# Too large: H↑ (sparse embedding)\n# Sweet spot: 32K-100K token"
+      },
+      {
+        title: { tr: "Hessian Matrisi — İkinci Türev Bilgisi", en: "Hessian Matrix — Second-Order Information" },
+        viz: "hessianLandscape",
+        content: "Gradient (1. türev) = 'hangi yöne git'. Hessian (2. türev) = 'yüzey ne kadar eğri/düz'. Düz minimum → daha iyi genelleme. Keskin minimum → overfit riski.",
+        highlight: "Newton metodu: w ← w - H⁻¹g. Hessian'ı hesaplamak O(n²) — GPT'de imkansız! Yaklaşımlar: Fisher, K-FAC, Gauss-Newton.",
+        code: "# Hessian hesaplama (küçük model):\nimport torch.autograd.functional as F\nH = F.hessian(loss_fn, params)\n\n# Eigenvalue analizi:\nevals = torch.linalg.eigvalsh(H)\nsharpness = evals.max()  # keskinlik\nflatness = 1.0 / sharpness\n\n# microGPT: 3648 parametre\n# H boyutu: 3648 × 3648 = 13.3M eleman"
+      },
+      {
+        title: { tr: "🔬 Attention Head Pruning — Taylor Expansion", en: "🔬 Attention Head Pruning — Taylor Expansion" },
+        viz: "headPruning",
+        content: "Tüm attention headlar eşit değil! Taylor expansion ile her head'in loss'a katkısını ölçüp gereksiz olanları çıkarabiliriz. |∂L/∂h × h| = head'in önemi.",
+        highlight: "GPT-2: 12 head × 12 katman = 144 head. Tipik olarak %30-40'ı prune edilebilir — hız artışı, minimal kayıp.",
+        code: "# Head importance skoru (Taylor 1st order):\ndef head_importance(model, data):\n    scores = []\n    for layer in model.transformer.h:\n        attn_out = layer.attn(x)  # [B,T,D]\n        grad = torch.autograd.grad(loss, attn_out)\n        importance = (grad * attn_out).abs().sum()\n        scores.append(importance)\n    return scores\n\n# Prune en düşük %30:\nthreshold = sorted(scores)[int(0.3 * len(scores))]\nmask = [s > threshold for s in scores]"
+      },
+      {
+        title: { tr: "Embedding İzotropi — Neden Önemli?", en: "Embedding Isotropy — Why Does It Matter?" },
+        viz: "isotropyViz",
+        content: "İzotrop = vektörler uzayda eşit dağılmış. Anizotrop = dar bir konide toplanmış. Çoğu LLM embedding'i anizotrop → benzerlik ölçümü bozulur.",
+        highlight: "Cosine similarity hepsi ~0.95 ise 'her şey birbirine benzer' = işe yaramaz. Düzeltme: whitening, normalization.",
+        code: "# İzotropi ölçümü:\ndef isotropy(embeddings):\n    # Tüm çift cosine similarity\n    norms = embeddings / embeddings.norm(dim=-1, keepdim=True)\n    sim_matrix = norms @ norms.T\n    # Ortalama off-diagonal similarity\n    mask = ~torch.eye(len(embeddings), dtype=bool)\n    avg_sim = sim_matrix[mask].mean()\n    # İzotrop → avg_sim ≈ 0, Anizotrop → avg_sim → 1\n    return 1.0 - avg_sim.item()  # 1=tam izotrop"
+      },
+      {
+        title: { tr: "Float16 Numerik Stabilite — Softmax Overflow", en: "Float16 Numerical Stability — Softmax Overflow" },
+        viz: "numericalStability",
+        content: "Float16 max: 65,504. Softmax'ta exp(x) hızla patlar! Çözüm: exp(x - max(x)). Bu değer değiştirmez çünkü exp(a-c)/Σexp(b-c) = exp(a)/Σexp(b).",
+        highlight: "Flash Attention'ın numerik stabilitesi bu trick'e dayanır. microGPT'de de math.exp(x - max_x) kullanılır!",
+        code: "# YANLIŞ — overflow riski:\ndef naive_softmax(x):\n    return [math.exp(xi) / sum(math.exp(xj) for xj in x) for xi in x]\n\n# DOĞRU — numerik stabil:\ndef safe_softmax(x):\n    max_x = max(x)  # max çıkar\n    exps = [math.exp(xi - max_x) for xi in x]\n    total = sum(exps)\n    return [e / total for e in exps]\n\n# microGPT satır 142 — tam olarak bunu yapar!"
+      },
+      {
+        title: { tr: "Kontrollü Deney Tasarımı — Ablation Study", en: "Controlled Experiment Design — Ablation Study" },
+        viz: "ablationDesign",
+        content: "Ablation = bir bileşeni çıkarıp etkisini ölç. Kontrol değişkeni: her seferinde SADECE 1 şey değişir. Seed sabitle, 3+ tekrar yap, standart sapma raporla.",
+        highlight: "Kötü deney: 'n_embd=32 ve n_layer=2 denedik, iyi oldu.' İyi deney: 'n_embd=16→32 (diğerleri sabit): loss 2.31→2.18 (±0.04, n=5)'",
+        code: "# Sistematik ablation framework:\nimport json, statistics\n\ndef run_ablation(base_config, param, values, seeds=[42,123,456]):\n    results = {}\n    for val in values:\n        config = {**base_config, param: val}\n        losses = [train_and_eval(config, seed=s) for s in seeds]\n        results[val] = {\n            'mean': statistics.mean(losses),\n            'std': statistics.stdev(losses),\n            'n': len(seeds)\n        }\n    return results  # → tablo ve grafik için"
+      },
+      {
+        title: { tr: "Akademik Rapor Yapısı — Related Work", en: "Academic Report Structure — Related Work" },
+        content: "Araştırma makalesi yapısı: Abstract → Introduction → Related Work → Method → Experiments → Results → Discussion → Conclusion. Related Work: alanı tanı, boşluğu göster, katkını konumla.",
+        highlight: "Related Work = 'başkaları X yaptı, biz Y'yi farklı yapıyoruz çünkü Z'. Her iddia citation ile desteklenmeli.",
+        code: "# Makale yapısı kontrol listesi:\npaper_structure = {\n    'abstract': '100-300 kelime, bağımsız özet',\n    'introduction': 'Motivasyon → Problem → Katkı → Yol haritası',\n    'related_work': 'Alanı tara → Boşluğu göster → Konumlan',\n    'method': 'Tekrarlanabilir detay + formüller',\n    'experiments': 'Veri + Metrik + Baseline + Ablation',\n    'results': 'Tablo + Grafik + İstatistik',\n    'discussion': 'Limitasyon + Gelecek iş',\n    'references': 'BibTeX, tutarlı format'\n}"
+      },
+      {
+        title: { tr: "🧪 İleri Lab — microGPT Ablation Deneyi", en: "🧪 Advanced Lab — microGPT Ablation Experiment" },
+        content: "Gerçek bir ablation deneyi tasarlayın: n_embd ∈ {8, 16, 32, 64} için loss karşılaştırması. 3 seed ile tekrar, std raporla. Sonuçları tablo ve grafikle sunun.",
+        highlight: "Bu lab bir YL tezinin deney bölümünü simüle eder. Sonuçlarınızı academic format'ta raporlayın.",
+        code: "# microGPT ablation komutu:\nfor embd in 8 16 32 64; do\n  for seed in 42 123 456; do\n    python3 microgpt.py --n_embd $embd --seed $seed \\\n      --num_steps 1000 > results/embd${embd}_s${seed}.log\n  done\ndone\n\n# Sonuçları parse et:\nimport glob, re\nfor f in sorted(glob.glob('results/*.log')):\n    final_loss = float(re.findall(r'loss ([\d.]+)', open(f).read())[-1])\n    print(f'{f}: {final_loss:.4f}')"
+      }
+    ]
+  },
+
+  {
+    id: "frontiers", week: 9, title: { tr: "Araştırma Sınırları & YL Proje Rehberi", en: "Research Frontiers & Graduate Project Guide" }, icon: "🎓", color: "#7C3AED",
+    subtitle: { tr: "NAS, distillation, RoPE, sparse attention, grokking, flat minima, proje planlama", en: "NAS, distillation, RoPE, sparse attention, grokking, flat minima, project planning" },
+    sections: [
+      {
+        title: { tr: "Neural Architecture Search (NAS) — Pareto Frontı", en: "Neural Architecture Search (NAS) — Pareto Front" },
+        viz: "nasPareto",
+        content: "NAS = mimariyi de öğren! Arama uzayı: katman sayısı, head sayısı, n_embd, MLP boyutu. Pareto frontı: performans vs maliyet trade-off'unda optimal noktalar kümesi.",
+        highlight: "Pareto-optimal: A'dan daha iyi B yoktur hem performans HEM maliyet açısından. Karar vericiye bırakılır: hız mı kalite mi?",
+        code: "# NAS arama uzayı (microGPT):\nsearch_space = {\n    'n_embd': [8, 16, 32, 64, 128],\n    'n_layer': [1, 2, 4, 6],\n    'n_head': [1, 2, 4],\n    'lr': [1e-2, 3e-3, 1e-3],\n}\n\n# Grid search → Pareto frontı bul:\nresults = []\nfor config in product(*search_space.values()):\n    loss = train_eval(config)\n    params = count_params(config)\n    results.append((params, loss, config))\n\n# Pareto filter:\npareto = [r for r in results\n    if not any(r2[0]<=r[0] and r2[1]<r[1] for r2 in results)]"
+      },
+      {
+        title: { tr: "Knowledge Distillation — Büyükten Küçüğe Transfer", en: "Knowledge Distillation — Large to Small Transfer" },
+        viz: "distillationFlow",
+        content: "Teacher (büyük model) soft probability dağılımını student'a öğretir. Yüksek T: dağılım yumuşak → 'yanlış' cevaplardan bile bilgi akışı. Loss = α·CE_hard + (1-α)·KL_soft.",
+        highlight: "T=1'de student sadece doğru cevabı öğrenir. T=5'te 'neredeyse doğru' alternatifleri de öğrenir → daha zengin bilgi.",
+        code: "# Distillation loss:\ndef distill_loss(student_logits, teacher_logits, labels, T=4, alpha=0.7):\n    # Hard loss (normal cross-entropy)\n    hard = F.cross_entropy(student_logits, labels)\n    \n    # Soft loss (teacher'dan öğren)\n    soft_student = F.log_softmax(student_logits / T, dim=-1)\n    soft_teacher = F.softmax(teacher_logits / T, dim=-1)\n    soft = F.kl_div(soft_student, soft_teacher, reduction='batchmean') * (T**2)\n    \n    return alpha * soft + (1 - alpha) * hard"
+      },
+      {
+        title: { tr: "RoPE — Rotary Position Embedding", en: "RoPE — Rotary Position Embedding" },
+        viz: "ropeViz",
+        content: "Learned PE: her pozisyon sabit vektör (context dışına genellemez). RoPE: vektörü pozisyona göre DÖNDÜR → göreceli mesafe doğal olarak kodlanır. cos/sin rotasyon matrisi.",
+        highlight: "RoPE'un büyüsü: q_m · k_n sadece (m-n) farkına bağlı → mesafe bilgisi çarpma içinde gömülü. Extrapolation bedava!",
+        code: "# RoPE implementasyonu:\ndef apply_rope(x, pos):\n    d = x.shape[-1]\n    freqs = 1.0 / (10000 ** (torch.arange(0, d, 2) / d))\n    angles = pos.unsqueeze(-1) * freqs  # [T, d/2]\n    cos_a, sin_a = angles.cos(), angles.sin()\n    \n    x1, x2 = x[..., ::2], x[..., 1::2]  # çift/tek\n    # 2D rotasyon: [cos -sin; sin cos] × [x1; x2]\n    return torch.cat([\n        x1 * cos_a - x2 * sin_a,\n        x1 * sin_a + x2 * cos_a\n    ], dim=-1)\n\n# microGPT: learned PE → RoPE upgrade\n# wpe(pos) yerine apply_rope(q, pos), apply_rope(k, pos)"
+      },
+      {
+        title: { tr: "Sparse Attention — O(n²) → O(n√n)", en: "Sparse Attention — O(n²) → O(n√n)" },
+        viz: "sparseAttention",
+        content: "Full attention: her token herkese bakar → O(n²). Sparse: sadece lokal pencere + global tokenlar → O(n√n). %50 sparsity ≈ %50 FLOPs tasarrufu ama kalite kaybı minimal.",
+        highlight: "Longformer: lokal + global. BigBird: lokal + global + random. Mistral: sliding window. Flash Attention: sparse değil ama IO-optimal.",
+        code: "# Sparse attention mask patterns:\ndef local_mask(seq_len, window=256):\n    mask = torch.zeros(seq_len, seq_len, dtype=torch.bool)\n    for i in range(seq_len):\n        start = max(0, i - window)\n        mask[i, start:i+1] = True\n    return mask\n\ndef global_local_mask(seq_len, window=256, n_global=4):\n    mask = local_mask(seq_len, window)\n    mask[:, :n_global] = True   # ilk n token global\n    mask[:n_global, :] = True\n    return mask\n\n# FLOPs karşılaştırma:\n# Full: 2 × n² × d = 2 × 1024² × 64 = 134M\n# Sparse (w=256): ≈ 2 × n × w × d = 33M (75% ↓)"
+      },
+      {
+        title: { tr: "Grokking Fenomeni — Geç Genelleme", en: "Grokking Phenomenon — Delayed Generalization" },
+        viz: "grokkingViz",
+        content: "Garip olay: eğitim loss'u çoktan 0 olmuşken, test loss'u BİNLERCE epoch sonra aniden düşer! Memorize → generalize geçişi. Weight decay ve regularization tetikleyici.",
+        highlight: "Grokking = 'aha anı'. Model önce ezberleri, sonra yapıyı keşfeder. Erken durdurma (early stopping) grokking'i kaçırabilir!",
+        code: "# Grokking deneyi (modular arithmetic):\n# Veri: (a + b) mod 97 = c\nimport random\nN = 97\ndata = [(a, b, (a+b) % N) for a in range(N) for b in range(N)]\nrandom.shuffle(data)\ntrain = data[:len(data)//2]\ntest  = data[len(data)//2:]\n\n# Eğitim: ~300 epoch'ta train_loss → 0\n#         ~3000 epoch'ta test_loss → 0 (GROKKING!)\n# Anahtar: weight_decay=0.01 olmadan grokking yok"
+      },
+      {
+        title: { tr: "Loss Landscape — Flat vs Sharp Minima", en: "Loss Landscape — Flat vs Sharp Minima" },
+        viz: "lossLandscape",
+        content: "Flat minimum = geniş vadi, küçük perturbasyonlara dayanıklı → iyi genelleme. Sharp minimum = dar çukur, hafif kayma = büyük loss artışı → kötü genelleme.",
+        highlight: "SAM optimizer: 'en kötü komşuda bile iyi ol' → flat minima arar. Large batch = sharp, small batch = flat.",
+        code: "# Sharpness-Aware Minimization (SAM):\ndef sam_step(model, loss_fn, data, rho=0.05):\n    # 1. Normal gradient hesapla\n    loss = loss_fn(model(data))\n    loss.backward()\n    \n    # 2. En kötü komşuya git (perturbation)\n    with torch.no_grad():\n        for p in model.parameters():\n            e = rho * p.grad / p.grad.norm()\n            p.add_(e)  # worst-case neighbor\n    \n    # 3. O noktada gradient hesapla\n    loss2 = loss_fn(model(data))\n    loss2.backward()\n    \n    # 4. Geri dön ve SAM gradient ile güncelle\n    with torch.no_grad():\n        for p in model.parameters():\n            p.sub_(e)  # geri dön\n    optimizer.step()  # SAM gradient"
+      },
+      {
+        title: { tr: "Ablation Study — Sistematik Deney Rehberi", en: "Ablation Study — Systematic Experiment Guide" },
+        content: "Her YL projesinde ablation zorunlu. Amaç: her bileşenin katkısını kanıtla. Template: Full model → -component A → -component B → ... En az 3 seed, p-value raporla.",
+        highlight: "İyi ablation: 'Attention head sayısı 4→2'ye düşünce loss %3.2±0.4 arttı (p<0.05).' Kötü ablation: 'Attention iyi çalışıyor.'",
+        code: "# Ablation tablo template:\n# ┌──────────────────┬────────┬────────┬─────────┐\n# │ Konfigürasyon     │ Loss   │ Params │ p-value │\n# ├──────────────────┼────────┼────────┼─────────┤\n# │ Full model       │ 2.18   │ 3,648  │ —       │\n# │ − Multi-head     │ 2.31   │ 3,520  │ 0.003   │\n# │ − Layer norm     │ 2.42   │ 3,616  │ 0.001   │\n# │ − Residual       │ 2.67   │ 3,648  │ <0.001  │\n# │ − Embedding dim/2│ 2.45   │ 1,024  │ 0.008   │\n# └──────────────────┴────────┴────────┴─────────┘\n\n# p-value hesaplama:\nfrom scipy import stats\nt_stat, p_val = stats.ttest_ind(full_losses, ablated_losses)"
+      },
+      {
+        title: { tr: "🎓 YL Proje Yol Haritası — Başlangıçtan Savunmaya", en: "🎓 Graduate Project Roadmap — From Start to Defense" },
+        content: "12 haftalık plan: H1-2: Literatür taraması + araştırma sorusu. H3-4: Baseline implementasyon. H5-8: Deneyler + ablation. H9-10: Yazım. H11: Review. H12: Savunma hazırlık.",
+        highlight: "Altın kural: Her hafta 1 tablo/grafik üret. 12 hafta = 12 sonuç. Tez kendiliğinden yazılır.",
+        code: "# YL Proje kontrol listesi:\nproject_plan = {\n    'week_1_2': 'Literatür: 20+ makale oku, RW yaz',\n    'week_3_4': 'Baseline: microGPT çalıştır, metrik belirle',\n    'week_5_6': 'Deney 1: Ana hipotezi test et',\n    'week_7_8': 'Deney 2: Ablation + karşılaştırma',\n    'week_9': 'Grafik ve tablo hazırla',\n    'week_10': 'Yazım: Method + Experiments',\n    'week_11': 'Peer review + revizyon',\n    'week_12': 'Sunum hazırla + prova'\n}\n\n# Her deney için kayıt:\nexperiment_log = {\n    'date': '2025-01-15',\n    'config': {'n_embd': 32, 'n_layer': 2},\n    'seed': [42, 123, 456],\n    'result': {'mean_loss': 2.18, 'std': 0.04},\n    'notes': 'Residual bağlantı kritik'\n}"
+      }
+    ]
+  },
+
   {
     id: "paper", week: "B",
     title: "Attention Is All You Need",
