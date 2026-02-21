@@ -37,11 +37,8 @@ const RESOURCES = {
     { title: "💬 Generation Lab — Colab", url: "https://colab.research.google.com/drive/1nTx2S54MeRMOPPOE1VUz4bdjAzERaVqC", type: "colab" },
     { title: "HuggingFace — Text Generation Strategies", url: "https://huggingface.co/blog/how-to-generate", type: "blog" },
     { title: "The Illustrated GPT-2", url: "https://jalammar.github.io/illustrated-gpt2/", type: "blog" },
-  ]
-};
-
-
-export { RESOURCES   7: [
+  ],
+  7: [
     { title: "🌍 Modern AI Lab — Colab", url: "https://colab.research.google.com/drive/1nTx2S54MeRMOPPOE1VUz4bdjAzERaVqC", type: "colab" },
     { title: "Chinchilla Scaling Laws Paper", url: "https://arxiv.org/abs/2203.15556", type: "paper" },
     { title: "LLaMA Paper", url: "https://arxiv.org/abs/2302.13971", type: "paper" },
@@ -60,3 +57,5 @@ export { RESOURCES   7: [
     { title: "SAM Optimizer Paper", url: "https://arxiv.org/abs/2010.01412", type: "paper" },
   ],
 };
+
+export { RESOURCES };
