@@ -1,38 +1,46 @@
-<div align="center">
+<p align="center">
+  <img src="public/og-image.png" alt="MicroGPT Academy" width="700" />
+</p>
 
-# 🧠 microGPT Academy
+<h1 align="center">🧠 MicroGPT Academy</h1>
 
-**İnteraktif GPT/Transformer Eğitim Platformu**
-*Interactive GPT/Transformer Learning Platform*
+<p align="center">
+  <strong>Interactive GPT/Transformer Education Platform</strong><br/>
+  <em>İnteraktif GPT/Transformer Eğitim Platformu</em>
+</p>
 
-[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)](https://reactjs.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/microgpt-academy/microgpt-academy/pulls)
-[![Based on](https://img.shields.io/badge/Based%20on-Karpathy%2Fmicrogpt-orange)](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95)
+<p align="center">
+  <a href="https://microgpt-academy.vercel.app"><img src="https://img.shields.io/badge/🚀_Live_Demo-microgpt--academy.vercel.app-0EA5E9?style=for-the-badge" alt="Live Demo" /></a>
+</p>
 
-[🇹🇷 Türkçe](#-türkçe) · [🇬🇧 English](#-english) · [🚀 Demo](#-canlı-demo--live-demo)
+<p align="center">
+  <a href="https://reactjs.org/"><img src="https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white" alt="React" /></a>
+  <a href="/LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License" /></a>
+  <a href="https://github.com/alicetinkaya76/microgpt-academy/pulls"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome" /></a>
+  <a href="https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95"><img src="https://img.shields.io/badge/Based%20on-Karpathy%2Fmicrogpt-orange" alt="Based on Karpathy" /></a>
+</p>
 
----
-
-<img src="docs/screenshot-main.png" alt="microGPT Academy Screenshot" width="800"/>
-
-</div>
-
----
-
-## 📌 Hakkında / About
-
-> 🇹🇷 Bu proje, **Andrej Karpathy**'nin [microgpt.py](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95) adlı — sıfır bağımlılıkla saf Python'da yazılmış minimal GPT implementasyonu — üzerine inşa edilmiş **interaktif bir eğitim platformudur**. Karpathy'nin 243 satırlık kodunu satır satır, görselleştirmeler ve Türkçe açıklamalarla öğretmeyi amaçlar.
->
-> 🇬🇧 This project is an **interactive educational platform** built on top of **Andrej Karpathy**'s [microgpt.py](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95) — a minimal GPT implementation in pure Python with zero dependencies. It aims to teach Karpathy's 243-line code line by line, with visualizations and bilingual explanations.
-
-**Orijinal Kaynak / Original Source:** [karpathy/microgpt.py](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95) — *"This is the full algorithmic content of what is needed. Everything else is just for efficiency."* — Andrej Karpathy
+<p align="center">
+  <a href="#-türkçe">🇹🇷 Türkçe</a> · <a href="#-english">🇬🇧 English</a> · <a href="https://microgpt-academy.vercel.app">🚀 Live Demo</a> · <a href="https://colab.research.google.com/drive/1nTx2S54MeRMOPPOE1VUz4bdjAzERaVqC">📓 Colab</a>
+</p>
 
 ---
 
-## 🚀 Canlı Demo / Live Demo
+## 📊 Project at a Glance
 
-👉 **[microgpt-academy.vercel.app](https://microgpt-academy.vercel.app)**
+| | |
+|---|---|
+| **📅 Curriculum** | 10 weeks + 1 bonus (Attention Is All You Need paper) |
+| **🔬 Interactive Visualizations** | 78 components with sliders, animations & real-time feedback |
+| **❓ Quiz Questions** | 90 bilingual questions across all weeks + prerequisites |
+| **📚 Prerequisite Lessons** | 3 full interactive lessons (Linear Algebra, Probability, Backprop) |
+| **💻 Code Examples** | 17 runnable Python snippets with line-by-line explanations |
+| **📓 Google Colab** | 10 lab notebooks — one per week, zero setup required |
+| **🎬 3Blue1Brown** | Embedded YouTube videos with custom interactive visualizations |
+| **🌐 Languages** | Bilingual Turkish + English (slides, quizzes, prerequisites) |
+| **📄 Slide Sections** | 85 bilingual embedded slides with formulas & key points |
+| **📖 Glossary** | 49 terms with week-based filtering |
+| **🏗️ Architecture** | Modular: 27 files, 11,134 lines of code |
 
 ---
 
@@ -40,53 +48,57 @@
 
 ### Ne Bu?
 
-Andrej Karpathy'nin 243 satırlık saf Python GPT kodunu ([microgpt.py](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95)) **satır satır, interaktif olarak** öğreten bir web uygulaması. Harici kütüphane yok — sadece `os`, `math`, `random`. Her hafta bir kavram, her kavram canlı görselleştirmelerle.
+Andrej Karpathy'nin 243 satırlık saf Python GPT kodunu ([microgpt.py](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95)) **satır satır, interaktif olarak** öğreten bir web uygulaması. Harici kütüphane yok — sadece `os`, `math`, `random`.
 
-### Özellikler
+> *"This is the full algorithmic content of what is needed. Everything else is just for efficiency."* — Andrej Karpathy
 
-🎓 **10 Haftalık Müfredat** — Tokenization'dan Scaling Laws'a kadar yapılandırılmış dersler
+### ✨ Özellikler
 
-🔬 **Canlı Keşif Paneli** — Olasılık dağılımları, attention ağırlıkları ve embedding vektörlerini gerçek zamanlı inceleyin
+- 🎓 **10 Haftalık Müfredat** — Tokenization'dan araştırma sınırlarına kadar yapılandırılmış dersler
+- 🔬 **78 İnteraktif Görselleştirme** — Attention heatmap, weight pixel grid, Hessian landscape, Pareto front, grokking animasyonu ve çok daha fazlası
+- 📚 **3 Ön Koşul Dersi** — Lineer Cebir, Olasılık & Bilgi Teorisi, Backpropagation — her biri 7-8 bölüm + quiz
+- ❓ **90 Quiz Sorusu** — Her hafta + ön koşul dersleri için çift dilli değerlendirme
+- 📓 **Google Colab Entegrasyonu** — Her hafta için sıfır kurulumlu coding lab
+- 🎬 **3Blue1Brown Videoları** — Weight pixel grid, MLP fact storage, sigmoid→ReLU evrimi ile gömülü videolar
+- 📊 **85 Bilingual Slide** — Formüller, kod örnekleri ve anahtar noktalar
+- 💻 **17 Python Kod Örneği** — Satır satır açıklamalı gerçek kod
+- 🌐 **İki Dilli** — Türkçe + İngilizce (slide, quiz, prereq dersleri)
+- 📄 **Attention Is All You Need** — Orijinal makalenin interaktif keşfi (Bonus hafta)
 
-✨ **İsim Üreteci** — Temperature ayarıyla GPT'nin token token nasıl isim ürettiğini izleyin
+### 📅 Haftalık İçerik
 
-🔄 **Tarayıcıda Eğitim** — Loss'un düştüğünü, isimlerin gerçekçileştiğini canlı görün
+| Hafta | Konu | Viz | Quiz |
+|:-----:|------|:---:|:----:|
+| 0 | 🚀 Giriş & Canlı Demo — Pipeline, sinir ağı temelleri, dil modeli | 8 | 7 |
+| 1 | 🔤 Tokenization & Embedding — Karakter tokenizer, vektörler, pozisyon | 6 | 7 |
+| 2 | ⛓️ Autograd & Backpropagation — Value sınıfı, hesaplama grafı, chain rule | 7 | 7 |
+| 3 | 🔍 Self-Attention — Q/K/V, scaled dot product, multi-head, causal mask | 6 | 7 |
+| 4 | 🧱 Transformer Blokları — RMSNorm, MLP, ReLU², residual, **MLP fact storage** | 10 | 7 |
+| 5 | 🏋️ Eğitim Döngüsü — Cross-entropy, Adam optimizer, learning rate | 6 | 7 |
+| 6 | ✨ Çıkarım & Örnekleme — Autoregressive, temperature, top-k, KV cache | 6 | 7 |
+| 7 | 🌍 Modern AI'a Evrim — Scaling laws, donanım, tokenizer, açık kaynak | 8 | 7 |
+| 8 | 🔬 İleri Düzey Teknikler — BPE bilgi teorisi, Hessian, pruning, isotropy, numerik stabilite | 6 | 7 |
+| 9 | 🎓 Araştırma Sınırları — NAS, distillation, RoPE, sparse attention, grokking, YL rehberi | 6 | 7 |
+| B | 📄 Attention Is All You Need — Orijinal makale deep-dive | 8 | — |
 
-🏗️ **Mimari Gezgini** — Transformer'ın 6 temel bileşenini adım adım, Python koduyla keşfedin
+### 📚 Ön Koşul Dersleri
 
-📊 **30+ İnteraktif Görselleştirme** — Attention flow, computation graph, softmax, gradient descent ve daha fazlası
+| Ders | Bölüm | Quiz | İçerik |
+|------|:-----:|:----:|--------|
+| 📐 Lineer Cebir | 8 | 7 | Vektörler, dot product, matris çarpımı, boyut akışı |
+| 🎲 Olasılık & Bilgi Teorisi | 8 | 7 | Softmax, cross-entropy, KL divergence, zar deneyi |
+| ⛓️ Backpropagation | 9 | 6 | Gradyan iniş, chain rule, ağırlık güncelleme, vanishing gradient |
 
-👨‍🏫 **Hoca Modu** — Ders planı, kopya kağıdı ve slayt referansları
-
-📚 **Kapsamlı Sözlük** — 100+ terim, haftalara göre filtrelenebilir
-
-🌐 **İki Dilli** — Türkçe (tam) | İngilizce (kısmi)
-
-### Kurulum
+### 🚀 Kurulum
 
 ```bash
-git clone https://github.com/microgpt-academy/microgpt-academy.git
+git clone https://github.com/alicetinkaya76/microgpt-academy.git
 cd microgpt-academy
 npm install
 npm start
 ```
 
-Tarayıcıda `http://localhost:3000` açılır.
-
-### Haftalık İçerik
-
-| Hafta | Konu | Anahtar Kavramlar |
-|-------|------|-------------------|
-| 0 | 🎯 Giriş & Genel Bakış | Pipeline, neural net temelleri, dil modeli konsepti |
-| 1 | 🔤 Tokenization & Embedding | Karakter tokenizer, embedding vektörleri, pozisyon kodlama |
-| 2 | ⛓ Autograd (Otomatik Türev) | Value sınıfı, hesaplama grafı, chain rule, backpropagation |
-| 3 | 🔍 Attention Mekanizması | Q/K/V, dot product, scaled attention, multi-head, causal mask |
-| 4 | 🧱 Transformer Blok | RMSNorm, MLP, ReLU², residual connections |
-| 5 | 🏋️ Eğitim Döngüsü | Cross-entropy loss, Adam optimizer, learning rate |
-| 6 | ✨ Çıkarım & Örnekleme | Autoregressive üretim, temperature, top-k, KV cache |
-| 7 | 🔬 İleri Konular | Scaling laws, donanım evrimi, tokenizer evrimi |
-| 8 | 📄 "Attention Is All You Need" | Orijinal makale deep-dive, encoder-decoder, positional encoding |
-| 9 | 🚀 Araştırma Sınırları | MoE, RLHF, LoRA, flash attention, açık kaynak ekosistemi |
+Tarayıcıda `http://localhost:3000` açılır. Ya da doğrudan: **[microgpt-academy.vercel.app](https://microgpt-academy.vercel.app)**
 
 ---
 
@@ -94,142 +106,200 @@ Tarayıcıda `http://localhost:3000` açılır.
 
 ### What Is This?
 
-An interactive web app that teaches Andrej Karpathy's 243-line pure Python GPT implementation ([microgpt.py](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95)) **line by line**. No external libraries — just `os`, `math`, `random`. Each week covers a concept with live visualizations.
+An interactive web platform that teaches Andrej Karpathy's 243-line pure Python GPT implementation ([microgpt.py](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95)) **line by line** through 78 interactive visualizations, 90 quizzes, and hands-on Colab labs. No external libraries — just `os`, `math`, `random`.
 
-### Features
+### ✨ Features
 
-🎓 **10-Week Curriculum** — Structured lessons from Tokenization to Scaling Laws
+- 🎓 **10-Week Curriculum** — Structured lessons from tokenization to research frontiers
+- 🔬 **78 Interactive Visualizations** — Attention heatmap, weight pixel grid, Hessian landscape, Pareto front, grokking animation, and much more
+- 📚 **3 Prerequisite Lessons** — Linear Algebra, Probability & Info Theory, Backpropagation — each with 7-8 chapters + quiz
+- ❓ **90 Quiz Questions** — Bilingual assessment for every week + prerequisites
+- 📓 **Google Colab Integration** — Zero-setup coding lab for every week
+- 🎬 **3Blue1Brown Videos** — Embedded videos with custom interactive visualizations inspired by Grant Sanderson's series
+- 📊 **85 Bilingual Slides** — Formulas, code examples, and key points
+- 💻 **17 Python Code Examples** — Real code with line-by-line explanations
+- 🌐 **Bilingual** — Turkish + English (slides, quizzes, prerequisite lessons)
+- 📄 **"Attention Is All You Need"** — Interactive exploration of the original paper (Bonus week)
 
-🔬 **Live Exploration Panel** — Inspect probability distributions, attention weights, and embeddings in real-time
+### 📅 Weekly Content
 
-✨ **Name Generator** — Watch GPT generate names token by token with adjustable temperature
+| Week | Topic | Viz | Quiz |
+|:----:|-------|:---:|:----:|
+| 0 | 🚀 Introduction & Live Demo — Pipeline, neural net basics, language model | 8 | 7 |
+| 1 | 🔤 Tokenization & Embedding — Character tokenizer, vectors, positional encoding | 6 | 7 |
+| 2 | ⛓️ Autograd & Backpropagation — Value class, computation graph, chain rule | 7 | 7 |
+| 3 | 🔍 Self-Attention — Q/K/V, scaled dot product, multi-head, causal mask | 6 | 7 |
+| 4 | 🧱 Transformer Blocks — RMSNorm, MLP, ReLU², residual, **MLP fact storage** | 10 | 7 |
+| 5 | 🏋️ Training Loop — Cross-entropy, Adam optimizer, learning rate | 6 | 7 |
+| 6 | ✨ Inference & Sampling — Autoregressive, temperature, top-k, KV cache | 6 | 7 |
+| 7 | 🌍 Evolution to Modern AI — Scaling laws, hardware, tokenizers, open source | 8 | 7 |
+| 8 | 🔬 Advanced Techniques — BPE info theory, Hessian, pruning, isotropy, numerical stability | 6 | 7 |
+| 9 | 🎓 Research Frontiers — NAS, distillation, RoPE, sparse attention, grokking, grad project guide | 6 | 7 |
+| B | 📄 Attention Is All You Need — Original paper deep-dive | 8 | — |
 
-🔄 **In-Browser Training** — See loss drop and names become realistic, live
-
-🏗️ **Architecture Explorer** — Step through Transformer's 6 core components with Python code
-
-📊 **30+ Interactive Visualizations** — Attention flow, computation graph, softmax, gradient descent and more
-
-👨‍🏫 **Instructor Mode** — Lesson plans, cheat sheets, and slide references
-
-📚 **Comprehensive Glossary** — 100+ terms, filterable by week
-
-🌐 **Bilingual** — Turkish (complete) | English (partial)
-
-### Getting Started
+### 🚀 Getting Started
 
 ```bash
-git clone https://github.com/microgpt-academy/microgpt-academy.git
+git clone https://github.com/alicetinkaya76/microgpt-academy.git
 cd microgpt-academy
 npm install
 npm start
 ```
 
-Opens `http://localhost:3000` in your browser.
-
-### Weekly Content
-
-| Week | Topic | Key Concepts |
-|------|-------|--------------|
-| 0 | 🎯 Intro & Overview | Pipeline, neural net basics, language model concept |
-| 1 | 🔤 Tokenization & Embedding | Character tokenizer, embedding vectors, positional encoding |
-| 2 | ⛓ Autograd | Value class, computation graph, chain rule, backpropagation |
-| 3 | 🔍 Attention Mechanism | Q/K/V, dot product, scaled attention, multi-head, causal mask |
-| 4 | 🧱 Transformer Block | RMSNorm, MLP, ReLU², residual connections |
-| 5 | 🏋️ Training Loop | Cross-entropy loss, Adam optimizer, learning rate |
-| 6 | ✨ Inference & Sampling | Autoregressive generation, temperature, top-k, KV cache |
-| 7 | 🔬 Advanced Topics | Scaling laws, hardware evolution, tokenizer evolution |
-| 8 | 📄 "Attention Is All You Need" | Original paper deep-dive, encoder-decoder, positional encoding |
-| 9 | 🚀 Research Frontiers | MoE, RLHF, LoRA, flash attention, open source ecosystem |
+Opens `http://localhost:3000`. Or try the live demo: **[microgpt-academy.vercel.app](https://microgpt-academy.vercel.app)**
 
 ---
 
-## 📐 Mimari / Architecture
+## 🏗️ Architecture
 
 ```
 src/
-└── App.js          ← Tüm uygulama tek dosyada / Entire app in one file (~7700 lines)
-    ├── i18n System         — İki dilli destek / Bilingual support
-    ├── Math Utils          — softmax, rmsnorm, matmul, sampling
-    ├── createModel()       — 3,648 parametreli mini GPT oluşturma
-    ├── fwd() / train()     — İleri geçiş ve eğitim döngüsü
-    ├── 30+ Viz Components  — İnteraktif görselleştirmeler
-    ├── Curriculum Data     — 10 haftalık ders içeriği
-    ├── Glossary            — 100+ terim veritabanı
-    └── App Component       — Ana uygulama ve tab yönetimi
+├── App.js                    ← Main app component (969 lines)
+├── core/
+│   ├── i18n.js               ← Bilingual system (TR/EN)
+│   └── analytics.js          ← GA4 event tracking
+├── utils/
+│   ├── math.js               ← softmax, rmsnorm, matmul, sampling
+│   └── model.js              ← 3,648-param mini GPT (createModel, fwd)
+├── components/
+│   ├── SharedComponents.js   ← VizBox, VideoEmbed, StatBox, FlowBox
+│   └── ...
+└── lectures/microgpt/
+    ├── data/
+    │   ├── weeks.js           ← 10-week curriculum (802 lines)
+    │   ├── slides.js          ← 85 embedded bilingual slides (946 lines)
+    │   ├── quizzes.js         ← 70 quiz questions (W0-W9)
+    │   ├── realCode.js        ← 17 Python code examples
+    │   ├── glossary.js        ← 49 terms
+    │   └── resources.js       ← 37 links + 10 Colab notebooks
+    ├── visualizations/
+    │   ├── interactiveViz.js  ← 48 interactive components (3,181 lines)
+    │   ├── staticViz.js       ← 19 static visualizations
+    │   ├── paperViz.js        ← 8 Transformer paper components
+    │   └── index.js           ← VIZ_MAP registry
+    └── components/
+        ├── LinearAlgebraLesson.js  ← 8 chapters, 7 quiz (825 lines)
+        ├── ProbabilityLesson.js    ← 8 chapters, 7 quiz (528 lines)
+        └── BackpropLesson.js       ← 9 chapters, 6 quiz (911 lines)
 ```
 
-> **Neden tek dosya?** Eğitim amaçlı — tüm kodu tek yerde görmek, bağımlılıkları anlamayı kolaylaştırır. Production için bölünmesi önerilir.
->
-> **Why single file?** Educational purpose — seeing all code in one place makes understanding dependencies easier. Splitting recommended for production.
+**27 files · 11,134 lines · Modular architecture**
 
 ---
 
-## 🔗 Orijinal Proje / Original Project
+## 🔬 Interactive Visualizations Showcase
 
-Bu platform aşağıdaki çalışma üzerine inşa edilmiştir / This platform is built on top of:
+<table>
+<tr>
+<td width="33%"><strong>Weight Pixel Grid</strong><br/><em>Inspired by 3Blue1Brown — see what each neuron "looks for" as a 28×28 weight pattern</em></td>
+<td width="33%"><strong>Attention Head Pruning</strong><br/><em>Adjust threshold slider to prune heads in real-time — see speedup vs loss trade-off</em></td>
+<td width="33%"><strong>Grokking Animation</strong><br/><em>Slide through epochs and watch delayed generalization — train loss → 0 long before test loss</em></td>
+</tr>
+<tr>
+<td><strong>BPE Info Theory</strong><br/><em>Step through BPE merges and watch entropy decrease in real-time</em></td>
+<td><strong>Knowledge Distillation</strong><br/><em>Adjust temperature T from 0.5 to 10 — see probability distribution soften</em></td>
+<td><strong>Sparse Attention Masks</strong><br/><em>Toggle between Full, Local, Local+Global, Sliding Window patterns</em></td>
+</tr>
+<tr>
+<td><strong>RoPE Rotation</strong><br/><em>Slide position from 0 to 20 — watch low/high frequency vectors rotate</em></td>
+<td><strong>NAS Pareto Front</strong><br/><em>Interactive scatter: params vs loss with Pareto-optimal configurations highlighted</em></td>
+<td><strong>Loss Landscape</strong><br/><em>Compare SGD, Adam, SAM, Small Batch — see flat vs sharp minima</em></td>
+</tr>
+</table>
+
+**+ 69 more:** Tokenizer Playground, Autograd Graph Builder, Attention Heatmap, Training Simulator, Scaling Laws Explorer, Generation Playground, Transformer Block Flow, MLP Fact Storage, Sigmoid→ReLU Evolution, Hessian Landscape, Numerical Stability, Ablation Designer, and more.
+
+---
+
+## 🎬 3Blue1Brown Integration
+
+The platform includes embedded 3Blue1Brown videos alongside custom interactive visualizations inspired by Grant Sanderson's pedagogical approach:
+
+- **Weight Pixel Grid** (W0) — Inspired by *"But what is a Neural Network?"* (Ch1)
+- **MLP Fact Storage** (W4) — Inspired by *"How might LLMs store facts"* (Ch7)
+- **Sigmoid → ReLU Evolution** (W4) — Inspired by the sigmoid "squishification" concept
+
+---
+
+## 📓 Google Colab Labs
+
+Every week includes a direct link to a Google Colab notebook — no local installation required:
+
+| Week | Lab |
+|:----:|-----|
+| 0 | 🚀 microGPT — Run it immediately |
+| 1 | 🔤 Tokenization Lab |
+| 2 | ⛓️ Autograd Lab |
+| 3 | 🔍 Attention Lab |
+| 4 | 🧱 Transformer Lab |
+| 5 | 🏋️ Training Lab |
+| 6 | 💬 Generation Lab |
+| 7 | 🌍 Modern AI Lab |
+| 8 | 🔬 Advanced Lab |
+| 9 | 🎓 Graduate Project Lab |
+
+---
+
+## 🔗 Original Project
+
+This platform is built on top of:
 
 | | |
 |---|---|
-| **Proje / Project** | [microgpt.py](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95) |
-| **Yazar / Author** | [Andrej Karpathy](https://karpathy.ai/) |
-| **Açıklama / Description** | 🇹🇷 Saf Python'da, sıfır bağımlılıkla yazılmış en minimal GPT implementasyonu. 243 satır, harici kütüphane yok. |
-| | 🇬🇧 The most minimal GPT implementation in pure Python with zero dependencies. 243 lines, no external libraries. |
-| **Alıntı / Quote** | *"This is the full algorithmic content of what is needed. Everything else is just for efficiency. I cannot simplify this any further."* |
+| **Project** | [microgpt.py](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95) |
+| **Author** | [Andrej Karpathy](https://karpathy.ai/) |
+| **Description** | The most minimal GPT in pure Python. 243 lines, zero dependencies. |
+| **Quote** | *"I cannot simplify this any further."* |
 
-### İlgili Karpathy Projeleri / Related Karpathy Projects
-- [micrograd](https://github.com/karpathy/micrograd) — Autograd motoru (Value sınıfı buradan esinlenmiştir)
-- [makemore](https://github.com/karpathy/makemore) — Karakter seviyesi dil modeli
-- [nanoGPT](https://github.com/karpathy/nanoGPT) — En basit, en hızlı orta ölçekli GPT eğitimi
-- [Neural Networks: Zero to Hero](https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ) — YouTube ders serisi
+### Related Karpathy Projects
+
+- [micrograd](https://github.com/karpathy/micrograd) — Autograd engine (Value class inspiration)
+- [makemore](https://github.com/karpathy/makemore) — Character-level language model
+- [nanoGPT](https://github.com/karpathy/nanoGPT) — Simplest, fastest medium-scale GPT training
+- [Neural Networks: Zero to Hero](https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ) — YouTube lecture series
 
 ---
 
-## 🤝 Katkıda Bulunma / Contributing
+## 🤝 Contributing
 
-Katkılarınızı bekliyoruz! / Contributions are welcome!
+Contributions welcome!
 
-- 🌐 İngilizce çevirileri tamamlama / Complete English translations
-- 🐛 Bug düzeltmeleri / Bug fixes
-- 📊 Yeni görselleştirmeler / New visualizations
-- 📝 İçerik iyileştirmeleri / Content improvements
+- 🌐 Complete English translations
+- 🐛 Bug fixes
+- 📊 New visualizations
+- 📝 Content improvements
+- 📓 Colab notebook enhancements
 
 ```bash
-# Fork & clone
 git checkout -b feature/amazing-feature
-# Değişikliklerinizi yapın / Make your changes
 git commit -m "feat: add amazing feature"
 git push origin feature/amazing-feature
-# Pull Request açın / Open a Pull Request
+# Open a Pull Request
 ```
 
 ---
 
-## 📄 Lisans / License
+## 📄 License
 
-MIT License — detaylar için [LICENSE](LICENSE) dosyasına bakın.
+MIT License — see [LICENSE](/LICENSE) for details.
 
-Orijinal [microgpt.py](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95) Andrej Karpathy tarafından oluşturulmuştur.
-
-Original [microgpt.py](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95) created by Andrej Karpathy.
+Original [microgpt.py](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95) created by [Andrej Karpathy](https://karpathy.ai/).
 
 ---
 
-## 🙏 İlham & Referanslar / Inspiration & References
+## 🙏 Inspiration & References
 
-- [Andrej Karpathy — microgpt.py](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95) ⭐ *Bu projenin temel aldığı kaynak / The foundation of this project*
-- [Andrej Karpathy — micrograd](https://github.com/karpathy/micrograd)
-- [Andrej Karpathy — makemore](https://github.com/karpathy/makemore)
+- [Andrej Karpathy — microgpt.py](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95) ⭐ *Foundation of this project*
+- [3Blue1Brown — Neural Networks series](https://www.3blue1brown.com/topics/neural-networks) — Visualizations inspired by Grant Sanderson
 - [Vaswani et al. — "Attention Is All You Need" (2017)](https://arxiv.org/abs/1706.03762)
+- [Jay Alammar — The Illustrated Transformer](https://jalammar.github.io/illustrated-transformer/)
 
 ---
 
-<div align="center">
+<p align="center">
+  <strong>MicroGPT Academy</strong> — <em>The best way to understand GPT is to explore it line by line.</em>
+</p>
 
-**microGPT Academy** — *Karpathy'nin microgpt.py'sini anlamak için en iyi yol, onu satır satır keşfetmektir.*
-
-*The best way to understand Karpathy's microgpt.py is to explore it line by line.*
-
-⭐ Bu projeyi beğendiyseniz yıldız vermeyi unutmayın! / Star this repo if you find it useful!
-
-</div>
+<p align="center">
+  ⭐ Star this repo if you find it useful!
+</p>
