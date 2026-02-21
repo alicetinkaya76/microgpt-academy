@@ -48,8 +48,8 @@ function S({ emoji, text, color, delay = 0 }) {
       borderLeft: `2px solid ${color}30`, borderRadius: "0 10px 10px 0",
       marginBottom: 7, animation: `fadeSlideIn 0.5s ${delay}s both cubic-bezier(0.16,1,0.3,1)`,
     }}>
-      <span style={{ fontSize: 18, lineHeight: 1, flexShrink: 0 }}>{emoji}</span>
-      <p style={{ margin: 0, color: P.text, fontSize: 13, lineHeight: 1.75 }}>{text}</p>
+      <span style={{ fontSize: 22, lineHeight: 1, flexShrink: 0 }}>{emoji}</span>
+      <p style={{ margin: 0, color: P.text, fontSize: 16, lineHeight: 1.85 }}>{text}</p>
     </div>
   );
 }
@@ -65,7 +65,7 @@ function VectorPlayground({ lang }) {
 
   return (
     <div>
-      <div style={{ fontSize: 13, color: P.text, marginBottom: 10, lineHeight: 1.7 }}>
+      <div style={{ fontSize: 16, color: P.text, marginBottom: 10, lineHeight: 1.8 }}>
         <strong style={{ color: P.teal }}>{t("Vektör", "Vector", lang)}</strong> = {t("yön + büyüklük. Kaydırıcılarla vektörü değiştir!", "direction + magnitude. Drag the sliders to change!", lang)}
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", maxWidth: W, display: "block", background: P.surface, borderRadius: 12, border: `1px solid ${P.border}` }}>
@@ -93,8 +93,8 @@ function VectorPlayground({ lang }) {
         {[["x", 0, P.teal], ["y", 1, P.blue]].map(([label, idx, color]) => (
           <div key={label} style={{ flex: 1 }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}>
-              <span style={{ color: P.muted, fontSize: 10, fontWeight: 700 }}>{label}</span>
-              <span style={{ color, fontSize: 11, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>{v[idx].toFixed(1)}</span>
+              <span style={{ color: P.muted, fontSize: 13, fontWeight: 700 }}>{label}</span>
+              <span style={{ color, fontSize: 14, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>{v[idx].toFixed(1)}</span>
             </div>
             <input type="range" min="-5" max="5" step="0.1" value={v[idx]}
               onChange={e => { const n = [...v]; n[idx] = +e.target.value; setV(n); }}
@@ -130,7 +130,7 @@ function DotProductViz({ lang }) {
 
   return (
     <div>
-      <div style={{ fontSize: 13, color: P.text, marginBottom: 10, lineHeight: 1.7 }}>
+      <div style={{ fontSize: 16, color: P.text, marginBottom: 10, lineHeight: 1.8 }}>
         <strong style={{ color: P.violet }}>Dot product</strong> = {t("iki vektörün ne kadar aynı yöne baktığını ölçer.", "measures how much two vectors point the same way.", lang)}
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", maxWidth: W, display: "block", background: P.surface, borderRadius: 12, border: `1px solid ${P.border}` }}>
@@ -150,12 +150,12 @@ function DotProductViz({ lang }) {
 
       <div style={{ display: "flex", gap: 6, marginTop: 8 }}>
         <div style={{ flex: 1, background: sim + "08", border: `1px solid ${sim}20`, borderRadius: 8, padding: "6px 10px", textAlign: "center" }}>
-          <div style={{ color: P.dim, fontSize: 8, fontWeight: 700 }}>{t("AÇI", "ANGLE", lang)}</div>
-          <div style={{ color: sim, fontSize: 14, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace" }}>{angle.toFixed(0)}°</div>
+          <div style={{ color: P.dim, fontSize: 10, fontWeight: 700 }}>{t("AÇI", "ANGLE", lang)}</div>
+          <div style={{ color: sim, fontSize: 17, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace" }}>{angle.toFixed(0)}°</div>
         </div>
         <div style={{ flex: 2, background: sim + "08", border: `1px solid ${sim}20`, borderRadius: 8, padding: "6px 10px", textAlign: "center" }}>
-          <div style={{ color: P.dim, fontSize: 8, fontWeight: 700 }}>{t("YORUM", "INTERPRETATION", lang)}</div>
-          <div style={{ color: sim, fontSize: 12, fontWeight: 700 }}>{simLabel}</div>
+          <div style={{ color: P.dim, fontSize: 10, fontWeight: 700 }}>{t("YORUM", "INTERPRETATION", lang)}</div>
+          <div style={{ color: sim, fontSize: 15, fontWeight: 700 }}>{simLabel}</div>
         </div>
       </div>
 
@@ -163,21 +163,21 @@ function DotProductViz({ lang }) {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginTop: 8 }}>
         {[[a, setA, "a", P.teal], [b, setB, "b", P.violet]].map(([vec, setVec, label, color]) => (
           <div key={label} style={{ background: P.card, border: `1px solid ${P.border}`, borderRadius: 8, padding: 8 }}>
-            <div style={{ color, fontSize: 10, fontWeight: 700, marginBottom: 4 }}>{label}</div>
+            <div style={{ color, fontSize: 13, fontWeight: 700, marginBottom: 4 }}>{label}</div>
             {[0, 1].map(idx => (
               <div key={idx} style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 2 }}>
-                <span style={{ color: P.muted, fontSize: 9, minWidth: 10 }}>{idx === 0 ? "x" : "y"}</span>
+                <span style={{ color: P.muted, fontSize: 11, minWidth: 10 }}>{idx === 0 ? "x" : "y"}</span>
                 <input type="range" min="-4" max="4" step="0.5" value={vec[idx]}
                   onChange={e => { const n = [...vec]; n[idx] = +e.target.value; setVec(n); }}
                   style={{ flex: 1 }} />
-                <span style={{ color, fontSize: 10, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", minWidth: 24, textAlign: "right" }}>{vec[idx].toFixed(1)}</span>
+                <span style={{ color, fontSize: 13, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", minWidth: 24, textAlign: "right" }}>{vec[idx].toFixed(1)}</span>
               </div>
             ))}
           </div>
         ))}
       </div>
 
-      <div style={{ marginTop: 8, padding: "8px 10px", borderRadius: 8, background: P.violet + "08", border: `1px solid ${P.violet}15`, fontSize: 11, color: P.muted, lineHeight: 1.6 }}>
+      <div style={{ marginTop: 8, padding: "8px 10px", borderRadius: 8, background: P.violet + "08", border: `1px solid ${P.violet}15`, fontSize: 14, color: P.muted, lineHeight: 1.6 }}>
         💡 a·b = ({a[0]}×{b[0]}) + ({a[1]}×{b[1]}) = <strong style={{ color: P.white }}>{dot.toFixed(1)}</strong>
         {" "}{t("— Attention'da Q·K tam olarak bunu yapar!", "— This is exactly what Q·K does in Attention!", lang)}
       </div>
@@ -196,7 +196,7 @@ function MatMulViz({ lang }) {
 
   return (
     <div>
-      <div style={{ fontSize: 13, color: P.text, marginBottom: 10, lineHeight: 1.7 }}>
+      <div style={{ fontSize: 16, color: P.text, marginBottom: 10, lineHeight: 1.8 }}>
         <strong style={{ color: P.pink }}>{t("Matris × vektör", "Matrix × vector", lang)}</strong> = {t("vektörü dönüştürme. Her satır bir dot product!", "transforming a vector. Each row is a dot product!", lang)}
       </div>
 
@@ -204,7 +204,7 @@ function MatMulViz({ lang }) {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, flexWrap: "wrap", padding: "14px 0" }}>
         {/* Matrix A */}
         <div style={{ background: P.card, borderRadius: 10, border: `1px solid ${P.border}`, padding: "8px 6px" }}>
-          <div style={{ color: P.dim, fontSize: 8, fontWeight: 700, textAlign: "center", marginBottom: 4 }}>A</div>
+          <div style={{ color: P.dim, fontSize: 10, fontWeight: 700, textAlign: "center", marginBottom: 4 }}>A</div>
           {A.map((row, i) => (
             <div key={i} style={{
               display: "flex", gap: 4, padding: "3px 6px", borderRadius: 6, marginBottom: 2,
@@ -214,35 +214,35 @@ function MatMulViz({ lang }) {
               onMouseEnter={() => setHighlightRow(i)} onMouseLeave={() => setHighlightRow(-1)}
             >
               {row.map((val, j) => (
-                <span key={j} style={{ color: highlightRow === i ? P.pink : P.text, fontSize: 15, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", minWidth: 24, textAlign: "center" }}>{val}</span>
+                <span key={j} style={{ color: highlightRow === i ? P.pink : P.text, fontSize: 18, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", minWidth: 24, textAlign: "center" }}>{val}</span>
               ))}
             </div>
           ))}
         </div>
 
-        <span style={{ color: P.dim, fontSize: 16, fontWeight: 700 }}>×</span>
+        <span style={{ color: P.dim, fontSize: 19, fontWeight: 700 }}>×</span>
 
         {/* Vector x */}
         <div style={{ background: P.card, borderRadius: 10, border: `1px solid ${P.border}`, padding: "8px 6px" }}>
-          <div style={{ color: P.dim, fontSize: 8, fontWeight: 700, textAlign: "center", marginBottom: 4 }}>x</div>
+          <div style={{ color: P.dim, fontSize: 10, fontWeight: 700, textAlign: "center", marginBottom: 4 }}>x</div>
           {x.map((val, i) => (
             <div key={i} style={{ padding: "3px 6px", textAlign: "center", marginBottom: 2 }}>
-              <span style={{ color: P.blue, fontSize: 15, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>{val.toFixed(1)}</span>
+              <span style={{ color: P.blue, fontSize: 18, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>{val.toFixed(1)}</span>
             </div>
           ))}
         </div>
 
-        <span style={{ color: P.dim, fontSize: 16, fontWeight: 700 }}>=</span>
+        <span style={{ color: P.dim, fontSize: 19, fontWeight: 700 }}>=</span>
 
         {/* Result */}
         <div style={{ background: P.card, borderRadius: 10, border: `1px solid ${P.border}`, padding: "8px 6px" }}>
-          <div style={{ color: P.dim, fontSize: 8, fontWeight: 700, textAlign: "center", marginBottom: 4 }}>y</div>
+          <div style={{ color: P.dim, fontSize: 10, fontWeight: 700, textAlign: "center", marginBottom: 4 }}>y</div>
           {result.map((val, i) => (
             <div key={i} style={{
               padding: "3px 6px", textAlign: "center", marginBottom: 2, borderRadius: 4,
               background: highlightRow === i ? P.emerald + "15" : "transparent",
             }}>
-              <span style={{ color: P.emerald, fontSize: 15, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace" }}>{val.toFixed(1)}</span>
+              <span style={{ color: P.emerald, fontSize: 18, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace" }}>{val.toFixed(1)}</span>
             </div>
           ))}
         </div>
@@ -250,7 +250,7 @@ function MatMulViz({ lang }) {
 
       {/* Calculation detail */}
       {highlightRow >= 0 && (
-        <div style={{ padding: "8px 10px", borderRadius: 8, background: P.pink + "08", border: `1px solid ${P.pink}15`, fontSize: 12, color: P.text, textAlign: "center", animation: "fadeSlideIn 0.2s both" }}>
+        <div style={{ padding: "8px 10px", borderRadius: 8, background: P.pink + "08", border: `1px solid ${P.pink}15`, fontSize: 15, color: P.text, textAlign: "center", animation: "fadeSlideIn 0.2s both" }}>
           y[{highlightRow}] = {A[highlightRow].map((a, j) => `${a}×${x[j].toFixed(1)}`).join(" + ")} = <strong style={{ color: P.emerald }}>{result[highlightRow].toFixed(1)}</strong>
         </div>
       )}
@@ -259,16 +259,16 @@ function MatMulViz({ lang }) {
       <div style={{ marginTop: 8 }}>
         {x.map((val, i) => (
           <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-            <span style={{ color: P.blue, fontSize: 10, fontWeight: 700, minWidth: 18 }}>x{i + 1}</span>
+            <span style={{ color: P.blue, fontSize: 13, fontWeight: 700, minWidth: 18 }}>x{i + 1}</span>
             <input type="range" min="-3" max="3" step="0.5" value={val}
               onChange={e => { const n = [...x]; n[i] = +e.target.value; setX(n); }}
               style={{ flex: 1 }} />
-            <span style={{ color: P.blue, fontSize: 11, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", minWidth: 28, textAlign: "right" }}>{val.toFixed(1)}</span>
+            <span style={{ color: P.blue, fontSize: 14, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", minWidth: 28, textAlign: "right" }}>{val.toFixed(1)}</span>
           </div>
         ))}
       </div>
 
-      <div style={{ marginTop: 8, padding: "8px 10px", borderRadius: 8, background: P.pink + "08", border: `1px solid ${P.pink}15`, fontSize: 11, color: P.muted, lineHeight: 1.6 }}>
+      <div style={{ marginTop: 8, padding: "8px 10px", borderRadius: 8, background: P.pink + "08", border: `1px solid ${P.pink}15`, fontSize: 14, color: P.muted, lineHeight: 1.6 }}>
         💡 {t("Embedding, Attention, MLP — hepsi matris çarpımıdır. y = Wx bu dersin en önemli formülü!", "Embedding, Attention, MLP — all are matrix multiplications. y = Wx is this course's most important formula!", lang)}
       </div>
     </div>
@@ -289,7 +289,7 @@ function TransposeViz({ lang }) {
       onMouseLeave={() => setHovCell(null)}
       style={{
         width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center",
-        borderRadius: 6, fontSize: 14, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace",
+        borderRadius: 6, fontSize: 17, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace",
         background: highlighted ? P.amber + "20" : P.card,
         border: `1px solid ${highlighted ? P.amber + "50" : P.border}`,
         color: highlighted ? P.amber : P.text,
@@ -300,14 +300,14 @@ function TransposeViz({ lang }) {
 
   return (
     <div>
-      <div style={{ fontSize: 13, color: P.text, marginBottom: 10, lineHeight: 1.7 }}>
+      <div style={{ fontSize: 16, color: P.text, marginBottom: 10, lineHeight: 1.8 }}>
         <strong style={{ color: P.amber }}>{t("Transpoz", "Transpose", lang)}</strong> (Aᵀ): {t("satır ↔ sütun değiştirir. Attention'da Kᵀ için kullanılır.", "swaps rows ↔ columns. Used for Kᵀ in Attention.", lang)}
       </div>
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, flexWrap: "wrap" }}>
         {/* Original */}
         <div>
-          <div style={{ color: P.teal, fontSize: 10, fontWeight: 700, textAlign: "center", marginBottom: 4 }}>A <span style={{ color: P.dim }}>({M.length}×{M[0].length})</span></div>
+          <div style={{ color: P.teal, fontSize: 13, fontWeight: 700, textAlign: "center", marginBottom: 4 }}>A <span style={{ color: P.dim }}>({M.length}×{M[0].length})</span></div>
           {M.map((row, r) => (
             <div key={r} style={{ display: "flex", gap: 3, marginBottom: 3 }}>
               {row.map((val, c) => (
@@ -318,11 +318,11 @@ function TransposeViz({ lang }) {
           ))}
         </div>
 
-        <span style={{ color: P.amber, fontSize: 20, fontWeight: 800 }}>→ᵀ</span>
+        <span style={{ color: P.amber, fontSize: 24, fontWeight: 800 }}>→ᵀ</span>
 
         {/* Transposed */}
         <div>
-          <div style={{ color: P.amber, fontSize: 10, fontWeight: 700, textAlign: "center", marginBottom: 4 }}>Aᵀ <span style={{ color: P.dim }}>({T.length}×{T[0].length})</span></div>
+          <div style={{ color: P.amber, fontSize: 13, fontWeight: 700, textAlign: "center", marginBottom: 4 }}>Aᵀ <span style={{ color: P.dim }}>({T.length}×{T[0].length})</span></div>
           {T.map((row, r) => (
             <div key={r} style={{ display: "flex", gap: 3, marginBottom: 3 }}>
               {row.map((val, c) => (
@@ -334,7 +334,7 @@ function TransposeViz({ lang }) {
         </div>
       </div>
 
-      <div style={{ marginTop: 10, padding: "8px 10px", borderRadius: 8, background: P.amber + "08", border: `1px solid ${P.amber}15`, fontSize: 11, color: P.muted, lineHeight: 1.6 }}>
+      <div style={{ marginTop: 10, padding: "8px 10px", borderRadius: 8, background: P.amber + "08", border: `1px solid ${P.amber}15`, fontSize: 14, color: P.muted, lineHeight: 1.6 }}>
         💡 {t("A[i][j] = Aᵀ[j][i]. Attention'da score = Q × Kᵀ — K'yı transpose edip Q ile çarpmak benzerlik hesaplar!", "A[i][j] = Aᵀ[j][i]. In Attention, score = Q × Kᵀ — transposing K and multiplying with Q computes similarity!", lang)}
       </div>
     </div>
@@ -361,7 +361,7 @@ function LinAlgLab({ lang, onConverge }) {
 
   return (
     <div>
-      <div style={{ fontSize: 13, color: P.text, marginBottom: 10, lineHeight: 1.7 }}>
+      <div style={{ fontSize: 16, color: P.text, marginBottom: 10, lineHeight: 1.8 }}>
         🧪 <strong style={{ color: P.emerald }}>{t("Dönüşüm laboratuvarı!", "Transformation lab!", lang)}</strong> {t("Matris seçip vektörün nasıl dönüştüğünü gör.", "Pick a matrix and see how the vector transforms.", lang)}
       </div>
 
@@ -369,7 +369,7 @@ function LinAlgLab({ lang, onConverge }) {
       <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 10 }}>
         {presets.map((p, i) => (
           <button key={i} onClick={() => setMatrix(p.m)} style={{
-            padding: "5px 10px", borderRadius: 8, fontSize: 10, fontWeight: 700,
+            padding: "5px 10px", borderRadius: 8, fontSize: 13, fontWeight: 700,
             border: `1px solid ${JSON.stringify(matrix) === JSON.stringify(p.m) ? P.emerald + "50" : P.border}`,
             background: JSON.stringify(matrix) === JSON.stringify(p.m) ? P.emerald + "12" : P.card,
             color: JSON.stringify(matrix) === JSON.stringify(p.m) ? P.emerald : P.muted,
@@ -402,16 +402,16 @@ function LinAlgLab({ lang, onConverge }) {
       <div style={{ marginTop: 6 }}>
         {[["x", 0, P.teal], ["y", 1, P.blue]].map(([label, idx, color]) => (
           <div key={label} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3 }}>
-            <span style={{ color, fontSize: 10, fontWeight: 700, minWidth: 12 }}>{label}</span>
+            <span style={{ color, fontSize: 13, fontWeight: 700, minWidth: 12 }}>{label}</span>
             <input type="range" min="-3" max="3" step="0.5" value={v[idx]}
               onChange={e => { const n = [...v]; n[idx] = +e.target.value; setV(n); }}
               style={{ flex: 1 }} />
-            <span style={{ color, fontSize: 10, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", minWidth: 28, textAlign: "right" }}>{v[idx].toFixed(1)}</span>
+            <span style={{ color, fontSize: 13, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", minWidth: 28, textAlign: "right" }}>{v[idx].toFixed(1)}</span>
           </div>
         ))}
       </div>
 
-      <div style={{ marginTop: 8, padding: "8px 10px", borderRadius: 8, background: P.emerald + "08", border: `1px solid ${P.emerald}15`, fontSize: 11, color: P.muted, lineHeight: 1.6 }}>
+      <div style={{ marginTop: 8, padding: "8px 10px", borderRadius: 8, background: P.emerald + "08", border: `1px solid ${P.emerald}15`, fontSize: 14, color: P.muted, lineHeight: 1.6 }}>
         💡 {t("Embedding = matris lookup. Attention = matris çarpımı. MLP = matris × aktivasyon × matris. HER ŞEY lineer cebirdir!", "Embedding = matrix lookup. Attention = matrix multiply. MLP = matrix × activation × matrix. EVERYTHING is linear algebra!", lang)}
       </div>
     </div>
@@ -458,14 +458,14 @@ function Quiz({ lang, onComplete }) {
     const pct = Math.round((score / QS.length) * 100);
     return (
       <div style={{ textAlign: "center", padding: "20px 0" }}>
-        <div style={{ fontSize: 40, marginBottom: 8 }}>{pct >= 80 ? "🏆" : pct >= 50 ? "👍" : "📚"}</div>
-        <div style={{ fontSize: 18, fontWeight: 900, color: pct >= 80 ? P.emerald : P.amber }}>{score}/{QS.length}</div>
-        <div style={{ fontSize: 13, color: P.muted, marginTop: 4 }}>
+        <div style={{ fontSize: 48, marginBottom: 8 }}>{pct >= 80 ? "🏆" : pct >= 50 ? "👍" : "📚"}</div>
+        <div style={{ fontSize: 22, fontWeight: 900, color: pct >= 80 ? P.emerald : P.amber }}>{score}/{QS.length}</div>
+        <div style={{ fontSize: 16, color: P.muted, marginTop: 4 }}>
           {pct >= 80 ? t("Harika! Lineer cebir hazır!", "Excellent! Linear algebra ready!", lang) : t("Tekrar denemelisin!", "Try again!", lang)}
         </div>
         <button onClick={() => { setCur(0); setSel(null); setScore(0); setDone(false); }} style={{
           marginTop: 12, padding: "8px 20px", borderRadius: 8, border: `1px solid ${P.border}`,
-          background: "transparent", color: P.text, fontSize: 12, fontWeight: 600, cursor: "pointer",
+          background: "transparent", color: P.text, fontSize: 15, fontWeight: 600, cursor: "pointer",
         }}>{t("Tekrar Dene", "Try Again", lang)}</button>
       </div>
     );
@@ -473,8 +473,8 @@ function Quiz({ lang, onComplete }) {
 
   return (
     <div>
-      <div style={{ fontSize: 11, color: P.muted, marginBottom: 8 }}>{cur + 1}/{QS.length} • {t("Skor", "Score", lang)}: {score}</div>
-      <div style={{ fontSize: 14, fontWeight: 700, color: P.text, marginBottom: 10, lineHeight: 1.6 }}>{q.q}</div>
+      <div style={{ fontSize: 14, color: P.muted, marginBottom: 8 }}>{cur + 1}/{QS.length} • {t("Skor", "Score", lang)}: {score}</div>
+      <div style={{ fontSize: 17, fontWeight: 700, color: P.text, marginBottom: 10, lineHeight: 1.6 }}>{q.q}</div>
       <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
         {q.o.map((opt, i) => {
           const isAns = i === q.a;
@@ -488,13 +488,13 @@ function Quiz({ lang, onComplete }) {
           return (
             <button key={i} onClick={() => pick(i)} style={{
               padding: "9px 12px", borderRadius: 8, border: `1.5px solid ${bc}`,
-              background: bg, color: tc, fontSize: 12.5, fontWeight: 600,
+              background: bg, color: tc, fontSize: 15, fontWeight: 600,
               cursor: sel !== null ? "default" : "pointer", textAlign: "left",
               display: "flex", alignItems: "center", gap: 8, transition: "all 0.2s",
             }}>
               <span style={{
                 width: 22, height: 22, borderRadius: "50%", display: "flex",
-                alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 800,
+                alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800,
                 background: sel !== null && isAns ? P.emerald + "20" : sel !== null && chosen ? P.pink + "20" : P.border + "50",
                 color: sel !== null && isAns ? P.emerald : sel !== null && chosen ? P.pink : P.muted,
                 flexShrink: 0,
@@ -512,14 +512,14 @@ function Quiz({ lang, onComplete }) {
             marginTop: 8, padding: "8px 10px", borderRadius: 8,
             background: correct ? P.emerald + "08" : P.pink + "08",
             border: `1px solid ${correct ? P.emerald : P.pink}18`,
-            fontSize: 12, lineHeight: 1.6, animation: "fadeSlideIn 0.3s both",
+            fontSize: 15, lineHeight: 1.6, animation: "fadeSlideIn 0.3s both",
           }}>
             <strong style={{ color: correct ? P.emerald : P.pink }}>{correct ? "✓ " : "✕ "}{correct ? t("Doğru!", "Correct!", lang) : t("Yanlış!", "Wrong!", lang)} </strong>{q.e}
           </div>
           <button onClick={next} style={{
             marginTop: 8, width: "100%", padding: "9px", borderRadius: 8, border: "none",
             background: `linear-gradient(135deg, ${P.indigo}, ${P.violet})`,
-            color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer",
+            color: "#fff", fontSize: 15, fontWeight: 700, cursor: "pointer",
           }}>{cur + 1 >= QS.length ? t("Sonuçlar", "Results", lang) : t("Sonraki →", "Next →", lang)}</button>
         </>
       )}
@@ -564,8 +564,8 @@ function Body({ step, lang, onConverge }) {
           ["MLP", "W₁ × x", P.pink],
         ].map(([label, formula, color]) => (
           <div key={label} style={{ background: color + "08", border: `1px solid ${color}20`, borderRadius: 8, padding: "8px 4px", textAlign: "center" }}>
-            <div style={{ color, fontSize: 9, fontWeight: 700 }}>{label}</div>
-            <div style={{ color: P.text, fontSize: 11, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", marginTop: 2 }}>{formula}</div>
+            <div style={{ color, fontSize: 11, fontWeight: 700 }}>{label}</div>
+            <div style={{ color: P.text, fontSize: 14, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", marginTop: 2 }}>{formula}</div>
           </div>
         ))}
       </div>
@@ -600,9 +600,9 @@ const LinearAlgebraLesson = () => {
 
       {/* Header */}
       <header style={{ padding: "14px 16px 10px", borderBottom: `1px solid ${P.border}` }}>
-        <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: 3, color: P.dim, textTransform: "uppercase" }}>{t("İnteraktif Ders", "Interactive Lesson", lang)}</div>
+        <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 3, color: P.dim, textTransform: "uppercase" }}>{t("İnteraktif Ders", "Interactive Lesson", lang)}</div>
         <h1 style={{
-          margin: "3px 0 0", fontSize: 21, fontWeight: 900, letterSpacing: -0.5,
+          margin: "3px 0 0", fontSize: 26, fontWeight: 900, letterSpacing: -0.5,
           background: `linear-gradient(135deg, ${P.teal}, ${P.blue}, ${P.pink})`,
           WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
         }}>{t("Lineer Cebir Temelleri", "Linear Algebra Basics", lang)}</h1>
@@ -617,17 +617,17 @@ const LinearAlgebraLesson = () => {
             border: i === step ? `1px solid ${c.color}35` : "1px solid transparent",
             background: i === step ? c.color + "10" : "transparent",
             color: i === step ? c.color : i < step ? P.text : P.dim,
-            fontSize: 10.5, fontWeight: i === step ? 700 : 500, cursor: "pointer",
+            fontSize: 13, fontWeight: i === step ? 700 : 500, cursor: "pointer",
             whiteSpace: "nowrap", transition: "all 0.25s",
           }}>
-            <span style={{ fontSize: 11 }}>{c.icon}</span><span>{c.label}</span>
+            <span style={{ fontSize: 14 }}>{c.icon}</span><span>{c.label}</span>
           </button>
         ))}
       </nav>
 
       {/* Title */}
       <div style={{ padding: "8px 16px 2px" }}>
-        <h2 style={{ margin: 0, fontSize: 15, fontWeight: 800, color: ch.color, display: "flex", alignItems: "center", gap: 6 }}>
+        <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: ch.color, display: "flex", alignItems: "center", gap: 6 }}>
           <span>{ch.icon}</span>{ch.label}
         </h2>
       </div>
@@ -641,7 +641,7 @@ const LinearAlgebraLesson = () => {
       <footer style={{ padding: "6px 16px 12px", borderTop: `1px solid ${P.border}`, background: P.bg }}>
         <div style={{ display: "flex", gap: 6 }}>
           <button onClick={() => setStep(s => Math.max(0, s - 1))} disabled={step === 0}
-            style={{ flex: 1, padding: "10px", borderRadius: 8, border: `1px solid ${P.border}`, background: "transparent", color: step === 0 ? P.dim : P.text, fontSize: 12, fontWeight: 600, cursor: step === 0 ? "default" : "pointer" }}>
+            style={{ flex: 1, padding: "10px", borderRadius: 8, border: `1px solid ${P.border}`, background: "transparent", color: step === 0 ? P.dim : P.text, fontSize: 15, fontWeight: 600, cursor: step === 0 ? "default" : "pointer" }}>
             ‹ {t("Geri", "Back", lang)}
           </button>
           <button onClick={() => setStep(s => Math.min(CHAPTERS.length - 1, s + 1))} disabled={step === CHAPTERS.length - 1}
@@ -649,7 +649,7 @@ const LinearAlgebraLesson = () => {
               flex: 1.3, padding: "10px", borderRadius: 8, border: "none",
               background: step === CHAPTERS.length - 1 ? P.card : `linear-gradient(135deg, ${CHAPTERS[Math.min(7, step + 1)]?.color}90, ${CHAPTERS[Math.min(7, step + 1)]?.color})`,
               color: step === CHAPTERS.length - 1 ? P.dim : P.white,
-              fontSize: 12, fontWeight: 700, cursor: step === CHAPTERS.length - 1 ? "default" : "pointer",
+              fontSize: 15, fontWeight: 700, cursor: step === CHAPTERS.length - 1 ? "default" : "pointer",
             }}>
             {t("İleri", "Next", lang)} ›
           </button>

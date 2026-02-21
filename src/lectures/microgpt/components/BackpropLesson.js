@@ -149,7 +149,7 @@ function SigmoidPlayground({ lang }) {
 
   return (
     <div>
-      <div style={{ fontSize: 13, color: P.text, marginBottom: 10, lineHeight: 1.7 }}>
+      <div style={{ fontSize: 16, color: P.text, marginBottom: 10, lineHeight: 1.8 }}>
         {L("Sigmoid her sayıyı 0 ile 1 arasına sıkıştırır. Kaydırıcıyla dene!","Sigmoid squeezes any number between 0 and 1. Try the slider!",lang)}
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", maxWidth: W, display: "block" }}>
@@ -166,13 +166,13 @@ function SigmoidPlayground({ lang }) {
         </text>
       </svg>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 6 }}>
-        <span style={{ color: P.muted, fontSize: 11, fontWeight: 600, minWidth: 42 }}>x = {val.toFixed(1)}</span>
+        <span style={{ color: P.muted, fontSize: 14, fontWeight: 600, minWidth: 42 }}>x = {val.toFixed(1)}</span>
         <input type="range" min="-6" max="6" step="0.1" value={val} onChange={e => setVal(+e.target.value)} style={{ flex: 1 }} />
       </div>
       <div style={{
         marginTop: 10, padding: "10px 12px", borderRadius: 8,
         background: P.violet + "08", border: `1px solid ${P.violet}15`,
-        fontSize: 12, color: P.muted, lineHeight: 1.6,
+        fontSize: 15, color: P.muted, lineHeight: 1.6,
       }}>
         {L("💡 Ortada (0 civarı) eğri en dik — ağ burada en çok öğreniyor. Uçlarda neredeyse düz — öğrenme duruyor.","💡 Near 0 the curve is steepest — the network learns most here. At the extremes it is nearly flat — learning stalls.",lang)}
       </div>
@@ -229,9 +229,9 @@ function WeightLab({ lang, onConverge }) {
 
   const WSlider = ({ label, value, onChange, color }) => (
     <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 5 }}>
-      <span style={{ color: P.muted, fontSize: 10, fontWeight: 700, minWidth: 24, fontFamily: "'JetBrains Mono', monospace" }}>{label}</span>
+      <span style={{ color: P.muted, fontSize: 13, fontWeight: 700, minWidth: 24, fontFamily: "'JetBrains Mono', monospace" }}>{label}</span>
       <input type="range" min="-3" max="3" step="0.01" value={value} onChange={e => onChange(+e.target.value)} style={{ flex: 1 }} />
-      <span style={{ color, fontSize: 11, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", minWidth: 38, textAlign: "right" }}>{value.toFixed(2)}</span>
+      <span style={{ color, fontSize: 14, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", minWidth: 38, textAlign: "right" }}>{value.toFixed(2)}</span>
     </div>
   );
 
@@ -248,30 +248,30 @@ function WeightLab({ lang, onConverge }) {
   return (
     <div>
       <Confetti active={showConf} />
-      <div style={{ fontSize: 13, color: P.text, marginBottom: 12, lineHeight: 1.7 }}>
+      <div style={{ fontSize: 16, color: P.text, marginBottom: 12, lineHeight: 1.8 }}>
         {L("🧪 Deney zamanı! Ağırlıkları kaydırarak tahmini hedefe yaklaştır. Ya da otomatik eğitimi başlat!","🧪 Experiment time! Drag weights to bring prediction closer to target. Or start auto-training!",lang)}
       </div>
 
       {/* Input + Output */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginBottom: 10 }}>
         <div style={{ background: P.card, border: `1px solid ${P.border}`, borderRadius: 10, padding: 10 }}>
-          <div style={{ color: P.dim, fontSize: 8, fontWeight: 700, letterSpacing: 1.5, marginBottom: 6 }}>{L("GİRİŞLER","INPUTS",lang)}</div>
+          <div style={{ color: P.dim, fontSize: 10, fontWeight: 700, letterSpacing: 1.5, marginBottom: 6 }}>{L("GİRİŞLER","INPUTS",lang)}</div>
           {[["x₁", x1, setX1], ["x₂", x2, setX2]].map(([l, v, set]) => (
             <div key={l} style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 3 }}>
-              <span style={{ color: P.indigo, fontSize: 10, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>{l}</span>
+              <span style={{ color: P.indigo, fontSize: 13, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>{l}</span>
               <input type="range" min="0" max="1" step="0.1" value={v} onChange={e => set(+e.target.value)} style={{ flex: 1 }} />
-              <span style={{ color: P.text, fontSize: 11, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", minWidth: 20 }}>{v}</span>
+              <span style={{ color: P.text, fontSize: 14, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", minWidth: 20 }}>{v}</span>
             </div>
           ))}
         </div>
         <div style={{ background: P.card, border: `1px solid ${P.border}`, borderRadius: 10, padding: 10, textAlign: "center" }}>
-          <div style={{ color: P.dim, fontSize: 8, fontWeight: 700, letterSpacing: 1.5, marginBottom: 3 }}>{L("TAHMİN","PREDICTION",lang)}</div>
+          <div style={{ color: P.dim, fontSize: 10, fontWeight: 700, letterSpacing: 1.5, marginBottom: 3 }}>{L("TAHMİN","PREDICTION",lang)}</div>
           <div style={{
-            fontSize: 24, fontWeight: 900, fontFamily: "'JetBrains Mono', monospace",
+            fontSize: 28, fontWeight: 900, fontFamily: "'JetBrains Mono', monospace",
             color: error < 0.05 ? P.emerald : error < 0.2 ? P.amber : P.pink,
             transition: "color 0.3s",
           }}>{result.o.toFixed(3)}</div>
-          <div style={{ fontSize: 9, color: P.muted }}>{L("hedef: 1.000","target: 1.000",lang)}</div>
+          <div style={{ fontSize: 11, color: P.muted }}>{L("hedef: 1.000","target: 1.000",lang)}</div>
           <div style={{ marginTop: 4, height: 3, borderRadius: 2, background: P.border, overflow: "hidden" }}>
             <div style={{
               height: "100%", width: `${(1 - error) * 100}%`,
@@ -284,7 +284,7 @@ function WeightLab({ lang, onConverge }) {
 
       {/* Weights */}
       <div style={{ background: P.card, border: `1px solid ${P.border}`, borderRadius: 10, padding: 10, marginBottom: 8 }}>
-        <div style={{ color: P.dim, fontSize: 8, fontWeight: 700, letterSpacing: 1.5, marginBottom: 6 }}>{L("AĞIRLIKLAR","WEIGHTS",lang)}</div>
+        <div style={{ color: P.dim, fontSize: 10, fontWeight: 700, letterSpacing: 1.5, marginBottom: 6 }}>{L("AĞIRLIKLAR","WEIGHTS",lang)}</div>
         {[["w₁", "w1", P.teal], ["w₂", "w2", P.teal], ["w₃", "w3", P.teal], ["w₄", "w4", P.teal], ["wh₁", "wh1", P.blue], ["wh₂", "wh2", P.blue]].map(([l, k, c]) => (
           <WSlider key={k} label={l} value={net[k]} onChange={v => setNet(n => ({ ...n, [k]: v }))} color={c} />
         ))}
@@ -293,24 +293,24 @@ function WeightLab({ lang, onConverge }) {
       {/* Auto train */}
       <div style={{ background: P.card, border: `1px solid ${P.border}`, borderRadius: 10, padding: 10 }}>
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-          <span style={{ color: P.dim, fontSize: 8, fontWeight: 700, letterSpacing: 1.5 }}>{L("OTOMATİK EĞİTİM","AUTO TRAINING",lang)}</span>
-          {epochs > 0 && <span style={{ color: P.amber, fontSize: 10, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>Epoch {epochs}</span>}
+          <span style={{ color: P.dim, fontSize: 10, fontWeight: 700, letterSpacing: 1.5 }}>{L("OTOMATİK EĞİTİM","AUTO TRAINING",lang)}</span>
+          {epochs > 0 && <span style={{ color: P.amber, fontSize: 13, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>Epoch {epochs}</span>}
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
-          <span style={{ color: P.muted, fontSize: 10, fontWeight: 600 }}>η</span>
+          <span style={{ color: P.muted, fontSize: 13, fontWeight: 600 }}>η</span>
           <input type="range" min="0.1" max="3" step="0.1" value={lr} onChange={e => setLr(+e.target.value)} style={{ flex: 1 }} />
-          <span style={{ color: P.teal, fontSize: 11, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", minWidth: 24 }}>{lr.toFixed(1)}</span>
+          <span style={{ color: P.teal, fontSize: 14, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", minWidth: 24 }}>{lr.toFixed(1)}</span>
         </div>
         <Spark />
         <div style={{ display: "flex", gap: 6, marginTop: 8 }}>
           <button onClick={toggle} style={{
             flex: 1, padding: "9px", borderRadius: 8, border: "none",
             background: running ? `linear-gradient(135deg, ${P.pink}, ${P.rose})` : `linear-gradient(135deg, ${P.indigo}, ${P.teal})`,
-            color: "#fff", fontSize: 12, fontWeight: 800, cursor: "pointer",
+            color: "#fff", fontSize: 15, fontWeight: 800, cursor: "pointer",
           }}>{running ? L("■ Durdur","■ Stop",lang) : L("▶ Eğit","▶ Train",lang)}</button>
           <button onClick={reset} style={{
             padding: "9px 14px", borderRadius: 8, border: `1px solid ${P.border}`,
-            background: "transparent", color: P.muted, fontSize: 11, fontWeight: 600, cursor: "pointer",
+            background: "transparent", color: P.muted, fontSize: 14, fontWeight: 600, cursor: "pointer",
           }}>↺</button>
         </div>
       </div>
@@ -355,15 +355,15 @@ function Quiz({ lang, onComplete }) {
   if (done) {
     return (
       <div style={{ textAlign: "center", padding: "24px 0" }}>
-        <div style={{ fontSize: 48, marginBottom: 10 }}>{score >= 4 ? "🏆" : score >= 3 ? "🎉" : "📚"}</div>
-        <div style={{ fontSize: 22, fontWeight: 900, fontFamily: "'JetBrains Mono', monospace" }}>{score} / {QS.length}</div>
-        <div style={{ color: P.muted, fontSize: 13, marginTop: 6 }}>
+        <div style={{ fontSize: 56, marginBottom: 10 }}>{score >= 4 ? "🏆" : score >= 3 ? "🎉" : "📚"}</div>
+        <div style={{ fontSize: 26, fontWeight: 900, fontFamily: "'JetBrains Mono', monospace" }}>{score} / {QS.length}</div>
+        <div style={{ color: P.muted, fontSize: 16, marginTop: 6 }}>
           {score >= 4 ? L("Mükemmel! Backpropagation ustası!","Excellent! Backpropagation master!",lang) : score >= 3 ? L("Harika! Neredeyse tam!","Great! Almost perfect!",lang) : L("Tekrar dene, yaparsın!","Try again, you can do it!",lang)}
         </div>
         <button onClick={() => { setCur(0); setSel(null); setScore(0); setDone(false); }} style={{
           marginTop: 14, padding: "9px 20px", borderRadius: 8,
           border: `1px solid ${P.border}`, background: P.card,
-          color: P.text, fontSize: 12, fontWeight: 600, cursor: "pointer",
+          color: P.text, fontSize: 15, fontWeight: 600, cursor: "pointer",
         }}>{L("Tekrar Dene","Try Again",lang)}</button>
       </div>
     );
@@ -372,10 +372,10 @@ function Quiz({ lang, onComplete }) {
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
-        <span style={{ color: P.dim, fontSize: 9, fontWeight: 700, letterSpacing: 1.5 }}>SORU {cur + 1}/{QS.length}</span>
-        <span style={{ color: P.emerald, fontSize: 11, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>{score} puan</span>
+        <span style={{ color: P.dim, fontSize: 11, fontWeight: 700, letterSpacing: 1.5 }}>SORU {cur + 1}/{QS.length}</span>
+        <span style={{ color: P.emerald, fontSize: 14, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>{score} puan</span>
       </div>
-      <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 12, lineHeight: 1.6 }}>{q.q}</div>
+      <div style={{ fontSize: 17, fontWeight: 700, marginBottom: 12, lineHeight: 1.6 }}>{q.q}</div>
       <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
         {q.o.map((opt, i) => {
           const chosen = sel === i;
@@ -389,13 +389,13 @@ function Quiz({ lang, onComplete }) {
           return (
             <button key={i} onClick={() => pick(i)} style={{
               padding: "10px 12px", borderRadius: 8, border: `1.5px solid ${bc}`,
-              background: bg, color: tc, fontSize: 12.5, fontWeight: 600,
+              background: bg, color: tc, fontSize: 15, fontWeight: 600,
               cursor: sel !== null ? "default" : "pointer", textAlign: "left",
               display: "flex", alignItems: "center", gap: 8, transition: "all 0.2s",
             }}>
               <span style={{
                 width: 22, height: 22, borderRadius: "50%", display: "flex",
-                alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 800,
+                alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800,
                 background: sel !== null && isAns ? P.emerald + "20" : sel !== null && chosen ? P.pink + "20" : P.border + "50",
                 color: sel !== null && isAns ? P.emerald : sel !== null && chosen ? P.pink : P.muted,
                 flexShrink: 0,
@@ -413,14 +413,14 @@ function Quiz({ lang, onComplete }) {
             marginTop: 10, padding: "10px 12px", borderRadius: 8,
             background: correct ? P.emerald + "08" : P.pink + "08",
             border: `1px solid ${correct ? P.emerald : P.pink}18`,
-            fontSize: 12, lineHeight: 1.6, animation: "fadeSlideIn 0.3s both",
+            fontSize: 15, lineHeight: 1.6, animation: "fadeSlideIn 0.3s both",
           }}>
             <strong style={{ color: correct ? P.emerald : P.pink }}>{correct ? L("✓ Doğru! ","✓ Correct! ",lang) : L("✕ Yanlış! ","✕ Wrong! ",lang)}</strong>{q.e}
           </div>
           <button onClick={next} style={{
             marginTop: 10, width: "100%", padding: "9px", borderRadius: 8, border: "none",
             background: `linear-gradient(135deg, ${P.indigo}, ${P.violet})`,
-            color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer",
+            color: "#fff", fontSize: 15, fontWeight: 700, cursor: "pointer",
           }}>{cur + 1 >= QS.length ? L("Sonuçlar","Results",lang) : L("Sonraki →","Next →",lang)}</button>
         </>
       )}
@@ -522,8 +522,8 @@ function S({ emoji, text, color, delay = 0 }) {
       borderLeft: `2px solid ${color}30`, borderRadius: "0 10px 10px 0",
       marginBottom: 7, animation: `fadeSlideIn 0.5s ${delay}s both cubic-bezier(0.16,1,0.3,1)`,
     }}>
-      <span style={{ fontSize: 18, lineHeight: 1, flexShrink: 0 }}>{emoji}</span>
-      <p style={{ margin: 0, color: P.text, fontSize: 13, lineHeight: 1.75 }}>{text}</p>
+      <span style={{ fontSize: 22, lineHeight: 1, flexShrink: 0 }}>{emoji}</span>
+      <p style={{ margin: 0, color: P.text, fontSize: 16, lineHeight: 1.85 }}>{text}</p>
     </div>
   );
 }
@@ -545,8 +545,8 @@ function Body({ step, net, result, onConverge, lang }) {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 5, marginTop: 6 }}>
         {[["w₁",net.w1],["w₂",net.w2],["w₃",net.w3],["w₄",net.w4],["wh₁",net.wh1],["wh₂",net.wh2]].map(([l,v],i) => (
           <div key={i} style={{ background: P.card, border: `1px solid ${P.border}`, borderRadius: 8, padding: "5px 4px", textAlign: "center" }}>
-            <div style={{ color: P.dim, fontSize: 8, fontWeight: 700 }}>{l}</div>
-            <div style={{ color: P.teal, fontSize: 12, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>{v.toFixed(3)}</div>
+            <div style={{ color: P.dim, fontSize: 10, fontWeight: 700 }}>{l}</div>
+            <div style={{ color: P.teal, fontSize: 15, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>{v.toFixed(3)}</div>
           </div>
         ))}
       </div>
@@ -557,8 +557,8 @@ function Body({ step, net, result, onConverge, lang }) {
       {r && <div style={{ display: "flex", gap: 6, marginTop: 6 }}>
         {[["h₁",r.h1,P.teal],["h₂",r.h2,P.teal],["ŷ",r.o,P.blue]].map(([l,v,c],i) => (
           <div key={i} style={{ flex: 1, background: c+"0d", border: `1px solid ${c}20`, borderRadius: 10, padding: "8px 4px", textAlign: "center" }}>
-            <div style={{ color: c, fontSize: 9, fontWeight: 700 }}>{l}</div>
-            <div style={{ color: P.white, fontSize: 17, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace", marginTop: 2 }}>{v.toFixed(3)}</div>
+            <div style={{ color: c, fontSize: 11, fontWeight: 700 }}>{l}</div>
+            <div style={{ color: P.white, fontSize: 20, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace", marginTop: 2 }}>{v.toFixed(3)}</div>
           </div>
         ))}
       </div>}
@@ -567,8 +567,8 @@ function Body({ step, net, result, onConverge, lang }) {
     case 4: return <>
       <S emoji="🎯" color={P.pink} text={L(`Hata = Hedef − Tahmin = ${r?(1-r.o).toFixed(4):"?"}. Bu fark ne kadar büyükse, o kadar çok düzeltme yapacağız.`,`Error = Target − Prediction = ${r?(1-r.o).toFixed(4):"?"}. The larger the gap, the more correction we apply.`,lang)} />
       {r && <div style={{ background: P.pink+"08", border: `1px solid ${P.pink}18`, borderRadius: 10, padding: 14, textAlign: "center", margin: "6px 0 8px" }}>
-        <div style={{ color: P.pink, fontSize: 9, fontWeight: 700, letterSpacing: 2 }}>{L("HATA","ERROR",lang)}</div>
-        <div style={{ color: P.white, fontSize: 28, fontWeight: 900, fontFamily: "'JetBrains Mono', monospace", marginTop: 3 }}>{Math.abs(1-r.o).toFixed(4)}</div>
+        <div style={{ color: P.pink, fontSize: 11, fontWeight: 700, letterSpacing: 2 }}>{L("HATA","ERROR",lang)}</div>
+        <div style={{ color: P.white, fontSize: 34, fontWeight: 900, fontFamily: "'JetBrains Mono', monospace", marginTop: 3 }}>{Math.abs(1-r.o).toFixed(4)}</div>
         <div style={{ marginTop: 8, height: 3, borderRadius: 2, background: P.border, overflow: "hidden" }}>
           <div style={{ height: "100%", width: `${Math.abs(1-r.o)*100}%`, background: `linear-gradient(90deg, ${P.pink}, ${P.amber})`, borderRadius: 2 }} />
         </div>
@@ -618,9 +618,9 @@ const BackpropLesson = () => {
 
       {/* Header */}
       <header style={{ padding: "14px 16px 10px", borderBottom: `1px solid ${P.border}` }}>
-        <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: 3, color: P.dim, textTransform: "uppercase" }}>{L("İnteraktif Ders","Interactive Lesson",lang)}</div>
+        <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 3, color: P.dim, textTransform: "uppercase" }}>{L("İnteraktif Ders","Interactive Lesson",lang)}</div>
         <h1 style={{
-          margin: "3px 0 0", fontSize: 21, fontWeight: 900, letterSpacing: -0.5,
+          margin: "3px 0 0", fontSize: 26, fontWeight: 900, letterSpacing: -0.5,
           background: `linear-gradient(135deg, ${P.indigo}, ${P.teal}, ${P.violet})`,
           WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
         }}>Backpropagation</h1>
@@ -637,10 +637,10 @@ const BackpropLesson = () => {
               border: act ? `1px solid ${c.color}35` : "1px solid transparent",
               background: act ? c.color + "10" : "transparent",
               color: act ? c.color : i < step ? P.text : P.dim,
-              fontSize: 10.5, fontWeight: act ? 700 : 500, cursor: "pointer",
+              fontSize: 13, fontWeight: act ? 700 : 500, cursor: "pointer",
               whiteSpace: "nowrap", transition: "all 0.25s",
             }}>
-              <span style={{ fontSize: 11 }}>{c.icon}</span><span>{c.label}</span>
+              <span style={{ fontSize: 14 }}>{c.icon}</span><span>{c.label}</span>
             </button>
           );
         })}
@@ -655,7 +655,7 @@ const BackpropLesson = () => {
 
       {/* Title */}
       <div style={{ padding: "8px 16px 2px" }}>
-        <h2 style={{ margin: 0, fontSize: 15, fontWeight: 800, color: ch.color, display: "flex", alignItems: "center", gap: 6 }}>
+        <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: ch.color, display: "flex", alignItems: "center", gap: 6 }}>
           <span>{ch.icon}</span>{ch.label}
         </h2>
       </div>
@@ -669,7 +669,7 @@ const BackpropLesson = () => {
       <footer style={{ padding: "6px 16px 12px", borderTop: `1px solid ${P.border}`, background: P.bg }}>
         <div style={{ display: "flex", gap: 6 }}>
           <button onClick={() => setStep(s => Math.max(0, s - 1))} disabled={step === 0}
-            style={{ flex: 1, padding: "10px", borderRadius: 8, border: `1px solid ${P.border}`, background: "transparent", color: step === 0 ? P.dim : P.text, fontSize: 12, fontWeight: 600, cursor: step === 0 ? "default" : "pointer" }}>
+            style={{ flex: 1, padding: "10px", borderRadius: 8, border: `1px solid ${P.border}`, background: "transparent", color: step === 0 ? P.dim : P.text, fontSize: 15, fontWeight: 600, cursor: step === 0 ? "default" : "pointer" }}>
             ‹ {L("Geri","Back",lang)}
           </button>
           <button onClick={() => setStep(s => Math.min(CHAPTERS.length - 1, s + 1))} disabled={step === CHAPTERS.length - 1}
@@ -677,7 +677,7 @@ const BackpropLesson = () => {
               flex: 1.3, padding: "10px", borderRadius: 8, border: "none",
               background: step === CHAPTERS.length - 1 ? P.card : `linear-gradient(135deg, ${CHAPTERS[Math.min(8, step + 1)]?.color}90, ${CHAPTERS[Math.min(8, step + 1)]?.color})`,
               color: step === CHAPTERS.length - 1 ? P.dim : P.white,
-              fontSize: 12, fontWeight: 700, cursor: step === CHAPTERS.length - 1 ? "default" : "pointer",
+              fontSize: 15, fontWeight: 700, cursor: step === CHAPTERS.length - 1 ? "default" : "pointer",
               boxShadow: step < CHAPTERS.length - 1 ? `0 3px 12px ${CHAPTERS[step + 1]?.color}20` : "none",
             }}>
             {L("İleri","Next",lang)} ›
