@@ -861,6 +861,31 @@ const EMBEDDED_SLIDES = {
       keyPoint: {tr:"Altın kural: 'Veri olmadan fikir, fikir olmadan veri' — ikisi birlikte ilerlemeli. Her hafta somut çıktı üretin.", en:"Golden rule: 'Ideas without data, data without ideas' — both must progress together. Produce concrete output every week."},
     },
   ],
+
+  "week0_s11": [
+    {
+      title: {tr:"Ağırlıklar = Piksel Patternler", en:"Weights = Pixel Patterns"},
+      desc: {tr:"Her nöronun 784 ağırlığı var — bunları 28×28 ızgara olarak çizdiğimizde nöronun 'aradığı şeyi' görebiliriz. Mavi piksel = pozitif ağırlık (bu piksel aktifse nöron mutlu), kırmızı = negatif ağırlık (bu piksel aktifse nöron mutsuz).", en:"Each neuron has 784 weights — drawing them as a 28×28 grid reveals what the neuron is 'looking for'. Blue = positive weight (neuron happy when this pixel is active), red = negative (neuron unhappy)."},
+      formula: "activation = σ(Σ wᵢ × pixelᵢ + bias)",
+      keyPoint: {tr:"3Blue1Brown'un ünlü görselleştirmesi: 'weighted sum = image × weights'. Eşleşme yüksekse nöron ateşler. Eğitim bu ağırlık grid'ini otomatik şekillendirir.", en:"3Blue1Brown's signature visualization: 'weighted sum = image × weights'. High match → neuron fires. Training automatically shapes this weight grid."},
+    },
+  ],
+  "week4_s8": [
+    {
+      title: {tr:"MLP = Key-Value Bilgi Deposu", en:"MLP = Key-Value Fact Storage"},
+      desc: {tr:"Transformer'daki MLP katmanları basit feed-forward ağ gibi görünür ama aslında dev bir sözlük (dictionary) gibi çalışır. W₁ satırları anahtar pattern, W₂ sütunları değer. ReLU kapı görevi görür.", en:"MLP layers in Transformers look like simple feed-forward nets but actually work like a giant dictionary. W₁ rows are key patterns, W₂ columns are values. ReLU acts as a gate."},
+      formula: "MLP(x) = W₂ · ReLU(W₁ · x + b₁) + b₂",
+      keyPoint: {tr:"3Blue1Brown Ch7: 'Fransa başkenti' pattern'ı W₁'de bir satırı aktive eder → ReLU kapıyı açar → W₂'den 'Paris' bilgisi çıkar. Milyarlarca fact bu şekilde depolanır.", en:"3B1B Ch7: 'Capital of France' pattern activates a W₁ row → ReLU opens the gate → 'Paris' information comes out from W₂. Billions of facts stored this way."},
+    },
+  ],
+  "week4_s9": [
+    {
+      title: {tr:"Sigmoid → ReLU → GELU Evrimi", en:"Sigmoid → ReLU → GELU Evolution"},
+      desc: {tr:"1990'lar: Sigmoid (0-1 sıkıştırma). 2010'lar: ReLU (max(0,x) — hızlı, basit). 2020'ler: GELU (yumuşak ReLU, GPT/BERT). microGPT: ReLU² (sparsity).", en:"1990s: Sigmoid (0-1 squish). 2010s: ReLU (max(0,x) — fast, simple). 2020s: GELU (smooth ReLU, GPT/BERT). microGPT: ReLU² (sparsity)."},
+      formula: "Sigmoid: σ(x) = 1/(1+e⁻ˣ)  |  ReLU: max(0,x)  |  GELU: x·Φ(x)",
+      keyPoint: {tr:"Sigmoid'in sorunu: |x|>4'te gradient ≈ 0 → derin ağlarda öğrenme durur (vanishing gradient). ReLU bu sorunu çözdü — modern deep learning'in doğuşu.", en:"Sigmoid's problem: gradient ≈ 0 when |x|>4 → learning stops in deep nets (vanishing gradient). ReLU solved this — the birth of modern deep learning."},
+    },
+  ],
 };
 
 const SlideRefPanel = ({ weekIdx, sectionIdx }) => {

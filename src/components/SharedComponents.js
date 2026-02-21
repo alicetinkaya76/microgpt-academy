@@ -256,4 +256,18 @@ const FlowArrow = ({ color = "#475569" }) => (<div style={{ display: "flex", ali
 const FlowBox = ({ label, sub, color, small, active }) => (<div style={{ padding: small ? "5px 10px" : "8px 14px", borderRadius: 8, minWidth: small ? 50 : 70, background: active ? `${color}20` : `${color}0A`, border: `1.5px solid ${color}30`, textAlign: "center", transition: "all .3s", transform: active ? "scale(1.05)" : "scale(1)", boxShadow: active ? `0 0 12px ${color}25` : "none" }}><div style={{ fontSize: small ? 10 : 12, fontWeight: 700, color, fontFamily: "'Fira Code', monospace" }}>{label}</div>{sub && <div style={{ fontSize: 11, color: VB.muted, marginTop: 2 }}>{sub}</div>}</div>);
 const StatBox = ({ value, label, color }) => (<div style={{ textAlign: "center", padding: "6px 10px", background: `${color}08`, borderRadius: 8, border: `1px solid ${color}15`, minWidth: 60 }}><div style={{ fontSize: 19, fontWeight: 800, color, fontFamily: "'Fira Code', monospace" }}>{value}</div><div style={{ fontSize: 11, color: VB.muted }}>{label}</div></div>);
 
+
+const VideoEmbed = ({ videoId, title, caption }) => (
+  <div style={{ margin: "12px 0", borderRadius: 12, overflow: "hidden", border: "1px solid rgba(255,255,255,0.06)" }}>
+    {title && <div style={{ padding: "8px 14px", background: "rgba(239,68,68,0.06)", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", alignItems: "center", gap: 8 }}>
+      <span style={{ fontSize: 15 }}>🎬</span>
+      <span style={{ fontSize: 13, fontWeight: 700, color: "#EF4444" }}>{title}</span>
+    </div>}
+    <div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
+      <iframe src={`https://www.youtube.com/embed/${videoId}?rel=0`} title={title || "Video"} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: "none" }} />
+    </div>
+    {caption && <div style={{ padding: "6px 14px", background: "rgba(0,0,0,0.2)", fontSize: 12, color: "#94A3B8" }}>{caption}</div>}
+  </div>
+);
+
 export { Spark, InfoCard, ProbDist, AttnMat, MLPViz, EmbedViz, Pipeline, CodeBlock, DimFlow, VB, VizBox, FlowArrow, FlowBox, StatBox };

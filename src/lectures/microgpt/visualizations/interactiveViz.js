@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useLang, tx } from '../../../core/i18n';
-import { VB, VizBox, FlowArrow, FlowBox, StatBox, CodeBlock, InfoCard, Spark } from '../../../components/SharedComponents';
+import { VB, VizBox, VideoEmbed, FlowArrow, FlowBox, StatBox, CodeBlock, InfoCard, Spark } from '../../../components/SharedComponents';
 import { softmax, softmaxArr, gauss, matmul, rmsnorm, relu2, smpl } from '../../../utils/math';
 import { NAMES, CHARS, VOCAB, stoi, itos, BOS, EOS, createModel, fwd } from '../../../utils/model';
 
@@ -2532,6 +2532,188 @@ const ConceptMapViz = () => {
 
 
 
+
+
+// ═══ 3B1B-INSPIRED VISUALIZATIONS ═══
+
+const WeightPixelGridViz = () => {
+  const lang = useLang();
+  const [pattern, setPattern] = useState(0);
+  const patterns = [
+    { name: lang === "tr" ? "Üst yatay çizgi" : "Upper horizontal", weights: Array.from({length: 784}, (_, i) => {
+      const r = Math.floor(i / 28), cl = i % 28;
+      if (r >= 4 && r <= 6 && cl >= 6 && cl <= 22) return 0.8;
+      if ((r >= 2 && r <= 3 || r >= 7 && r <= 8) && cl >= 6 && cl <= 22) return -0.5;
+      return 0;
+    })},
+    { name: lang === "tr" ? "Sol dikey çizgi" : "Left vertical", weights: Array.from({length: 784}, (_, i) => {
+      const r = Math.floor(i / 28), cl = i % 28;
+      if (cl >= 6 && cl <= 8 && r >= 4 && r <= 24) return 0.8;
+      if ((cl >= 4 && cl <= 5 || cl >= 9 && cl <= 10) && r >= 4 && r <= 24) return -0.5;
+      return 0;
+    })},
+    { name: lang === "tr" ? "Üst döngü (loop)" : "Upper loop", weights: Array.from({length: 784}, (_, i) => {
+      const r = Math.floor(i / 28), cl = i % 28;
+      const cx = 14, cy = 10, radius = 6;
+      const dist = Math.sqrt((cl - cx) ** 2 + (r - cy) ** 2);
+      if (Math.abs(dist - radius) < 2) return 0.8;
+      if (dist < radius - 2) return -0.3;
+      return 0;
+    })},
+    { name: lang === "tr" ? "Çapraz çizgi" : "Diagonal line", weights: Array.from({length: 784}, (_, i) => {
+      const r = Math.floor(i / 28), cl = i % 28;
+      if (Math.abs(r - cl) < 2 && r >= 4 && r <= 24) return 0.8;
+      if (Math.abs(r - cl) >= 2 && Math.abs(r - cl) < 4 && r >= 4 && r <= 24) return -0.4;
+      return 0;
+    })},
+  ];
+  const p = patterns[pattern];
+  const cellSize = 6;
+  const W = 28 * cellSize, H = 28 * cellSize;
+
+  return (<VizBox title={lang === "tr" ? "Ağırlıklar Piksel Olarak — Nöron Ne Görüyor?" : "Weights as Pixels — What Does the Neuron See?"} color="#0EA5E9">
+    <div style={{ fontSize: 12, color: VB.muted, marginBottom: 8 }}>{lang === "tr" ? "Her nöron bir PATTERN arar. Mavi = pozitif ağırlık (aranan), kırmızı = negatif (istenmeyen):" : "Each neuron looks for a PATTERN. Blue = positive weight (wanted), red = negative (unwanted):"}</div>
+    <div style={{ display: "flex", gap: 4, marginBottom: 10, flexWrap: "wrap" }}>
+      {patterns.map((pt, i) => <button key={i} onClick={() => setPattern(i)} style={{
+        padding: "5px 10px", borderRadius: 7, border: `1px solid ${pattern === i ? "#0EA5E930" : VB.border}`,
+        background: pattern === i ? "#0EA5E910" : "transparent", color: pattern === i ? "#0EA5E9" : VB.muted,
+        fontSize: 11, fontWeight: 700, cursor: "pointer"
+      }}>{pt.name}</button>)}
+    </div>
+    <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
+      <div>
+        <div style={{ fontSize: 10, fontWeight: 700, color: VB.dim, letterSpacing: 1, marginBottom: 4, textAlign: "center" }}>{lang === "tr" ? "AĞIRLIK GRİDİ (28×28)" : "WEIGHT GRID (28×28)"}</div>
+        <svg viewBox={`0 0 ${W} ${H}`} style={{ width: W, height: H, display: "block", borderRadius: 6, border: `1px solid ${VB.border}` }}>
+          {p.weights.map((w, i) => {
+            const row = Math.floor(i / 28), col = i % 28;
+            const color = w > 0 ? `rgba(59,130,246,${Math.abs(w)})` : w < 0 ? `rgba(239,68,68,${Math.abs(w)})` : "rgba(0,0,0,0.8)";
+            return <rect key={i} x={col * cellSize} y={row * cellSize} width={cellSize} height={cellSize} fill={color} />;
+          })}
+        </svg>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 6 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <div style={{ width: 16, height: 16, borderRadius: 3, background: "rgba(59,130,246,0.8)" }} />
+          <span style={{ fontSize: 11, color: VB.txt }}>{lang === "tr" ? "Pozitif ağırlık (arıyor)" : "Positive weight (looking for)"}</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <div style={{ width: 16, height: 16, borderRadius: 3, background: "rgba(239,68,68,0.6)" }} />
+          <span style={{ fontSize: 11, color: VB.txt }}>{lang === "tr" ? "Negatif ağırlık (istemiyor)" : "Negative weight (avoiding)"}</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <div style={{ width: 16, height: 16, borderRadius: 3, background: "rgba(0,0,0,0.8)", border: "1px solid #333" }} />
+          <span style={{ fontSize: 11, color: VB.txt }}>{lang === "tr" ? "Sıfır (umursamıyor)" : "Zero (doesn't care)"}</span>
+        </div>
+        <div style={{ marginTop: 8, padding: "6px 10px", borderRadius: 8, background: "#0EA5E908", border: "1px solid #0EA5E920", fontSize: 11, color: "#0EA5E9", maxWidth: 180 }}>
+          {lang === "tr" ? "💡 Weighted sum: görüntü × ağırlıklar. Eşleşme yüksekse → nöron aktif!" : "💡 Weighted sum: image × weights. High match → neuron fires!"}
+        </div>
+      </div>
+    </div>
+    <VideoEmbed videoId="aircAruvnKk" title="3Blue1Brown — But what is a Neural Network?" caption={lang === "tr" ? "Bu görselleştirme 3Blue1Brown'un Chapter 1'indeki ağırlık-piksel konseptinden esinlenmiştir" : "This visualization is inspired by the weight-pixel concept from 3Blue1Brown Chapter 1"} />
+  </VizBox>);
+};
+
+const MLPFactStorageViz = () => {
+  const lang = useLang();
+  const [queryIdx, setQueryIdx] = useState(0);
+  const facts = [
+    { key: lang === "tr" ? "Fransa başkenti" : "Capital of France", pattern: "🇫🇷 France + capital", value: "Paris", activation: 0.95, color: "#0EA5E9" },
+    { key: lang === "tr" ? "Suyun formülü" : "Water formula", pattern: "💧 water + chemical", value: "H₂O", activation: 0.88, color: "#10B981" },
+    { key: lang === "tr" ? "Einstein mesleği" : "Einstein profession", pattern: "👤 Einstein + job", value: lang === "tr" ? "Fizikçi" : "Physicist", activation: 0.92, color: "#8B5CF6" },
+    { key: lang === "tr" ? "Güneş'in rengi" : "Color of sun", pattern: "☀️ sun + color", value: lang === "tr" ? "Sarı" : "Yellow", activation: 0.78, color: "#F59E0B" },
+  ];
+  const fact = facts[queryIdx];
+
+  return (<VizBox title={lang === "tr" ? "MLP Bilgi Deposu — Transformer Nasıl Hatırlıyor?" : "MLP Fact Storage — How Does a Transformer Remember?"} color="#EC4899">
+    <div style={{ fontSize: 12, color: VB.muted, marginBottom: 8 }}>
+      {lang === "tr" ? "MLP katmanı key-value bellek gibi çalışır. Gelen pattern bir 'anahtar'ı tetikler → ilgili 'değer' çıkar:" : "MLP acts like key-value memory. Input pattern triggers a 'key' → corresponding 'value' comes out:"}
+    </div>
+    <div style={{ display: "flex", gap: 4, marginBottom: 10, flexWrap: "wrap" }}>
+      {facts.map((f, i) => <button key={i} onClick={() => setQueryIdx(i)} style={{
+        padding: "5px 10px", borderRadius: 7, border: `1px solid ${queryIdx === i ? f.color + "30" : VB.border}`,
+        background: queryIdx === i ? f.color + "10" : "transparent", color: queryIdx === i ? f.color : VB.muted,
+        fontSize: 11, fontWeight: 700, cursor: "pointer"
+      }}>{f.key}</button>)}
+    </div>
+    <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+      <div style={{ padding: "10px 14px", borderRadius: 10, background: `${fact.color}08`, border: `1.5px solid ${fact.color}25`, textAlign: "center", minWidth: 100 }}>
+        <div style={{ fontSize: 9, fontWeight: 700, color: VB.dim, letterSpacing: 1, marginBottom: 4 }}>INPUT</div>
+        <div style={{ fontSize: 22 }}>{fact.pattern.split(" ")[0]}</div>
+        <div style={{ fontSize: 11, color: VB.txt, marginTop: 2 }}>{fact.key}</div>
+      </div>
+      <div style={{ fontSize: 20, color: VB.dim }}>→</div>
+      <div style={{ padding: "10px 14px", borderRadius: 10, background: VB.card, border: `1px solid ${VB.border}`, textAlign: "center", flex: 1, minWidth: 120 }}>
+        <div style={{ fontSize: 9, fontWeight: 700, color: VB.dim, letterSpacing: 1, marginBottom: 4 }}>MLP (W₁ × ReLU × W₂)</div>
+        <div style={{ display: "flex", gap: 4, justifyContent: "center", marginBottom: 6 }}>
+          {Array.from({length: 8}, (_, i) => {
+            const active = i < Math.round(fact.activation * 4) || i === 5;
+            return <div key={i} style={{ width: 12, height: 24, borderRadius: 3, background: active ? `${fact.color}60` : `${VB.border}`, transition: "all 0.4s" }} />;
+          })}
+        </div>
+        <div style={{ fontSize: 10, color: VB.muted }}>{lang === "tr" ? "Gizli nöronlar" : "Hidden neurons"}</div>
+      </div>
+      <div style={{ fontSize: 20, color: VB.dim }}>→</div>
+      <div style={{ padding: "10px 14px", borderRadius: 10, background: `${fact.color}15`, border: `2px solid ${fact.color}40`, textAlign: "center", minWidth: 80 }}>
+        <div style={{ fontSize: 9, fontWeight: 700, color: fact.color, letterSpacing: 1, marginBottom: 4 }}>OUTPUT</div>
+        <div style={{ fontSize: 20, fontWeight: 800, color: fact.color }}>{fact.value}</div>
+        <div style={{ fontSize: 10, color: VB.muted, marginTop: 2 }}>{(fact.activation * 100).toFixed(0)}% {lang === "tr" ? "güven" : "confidence"}</div>
+      </div>
+    </div>
+    <div style={{ marginTop: 10, padding: "8px 12px", borderRadius: 8, background: "#EC489908", border: "1px solid #EC489920", fontSize: 12, color: "#EC4899" }}>
+      {lang === "tr" ? "💡 W₁ satırları = ANAHTAR pattern. W₂ sütunları = DEĞER. ReLU = kapı (eşleşme varsa aç). Bu, bir sözlüğün (dict) yaklaşık halidir!" : "💡 W₁ rows = KEY patterns. W₂ columns = VALUES. ReLU = gate (open if match). This is an approximate dictionary (dict)!"}
+    </div>
+    <VideoEmbed videoId="9-Jl0dxWQs8" title="3Blue1Brown — How might LLMs store facts (Ch7)" caption={lang === "tr" ? "MLP'nin bilgi depolama mekanizması — 3Blue1Brown Deep Learning Chapter 7" : "MLP fact storage mechanism — 3Blue1Brown Deep Learning Chapter 7"} />
+  </VizBox>);
+};
+
+const SigmoidVsReluViz = () => {
+  const lang = useLang();
+  const [fn, setFn] = useState(0);
+  const fns = [
+    { name: "Sigmoid", color: "#F59E0B", compute: (x) => 1 / (1 + Math.exp(-x)), deriv: (x) => { const s = 1/(1+Math.exp(-x)); return s*(1-s); }, problem: lang === "tr" ? "⚠️ |x|>4'te gradient ≈ 0 → öğrenme durur!" : "⚠️ gradient ≈ 0 when |x|>4 → learning stops!" },
+    { name: "ReLU", color: "#10B981", compute: (x) => Math.max(0, x), deriv: (x) => x > 0 ? 1 : 0, problem: lang === "tr" ? "⚠️ x<0'da 'ölü nöron' — ama hızlı ve basit!" : "⚠️ 'dead neuron' when x<0 — but fast and simple!" },
+    { name: "GELU", color: "#8B5CF6", compute: (x) => 0.5 * x * (1 + Math.tanh(Math.sqrt(2/Math.PI) * (x + 0.044715 * x*x*x))), deriv: (x) => { const h = 0.5*(1+Math.tanh(Math.sqrt(2/Math.PI)*(x+0.044715*x*x*x))); return h + x * 0.1; }, problem: lang === "tr" ? "✅ GPT-4, LLaMA, BERT'te kullanılıyor. Yumuşak ReLU." : "✅ Used in GPT-4, LLaMA, BERT. Smooth ReLU." },
+    { name: "ReLU²", color: "#E11D48", compute: (x) => x > 0 ? x*x : 0, deriv: (x) => x > 0 ? 2*x : 0, problem: lang === "tr" ? "✅ microGPT bunu kullanır! Sparsity + güç." : "✅ microGPT uses this! Sparsity + power." },
+  ];
+  const f = fns[fn];
+  const W = 260, H = 130;
+  const xRange = 6;
+  const toSvg = (x, y) => ({ x: (x / xRange + 0.5) * (W - 20) + 10, y: H - 10 - (y / 2) * (H - 20) });
+  const funcPts = Array.from({length: 100}, (_, i) => {
+    const x = (i / 99 - 0.5) * xRange * 2;
+    const y = f.compute(x);
+    return toSvg(x, Math.max(-0.2, Math.min(y, 2)));
+  });
+  const derivPts = Array.from({length: 100}, (_, i) => {
+    const x = (i / 99 - 0.5) * xRange * 2;
+    const y = f.deriv(x);
+    return toSvg(x, Math.max(-0.2, Math.min(y, 2)));
+  });
+
+  return (<VizBox title={lang === "tr" ? "Sigmoid → ReLU Evrimi — Neden Değiştik?" : "Sigmoid → ReLU Evolution — Why Did We Switch?"} color="#F59E0B">
+    <div style={{ display: "flex", gap: 4, marginBottom: 8, flexWrap: "wrap" }}>
+      {fns.map((func, i) => <button key={i} onClick={() => setFn(i)} style={{
+        padding: "5px 10px", borderRadius: 7, border: `1px solid ${fn === i ? func.color + "30" : VB.border}`,
+        background: fn === i ? func.color + "10" : "transparent", color: fn === i ? func.color : VB.muted,
+        fontSize: 12, fontWeight: 700, cursor: "pointer"
+      }}>{func.name}</button>)}
+    </div>
+    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", display: "block", background: VB.card, borderRadius: 10 }}>
+      <line x1={10} y1={H-10} x2={W-10} y2={H-10} stroke={VB.border} strokeWidth="0.5" />
+      <line x1={W/2} y1={5} x2={W/2} y2={H-10} stroke={VB.border} strokeWidth="0.5" />
+      <polyline points={funcPts.map(p => `${p.x},${p.y}`).join(" ")} fill="none" stroke={f.color} strokeWidth="2.5" strokeLinecap="round" />
+      <polyline points={derivPts.map(p => `${p.x},${p.y}`).join(" ")} fill="none" stroke={f.color} strokeWidth="1.5" strokeDasharray="4 2" opacity="0.5" />
+      <text x={W-30} y={15} fill={f.color} fontSize="8" fontWeight="700">{f.name}</text>
+      <text x={W-50} y={25} fill={f.color} fontSize="7" opacity="0.6">{lang === "tr" ? "--- türev" : "--- derivative"}</text>
+    </svg>
+    <div style={{ marginTop: 6, padding: "6px 10px", borderRadius: 8, background: `${f.color}08`, border: `1px solid ${f.color}20`, fontSize: 12, color: f.color }}>
+      {f.problem}
+    </div>
+    <VideoEmbed videoId="aircAruvnKk" title="3Blue1Brown — Sigmoid Squishification" caption={lang === "tr" ? "3B1B'nin sigmoid'i 'squishification' olarak adlandırması — video sonundaki bonus notta ReLU'ya geçiş açıklanıyor" : "3B1B calls sigmoid 'squishification' — the bonus note at the end explains the switch to ReLU"} />
+  </VizBox>);
+};
+
+
 // ═══ W8: ADVANCED TECHNIQUES ═══
 
 const BpeInfoTheoryViz = () => {
@@ -2996,4 +3178,4 @@ const LossLandscapeViz = () => {
 
 
 
-export { BpeInfoTheoryViz, HessianLandscapeViz, HeadPruningViz, IsotropyViz, NumericalStabilityViz, AblationDesignViz, NasParetoViz, DistillationFlowViz, RopeViz, SparseAttentionViz, GrokkingViz, LossLandscapeViz, NeuralNetBasicsViz, LangModelConceptViz, VectorConceptViz, MatrixMulViz, DerivativeViz, TopoSortViz, RnnToAttnViz, DotProductViz, NormCompareViz, ActivationViz, DimensionFlowViz, GradDescentViz, LrDecayViz, CrossEntropyGraphViz, SamplingViz, WhatsMissingViz, WeightInitViz, WhyBox, BridgeBox, AnalogyBox, ConcreteBox, TryItTokenizer, TryItSoftmax, TryItDotProduct, TryItGradient, TryItEmbedding, StepByStepCalc, TryItParams, TrainingEvolutionViz, GPTScaleTowerViz, FrameworkCompareViz, LivePipelineViz, TokenizerPlaygroundViz, AutogradPlaygroundViz, AttentionPlaygroundViz, TransformerBlockFlowViz, TrainingSimViz, GenerationPlaygroundViz, ScalingLawsViz, EvolutionTimelineViz, HardwareEvolutionViz, TrainingPipelineViz, TokenEvolutionViz, AttentionEvolutionViz, OpensourceMapViz, TrendsRadarViz, ConceptMapViz };
+export { WeightPixelGridViz, MLPFactStorageViz, SigmoidVsReluViz, BpeInfoTheoryViz, HessianLandscapeViz, HeadPruningViz, IsotropyViz, NumericalStabilityViz, AblationDesignViz, NasParetoViz, DistillationFlowViz, RopeViz, SparseAttentionViz, GrokkingViz, LossLandscapeViz, NeuralNetBasicsViz, LangModelConceptViz, VectorConceptViz, MatrixMulViz, DerivativeViz, TopoSortViz, RnnToAttnViz, DotProductViz, NormCompareViz, ActivationViz, DimensionFlowViz, GradDescentViz, LrDecayViz, CrossEntropyGraphViz, SamplingViz, WhatsMissingViz, WeightInitViz, WhyBox, BridgeBox, AnalogyBox, ConcreteBox, TryItTokenizer, TryItSoftmax, TryItDotProduct, TryItGradient, TryItEmbedding, StepByStepCalc, TryItParams, TrainingEvolutionViz, GPTScaleTowerViz, FrameworkCompareViz, LivePipelineViz, TokenizerPlaygroundViz, AutogradPlaygroundViz, AttentionPlaygroundViz, TransformerBlockFlowViz, TrainingSimViz, GenerationPlaygroundViz, ScalingLawsViz, EvolutionTimelineViz, HardwareEvolutionViz, TrainingPipelineViz, TokenEvolutionViz, AttentionEvolutionViz, OpensourceMapViz, TrendsRadarViz, ConceptMapViz };

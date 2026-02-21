@@ -17,6 +17,12 @@ const WEEKS = [
         highlight: "Eğitim = bu kaydırıcıları (w₁, w₂, b) veriye göre OTOMATİK ayarlama. GPT'de 3,648 tane var!"
       },
       {
+        title: { tr: "🎨 Ağırlıklar Ne Görüyor? — Piksel Grid Keşfi", en: "🎨 What Do Weights See? — Pixel Grid Explorer" },
+        viz: "weightPixelGrid",
+        content: "Her nöron girdide bir PATTERN arar. Ağırlıkları 28×28 piksel ızgarası olarak gösterdiğimizde nöronun ne 'gördüğünü' anlayabiliriz. Mavi piksel = 'bunu istiyorum', kırmızı = 'bunu istemiyorum'. 3Blue1Brown'un ünlü görselleştirmesi.",
+        highlight: "Bir nöronun 'görüşü' = ağırlık matrisi. Eğitim bu matrisi otomatik şekillendirir — el ile 13,000 ağırlık ayarlamak imkansız!"
+      },
+      {
         title: { tr: "Ön Bilgi: Dil Modeli Nedir?", en: "Background: What is a Language Model?" },
         viz: "langModelConcept",
         content: "Dil modeli = 'sonraki token ne olabilir?' sorusuna cevap veren olasılık makinesi. 3 sekmeyi keşfedin: 🎲 Autoregressive Üretim'de 'emma' isminin harf harf nasıl üretildiğini izleyin. 📱 Telefon Analojisi'nde harf yazarak autocomplete'in GPT ile aynı mantıkta çalıştığını görün. 📚 'emma' Eğitimi'nde her harf çiftinin olasılığını eğitim öncesi/sonrası karşılaştırın.",
@@ -396,10 +402,22 @@ x = [a+b for a,b in zip(x, x_res)]   # +residual`,
         highlight: "~%40 nöron 'ölü' kalır (sparse = iyi!)"
       },
       {
+        title: "MLP = Bilgi Deposu — Transformer Nasıl Hatırlıyor?",
+        viz: "mlpFactStorage",
+        content: "Attention 'hangi tokena bak' der, MLP 'ne bilgi üret' der. W₁ satırları anahtar pattern, W₂ sütunları değer. ReLU kapı görevi görür. 3Blue1Brown Ch7'nin temel keşfi.",
+        highlight: "MLP ≈ dev bir sözlük. Eğitim sırasında milyarlarca key-value çifti implicitly öğrenilir. 'Fransa başkenti' → 'Paris' gibi."
+      },
+      {
         title: "Ön Bilgi: Aktivasyon Fonksiyonu Neden Gerekli?",
         viz: "activation",
         content: "Aktivasyon olmadan derin ağ = tek matris çarpımı (W₃×W₂×W₁×x = W×x). Non-linearity her katmana farklı karar sınırı öğretir.",
         highlight: "Aktivasyon = non-linearity. Onsuz derin ağ = basit matris çarpımı. Tüm güç buradan gelir."
+      },
+      {
+        title: "Sigmoid → ReLU → GELU Evrimi",
+        viz: "sigmoidVsRelu",
+        content: "Sigmoid her değeri 0-1 arasına sıkıştırır ama uçlarda gradient ≈ 0 → öğrenme durur! ReLU basit ve hızlı ama x<0'da 'ölü nöron'. GELU ve ReLU² modern alternatifleri. microGPT ReLU² kullanır.",
+        highlight: "3Blue1Brown sigmoid'i 'squishification' olarak adlandırır — 1990'larda standart olan bu fonksiyon yerini ReLU'ya bıraktı. Neden? Vanishing gradient!"
       },
       {
         title: "Residual Bağlantılar — Gradient Highway",
