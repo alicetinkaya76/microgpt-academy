@@ -337,6 +337,7 @@ const QS_EN = [
 ];
 
 function Quiz({ lang, onComplete }) {
+  const QS = lang === "tr" ? QS_TR : QS_EN;
   const [cur, setCur] = useState(0);
   const [sel, setSel] = useState(null);
   const [score, setScore] = useState(0);
@@ -597,6 +598,7 @@ const BackpropLesson = () => {
   const [net] = useState(initNet);
   const result = useMemo(() => fwdPass(net, 1, 0), [net]);
   const [confetti, setConfetti] = useState(false);
+  const CHAPTERS = lang === "tr" ? CH_TR : CH_EN;
   const ch = CHAPTERS[step];
 
   const onConverge = () => { setConfetti(true); setTimeout(() => setConfetti(false), 3000); };
