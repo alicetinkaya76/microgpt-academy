@@ -563,15 +563,15 @@ function Quiz({ lang, onComplete }) {
 function Body({ step, lang, onConverge }) {
   switch (step) {
     case 0: return <>
-      <S emoji="🗺️" color={P.indigo} text={t(
+      <S emoji="🗺️" color={P.indigo} text={L(
         "Bir şehirde kaybolduğunu düşün. Konumun bir vektör: [sokak, cadde]. Yönün bir ok. Haritadaki her yer bir koordinat — işte lineer cebir budur!",
         "Imagine being lost in a city. Your location is a vector: [street, avenue]. Your direction is an arrow. Every spot on the map is a coordinate — that's linear algebra!"
       , lang)} />
-      <S emoji="🧠" color={P.teal} delay={0.1} text={t(
+      <S emoji="🧠" color={P.teal} delay={0.1} text={L(
         "GPT'nin her kelimesi bir vektör (16 veya 4096 boyutlu). Attention, embedding, MLP — hepsi matris çarpımı. Bu ders olmadan GPT anlaşılmaz!",
         "Every word in GPT is a vector (16 or 4096 dimensions). Attention, embedding, MLP — all matrix multiplications. Can't understand GPT without this!"
       , lang)} />
-      <S emoji="🎯" color={P.violet} delay={0.2} text={t(
+      <S emoji="🎯" color={P.violet} delay={0.2} text={L(
         "Bu derste öğreneceklerin: vektör, dot product (benzerlik), matris çarpımı (dönüşüm), transpoz. Hepsi interaktif!",
         "What you'll learn: vectors, dot product (similarity), matrix multiplication (transformation), transpose. All interactive!"
       , lang)} />
@@ -597,11 +597,11 @@ function Body({ step, lang, onConverge }) {
     case 1: return <VectorPlayground lang={lang} />;
     case 2: return <DotProductViz lang={lang} />;
     case 3: return <>
-      <S emoji="🔢" color={P.blue} text={t(
+      <S emoji="🔢" color={P.blue} text={L(
         "Matris = sayı tablosu. 2×3 matris = 2 satır, 3 sütun. GPT'de embedding tablosu (27×16) bir matristir!",
         "Matrix = number table. 2×3 matrix = 2 rows, 3 columns. In GPT, embedding table (27×16) is a matrix!"
       , lang)} />
-      <S emoji="🏗️" color={P.pink} delay={0.1} text={t(
+      <S emoji="🏗️" color={P.pink} delay={0.1} text={L(
         "Matris × vektör = dönüşüm. Her satır bir dot product yapar. Sonuç: yeni bir vektör. Bu, GPT'deki her katmanın yaptığı şey!",
         "Matrix × vector = transformation. Each row does a dot product. Result: a new vector. This is what every GPT layer does!"
       , lang)} />
