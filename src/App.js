@@ -33,10 +33,10 @@ import { WhyBox, BridgeBox, AnalogyBox, ConcreteBox, TryItTokenizer, TryItSoftma
 import { QuizWidget, MistakesList, ComparisonTableWidget, ResourceLinks, GlossaryPanel, ProgressSidebar } from './lectures/microgpt/components/LearningWidgets';
 
 // ─── Admin Panel ─────────────────────────────────────────────────
-
-// ─── Prereq Lessons ──────────────────────────────────────────────
-const BackpropLesson = React.lazy(() => import('./lectures/microgpt/components/BackpropLesson'));
 import AdminPanel from './admin/AdminPanel';
+
+// ─── Prereq Lessons (lazy-loaded) ────────────────────────────────
+const BackpropLesson = React.lazy(() => import('./lectures/microgpt/components/BackpropLesson'));
 
 // ─── COURSE REGISTRY ─────────────────────────────────────────────
 // To add a new course: import its data and add to COURSES array
