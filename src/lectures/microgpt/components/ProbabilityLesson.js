@@ -315,7 +315,7 @@ function CrossEntropyLab({lang}){
 function FullLab({lang}){
   const[logits,setLogits]=useState([2.5,1.0,0.3,-0.5,-1.5]);
   const[temp,setTemp]=useState(1.0);
-  const[samples,setSamples]=useState([]);const ci=0;
+  const[trainSteps,setTrainSteps]=useState(0);const ci=0;
   const toks=["a","b","c","d","e"];const cols=[P.indigo,P.teal,P.violet,P.blue,P.pink];
   const sc=logits.map(l=>l/temp);const mx=Math.max(...sc);
   const ex=sc.map(l=>Math.exp(l-mx));const sm=ex.reduce((a,b)=>a+b,0);
