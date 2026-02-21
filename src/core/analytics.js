@@ -1,5 +1,5 @@
 // ─── Google Analytics & Event Tracking ─────────────────────────
-const GA_ID = 'G-XXXXXXXXXX'; // Replace with your GA4 Measurement ID
+const GA_ID = 'G-GDKEZ570W6'; // MicroGPT Academy GA4
 
 export const initGA = (id = GA_ID) => {
   if (typeof window === 'undefined' || window.__GA_INIT) return;
