@@ -53,7 +53,12 @@ function DiceExplorer({lang}){
         <button onClick={()=>setRolls([])} style={{padding:"8px 12px",borderRadius:8,border:`1px solid ${P.border}`,background:"transparent",color:P.muted,fontSize: 14,cursor:"pointer"}}>↺</button>
       </div>
     </div>
-    <div style={{display:"flex",alignItems:"flex-end",gap:4,height:80,padding:"0 8px"}}>
+    {/* Reference line */}
+    {rolls.length>10 && <div style={{fontSize:12,color:P.amber,textAlign:"center",marginBottom:2}}>
+      {L("Beklenen: her yüz ≈ ","Expected: each face ≈ ",lang)}<strong>16.7%</strong>
+    </div>}
+    <div style={{display:"flex",alignItems:"flex-end",gap:4,height:80,padding:"0 8px",position:"relative"}}>
+      {rolls.length>10 && <div style={{position:"absolute",left:0,right:0,bottom:`${(16.7/Math.max(...counts.map(c=>c/total*100),16.7))*50}px`,height:1,background:P.amber+"60",borderRadius:1,zIndex:1}}/>}
       {counts.map((c,i)=><div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:2}}>
         <span style={{color:P.teal,fontSize: 11,fontWeight:700,fontFamily:"'JetBrains Mono',monospace"}}>{rolls.length>0?`${((c/total)*100).toFixed(0)}%`:"—"}</span>
         <div style={{width:"100%",borderRadius:"4px 4px 0 0",height:`${(c/maxC)*50}px`,minHeight:2,background:`linear-gradient(180deg,${P.teal},${P.teal}60)`,transition:"height 0.3s"}}/>
@@ -104,6 +109,7 @@ function DistributionViz({lang}){
 function SoftmaxExplorer({lang}){
   const[logits,setLogits]=useState([2.0,1.0,0.5,-0.5,-1.0]);
   const[temp,setTemp]=useState(1.0);
+  const[samples,setSamples]=useState([]);
   const toks=["a","b","c","d","e"];
   const cols=[P.indigo,P.teal,P.violet,P.blue,P.pink];
   const sc=logits.map(l=>l/temp);const mx=Math.max(...sc);
@@ -155,25 +161,27 @@ function SoftmaxExplorer({lang}){
       <div style={{marginTop:8,background:P.card,borderRadius:10,border:`1px solid ${P.border}`,padding:"10px 12px"}}>
         <div style={{color:P.dim,fontSize:10,fontWeight:700,letterSpacing:1.5,marginBottom:6}}>{L("TOKEN ÖRNEKLEME","TOKEN SAMPLING",lang)}</div>
         <div style={{fontSize:13,color:P.muted,marginBottom:6,lineHeight:1.6}}>
-          {L("Bu dağılımdan 20 token sample et — temperature ne kadar yüksekse sonuçlar o kadar çeşitli!","Sample 20 tokens from this distribution — higher temperature = more variety!",lang)}
+          {L("Butona bas ve bu dağılımdan 20 token örnekle!","Press the button to sample 20 tokens from this distribution!",lang)}
         </div>
-        {(()=>{
-          const samples=Array.from({length:20},()=>{
-            const r=Math.random();let cum=0;
-            for(let i=0;i<pr.length;i++){cum+=pr[i];if(r<cum)return toks[i];}
-            return toks[toks.length-1];
-          });
-          return <div style={{display:"flex",flexWrap:"wrap",gap:3}}>
-            {samples.map((s,i)=>{
-              const idx=toks.indexOf(s);
-              return <span key={i} style={{
-                padding:"3px 8px",borderRadius:6,fontSize:13,fontWeight:700,
-                background:cols[idx]+"15",color:cols[idx],border:`1px solid ${cols[idx]}25`,
-                fontFamily:"'JetBrains Mono',monospace",animation:`fadeSlideIn 0.2s ${i*0.03}s both`
-              }}>{s}</span>;
-            })}
-          </div>;
-        })()}
+        <button onClick={()=>setSamples(Array.from({length:20},()=>{
+          const r=Math.random();let cum=0;
+          for(let i=0;i<pr.length;i++){cum+=pr[i];if(r<cum)return toks[i];}
+          return toks[toks.length-1];
+        }))} style={{
+          width:"100%",padding:"7px",borderRadius:8,border:"none",marginBottom:6,
+          background:`linear-gradient(135deg,${P.blue}80,${P.blue})`,
+          color:"#fff",fontSize:13,fontWeight:700,cursor:"pointer"
+        }}>{L("🎲 Örnekle!","🎲 Sample!",lang)}</button>
+        {samples.length>0 && <div style={{display:"flex",flexWrap:"wrap",gap:3}}>
+          {samples.map((s,i)=>{
+            const idx=toks.indexOf(s);
+            return <span key={i} style={{
+              padding:"3px 8px",borderRadius:6,fontSize:13,fontWeight:700,
+              background:cols[idx]+"15",color:cols[idx],border:`1px solid ${cols[idx]}25`,
+              fontFamily:"'JetBrains Mono',monospace",animation:`fadeSlideIn 0.2s ${i*0.03}s both`
+            }}>{s}</span>;
+          })}
+        </div>}
     </div>
   </div>;
 }
@@ -183,6 +191,8 @@ function EntropyViz({lang}){
   const[mode,setMode]=useState("uniform");
   const presets={uniform:[0.2,0.2,0.2,0.2,0.2],peaked:[0.01,0.01,0.01,0.01,0.96],medium:[0.05,0.1,0.15,0.3,0.4]};
   const[probs,setProbs]=useState(presets.uniform);
+  const[customMode,setCustomMode]=useState(false);
+  const adjEnt=(idx,val)=>{const n=[...probs];n[idx]=val;const s=n.reduce((a,b)=>a+b,0);if(s>0)setProbs(n.map(p=>p/s));};
   const toks=["a","b","c","d","e"];const cols=[P.indigo,P.teal,P.violet,P.blue,P.pink];
   const H=-probs.reduce((s,p)=>s+(p>0.001?p*Math.log2(p):0),0);const maxH=Math.log2(5);
   return <div>
@@ -194,6 +204,17 @@ function EntropyViz({lang}){
         <button key={k} onClick={()=>{setMode(k);setProbs(presets[k]);}} style={{flex:1,padding:"6px 8px",borderRadius:8,fontSize: 13,fontWeight:700,border:`1px solid ${mode===k?P.pink+"50":P.border}`,background:mode===k?P.pink+"12":P.card,color:mode===k?P.pink:P.muted,cursor:"pointer"}}>{l}</button>
       )}
     </div>
+    <button onClick={()=>setCustomMode(!customMode)} style={{
+      width:"100%",padding:"5px",borderRadius:6,border:`1px solid ${customMode?P.pink+"40":P.border}`,
+      background:customMode?P.pink+"08":"transparent",color:customMode?P.pink:P.muted,
+      fontSize:12,fontWeight:600,cursor:"pointer",marginBottom:6
+    }}>{customMode?L("✓ Özel Mod Aktif — kaydırıcılarla ayarla","✓ Custom Mode — drag sliders",lang):L("+ Özel Dağılım Oluştur","+ Create Custom Distribution",lang)}</button>
+    {customMode && <div style={{display:"flex",gap:4,marginBottom:6}}>
+      {probs.map((p,i)=><div key={i} style={{flex:1,textAlign:"center"}}>
+        <div style={{color:cols[i],fontSize:13,fontWeight:700}}>{toks[i]}</div>
+        <input type="range" min="0.01" max="1" step="0.01" value={p} onChange={e=>adjEnt(i,+e.target.value)} style={{width:"90%"}}/>
+      </div>)}
+    </div>}
     <div style={{display:"flex",alignItems:"flex-end",gap:6,height:90,padding:"0 10px"}}>
       {probs.map((p,i)=><div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:2}}>
         <span style={{color:cols[i],fontSize: 11,fontWeight:700,fontFamily:"'JetBrains Mono',monospace"}}>{(p*100).toFixed(0)}%</span>
@@ -244,7 +265,9 @@ function CrossEntropyLab({lang}){
   const[mp,setMp]=useState(0.5);
   const loss=-Math.log(Math.max(0.001,mp));
   const toks=["a","b","c","d","e"];const ci=2;
-  const pr=[0.1,0.1,0.5,0.2,0.1];const cols=[P.indigo,P.teal,P.violet,P.blue,P.pink];
+  const[ceProbs,setCeProbs]=useState([0.1,0.1,0.5,0.2,0.1]);
+  const pr=ceProbs;const cols=[P.indigo,P.teal,P.violet,P.blue,P.pink];
+  const adjCe=(idx,val)=>{const n=[...ceProbs];n[idx]=val;const s=n.reduce((a,b)=>a+b,0);if(s>0)setCeProbs(n.map(p=>p/s));};
   const ce=-Math.log(Math.max(0.001,pr[ci]));
   return <div>
     <div style={{fontSize: 16,color:P.text,marginBottom:10,lineHeight:1.7}}>
@@ -274,6 +297,7 @@ function CrossEntropyLab({lang}){
       <div style={{display:"flex",gap:4}}>
         {toks.map((tok,i)=><div key={tok} style={{flex:1,textAlign:"center",padding:"6px 2px",borderRadius:8,background:i===ci?P.emerald+"12":P.card,border:`1px solid ${i===ci?P.emerald+"40":P.border}`}}>
           <div style={{color:i===ci?P.emerald:cols[i],fontSize: 15,fontWeight:800}}>{tok}</div>
+          <input type="range" min="0.01" max="1" step="0.01" value={pr[i]} onChange={e=>adjCe(i,+e.target.value)} style={{width:"90%",margin:"2px 0"}}/>
           <div style={{color:P.muted,fontSize: 11,fontFamily:"'JetBrains Mono',monospace"}}>{(pr[i]*100).toFixed(0)}%</div>
         </div>)}
       </div>
@@ -290,7 +314,8 @@ function CrossEntropyLab({lang}){
 /* ═══ Full Lab ═══ */
 function FullLab({lang}){
   const[logits,setLogits]=useState([2.5,1.0,0.3,-0.5,-1.5]);
-  const[temp,setTemp]=useState(1.0);const ci=0;
+  const[temp,setTemp]=useState(1.0);
+  const[samples,setSamples]=useState([]);const ci=0;
   const toks=["a","b","c","d","e"];const cols=[P.indigo,P.teal,P.violet,P.blue,P.pink];
   const sc=logits.map(l=>l/temp);const mx=Math.max(...sc);
   const ex=sc.map(l=>Math.exp(l-mx));const sm=ex.reduce((a,b)=>a+b,0);
@@ -333,18 +358,32 @@ function FullLab({lang}){
       </div>
       {/* Auto-train button */}
       <div style={{marginTop:8,background:P.card,borderRadius:10,border:`1px solid ${P.border}`,padding:"10px 12px",textAlign:"center"}}>
+        <div style={{display:"flex",gap:6}}>
         <button onClick={()=>{
           const n=[...logits];
           n[ci]+=0.3;
           for(let i=0;i<n.length;i++){if(i!==ci)n[i]-=0.1;}
-          setLogits(n);
+          setLogits(n);setTrainSteps(t=>t+1);
         }} style={{
           padding:"8px 20px",borderRadius:8,border:"none",
           background:`linear-gradient(135deg,${P.emerald}90,${P.emerald})`,
           color:"#fff",fontSize:14,fontWeight:700,cursor:"pointer"
-        }}>{L("🧠 1 Eğitim Adımı Simüle Et","🧠 Simulate 1 Training Step",lang)}</button>
-        <div style={{fontSize:12,color:P.muted,marginTop:6}}>
-          {L("Her tıklamada: doğru token logit'i ↑, diğerleri ↓","Each click: correct token logit ↑, others ↓",lang)}
+        }}>{L("🧠 1 Adım","🧠 1 Step",lang)}</button>
+          <button onClick={()=>{
+            let lg=[...logits];
+            for(let s=0;s<10;s++){lg[ci]+=0.3;for(let i=0;i<lg.length;i++){if(i!==ci)lg[i]-=0.1;}}
+            setLogits(lg);setTrainSteps(t=>t+10);
+          }} style={{
+            padding:"8px 16px",borderRadius:8,border:"none",
+            background:`linear-gradient(135deg,${P.teal}90,${P.teal})`,
+            color:"#fff",fontSize:14,fontWeight:700,cursor:"pointer"
+          }}>{L("🚀 ×10 Adım","🚀 ×10 Steps",lang)}</button>
+        </div>
+        {trainSteps>0 && <div style={{fontSize:13,color:P.amber,fontWeight:700,textAlign:"center",marginTop:4}}>
+          {L("Toplam adım","Total steps",lang)}: {trainSteps} — Loss: {(-Math.log(Math.max(0.001,pr[ci]))).toFixed(3)}
+        </div>}
+        <div style={{fontSize:12,color:P.muted,marginTop:4}}>
+          {L("Her adımda: doğru token logit'i ↑, diğerleri ↓","Each step: correct token logit ↑, others ↓",lang)}
         </div>
     </div>
   </div>;
@@ -358,6 +397,7 @@ const QS_TR=[
   {q:"Entropi H=0 ne anlama gelir?",o:["Tam belirsizlik","Hiçbir şey bilmiyor","Sıfır hata","Tamamen emin (%100 tek sonuç)"],a:3,e:"H=0 = tek olayın olasılığı 1, diğerleri 0."},
   {q:"-log(0.5) kaçtır?",o:["0.5","0.69","1.0","2.0"],a:1,e:"-log(0.5)=0.693. Doğal logaritma (ln) kullanılır."},
   {q:"Rastgele model (27 token) loss kaç?",o:["0","1.0","3.30","27"],a:2,e:"-log(1/27)=log(27)≈3.30."},
+  {q:"Temperature=0.1 ile T=2.0 arasındaki fark ne?",o:["Aynı dağılım","Düşük T daha düz","Düşük T daha sivri","Yüksek T daha sivri"],a:2,e:"Düşük temperature = daha sivri dağılım (greedy'ye yakın). Yüksek T = daha düz (rastgeleye yakın)."},
 ];
 const QS_EN=[
   {q:"P(A)+P(B)+... sums to?",o:["0","1","100","Varies"],a:1,e:"In a complete distribution, all probabilities sum to 1."},
@@ -366,6 +406,7 @@ const QS_EN=[
   {q:"Entropy H=0 means?",o:["Total uncertainty","Knows nothing","Zero error","Completely certain (100% one outcome)"],a:3,e:"H=0 = one event probability 1, others 0."},
   {q:"-log(0.5) equals?",o:["0.5","0.69","1.0","2.0"],a:1,e:"-log(0.5)=0.693. Natural log (ln)."},
   {q:"Loss for random model (27 tokens)?",o:["0","1.0","3.30","27"],a:2,e:"-log(1/27)=log(27)≈3.30."},
+  {q:"What is the difference between T=0.1 and T=2.0?",o:["Same distribution","Low T is flatter","Low T is sharper","High T is sharper"],a:2,e:"Low temperature = sharper distribution (near greedy). High T = flatter (near random)."},
 ];
 
 function Quiz({lang,onComplete}){
@@ -410,6 +451,24 @@ function Body({step,lang}){
       <S emoji="🌧️" color={P.indigo} text={L("Hava durumu tahminini düşün: 'Yarın yağmur yağma olasılığı %70.' Bu bir olasılık — tam emin değiliz ama bilgiye dayalı bir tahmin.","Think about weather forecasts: '70% chance of rain tomorrow.' This is a probability — not certain, but an informed prediction.",lang)}/>
       <S emoji="🤖" color={P.teal} delay={0.1} text={L("GPT de aynısını yapar: 'Sonraki token e olma olasılığı %40, m olma olasılığı %25...' Model her zaman bir olasılık dağılımı üretir.","GPT does the same: 'Next token e probability 40%, m probability 25%...' The model always produces a probability distribution.",lang)}/>
       <S emoji="📏" color={P.pink} delay={0.2} text={L("Peki modelin ne kadar 'iyi' olduğunu nasıl ölçeriz? Entropi ve cross-entropy ile! Bu ders, W5 Eğitim Döngüsü'nün temelini atıyor.","How do we measure how 'good' the model is? With entropy and cross-entropy! This lesson lays the foundation for W5 Training Loop.",lang)}/>
+      {/* microGPT Connection + Roadmap */}
+      <div style={{marginTop:10,padding:"12px",borderRadius:10,background:P.surface,border:`1px solid ${P.border}`}}>
+        <div style={{color:P.amber,fontSize:13,fontWeight:700,marginBottom:8}}>🔗 {L("microGPT'de Nerede Kullanılır?","Where Is This Used in microGPT?",lang)}</div>
+        {[
+          ["🎲",L("Olasılık","Probability",lang),L("Model çıktısı: 27 token üzerinde olasılık dağılımı","Model output: probability distribution over 27 tokens",lang),P.teal],
+          ["🔀","Softmax",L("Logitler → olasılıklar (F.softmax)","Logits → probabilities (F.softmax)",lang),P.blue],
+          ["📏",L("Entropi","Entropy",lang),L("Modelin belirsizliği — düşük = iyi","Model uncertainty — low = good",lang),P.pink],
+          ["🎯","Cross-Entropy",L("Eğitim loss fonksiyonu (F.cross_entropy)","Training loss function (F.cross_entropy)",lang),P.amber],
+        ].map(([icon,label,desc,color],i)=>(
+          <div key={i} style={{display:"flex",alignItems:"flex-start",gap:8,padding:"6px 0",borderBottom:i<3?`1px solid ${P.border}`:"none"}}>
+            <span style={{fontSize:15,width:24,textAlign:"center",flexShrink:0}}>{icon}</span>
+            <div>
+              <span style={{fontSize:13,color,fontWeight:700}}>{label}</span>
+              <div style={{fontSize:12,color:P.muted,marginTop:1}}>{desc}</div>
+            </div>
+          </div>
+        ))}
+      </div>
     </>;
     case 1:return <DiceExplorer lang={lang}/>;
     case 2:return <DistributionViz lang={lang}/>;

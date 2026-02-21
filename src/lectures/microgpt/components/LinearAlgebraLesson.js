@@ -91,6 +91,19 @@ function VectorPlayground({ lang }) {
         <text x={W - 8} y={H - 8} textAnchor="end" fill={P.dim} fontSize="8" fontFamily="'JetBrains Mono', monospace">
           |v| = {mag.toFixed(2)}
         </text>
+        {/* Second vector + sum (when addition mode active) */}
+        {showAdd && <>
+          <line x1={mid} y1={mid} x2={mid + v2[0] * scale} y2={mid - v2[1] * scale} stroke={P.pink} strokeWidth={2} strokeLinecap="round" />
+          <circle cx={mid + v2[0] * scale} cy={mid - v2[1] * scale} r={4} fill={P.pink} />
+          <text x={mid + v2[0] * scale + 8} y={mid - v2[1] * scale - 8} fill={P.pink} fontSize="10" fontWeight="700" fontFamily="'JetBrains Mono', monospace">b</text>
+          {/* Sum vector (dashed) */}
+          <line x1={mid} y1={mid} x2={mid + vSum[0] * scale} y2={mid - vSum[1] * scale} stroke={P.emerald} strokeWidth={2.5} strokeLinecap="round" strokeDasharray="6 3" />
+          <circle cx={mid + vSum[0] * scale} cy={mid - vSum[1] * scale} r={5} fill={P.emerald} />
+          <text x={mid + vSum[0] * scale + 8} y={mid - vSum[1] * scale - 8} fill={P.emerald} fontSize="10" fontWeight="700" fontFamily="'JetBrains Mono', monospace">a+b</text>
+          {/* Parallelogram helper lines */}
+          <line x1={mid + v[0] * scale} y1={mid - v[1] * scale} x2={mid + vSum[0] * scale} y2={mid - vSum[1] * scale} stroke={P.pink} strokeWidth={1} strokeDasharray="3 3" opacity={0.35} />
+          <line x1={mid + v2[0] * scale} y1={mid - v2[1] * scale} x2={mid + vSum[0] * scale} y2={mid - vSum[1] * scale} stroke={P.teal} strokeWidth={1} strokeDasharray="3 3" opacity={0.35} />
+        </>}
       </svg>
       <div style={{ display: "flex", gap: 12, marginTop: 8 }}>
         {[["x", 0, P.teal], ["y", 1, P.blue]].map(([label, idx, color]) => (
@@ -207,6 +220,37 @@ function DotProductViz({ lang }) {
         ))}
       </div>
 
+      {/* Mini Attention Heatmap */}
+      <div style={{ marginTop: 10, padding: "10px", borderRadius: 10, background: P.card, border: `1px solid ${P.border}` }}>
+        <div style={{ color: P.dim, fontSize: 10, fontWeight: 700, letterSpacing: 1.5, marginBottom: 6 }}>{L("ATTENTION HEATMAP SİMÜLASYONU","ATTENTION HEATMAP SIMULATION",lang)}</div>
+        <div style={{ fontSize: 13, color: P.muted, marginBottom: 8, lineHeight: 1.6 }}>
+          {L("Her hücre = Q·K dot product. Yüksek skor = güçlü dikkat.","Each cell = Q·K dot product. High score = strong attention.",lang)}
+        </div>
+        {(() => {
+          const tks = ["I","love","GPT"];
+          const vecs = [[2,1],[1,3],[3,2]];
+          const dots = vecs.map(q => vecs.map(k => q[0]*k[0]+q[1]*k[1]));
+          const maxD = Math.max(...dots.flat());
+          return <div style={{ display: "inline-block" }}>
+            <div style={{ display: "flex", gap: 2, marginLeft: 46 }}>
+              {tks.map((tk,i) => <div key={i} style={{ width: 48, textAlign: "center", fontSize: 12, color: P.blue, fontWeight: 700 }}>{tk}</div>)}
+            </div>
+            {tks.map((qt,qi) => <div key={qi} style={{ display: "flex", alignItems: "center", gap: 2, marginBottom: 2 }}>
+              <div style={{ width: 44, textAlign: "right", fontSize: 12, color: P.teal, fontWeight: 700, paddingRight: 4 }}>{qt}</div>
+              {dots[qi].map((d,ki) => {
+                const intensity = d / maxD;
+                return <div key={ki} style={{
+                  width: 48, height: 34, borderRadius: 5, display: "flex", alignItems: "center", justifyContent: "center",
+                  background: `rgba(129,140,248,${intensity * 0.6})`, border: `1px solid rgba(129,140,248,${intensity * 0.3})`,
+                  fontSize: 13, fontWeight: 700, color: intensity > 0.6 ? P.white : P.muted,
+                  fontFamily: "'JetBrains Mono', monospace", transition: "all 0.3s",
+                }}>{d}</div>;
+              })}
+            </div>)}
+          </div>;
+        })()}
+      </div>
+
       <div style={{ marginTop: 8, padding: "8px 10px", borderRadius: 8, background: P.violet + "08", border: `1px solid ${P.violet}15`, fontSize: 14, color: P.muted, lineHeight: 1.6 }}>
         💡 a·b = ({a[0]}×{b[0]}) + ({a[1]}×{b[1]}) = <strong style={{ color: P.white }}>{dot.toFixed(1)}</strong>
         {" "}{L("— Attention'da Q·K tam olarak bunu yapar!", "— This is exactly what Q·K does in Attention!", lang)}
@@ -219,7 +263,13 @@ function DotProductViz({ lang }) {
    MATRIX MULTIPLY VISUALIZER
    ═══════════════════════════════════════════ */
 function MatMulViz({ lang }) {
-  const [A] = useState([[2, 0], [1, 3]]);
+  const matPresets = [
+    { name: L("Ölçekleme","Scale",lang), m: [[2, 0], [0, 2]] },
+    { name: L("Döndürme","Rotation",lang), m: [[0, -1], [1, 0]] },
+    { name: L("Özel","Custom",lang), m: [[2, 0], [1, 3]] },
+    { name: "Attention", m: [[1, 1], [1, 0]] },
+  ];
+  const [A, setA] = useState([[2, 0], [1, 3]]);
   const [x, setX] = useState([1, 1]);
   const result = [A[0][0] * x[0] + A[0][1] * x[1], A[1][0] * x[0] + A[1][1] * x[1]];
   const [highlightRow, setHighlightRow] = useState(-1);
@@ -228,6 +278,18 @@ function MatMulViz({ lang }) {
     <div>
       <div style={{ fontSize: 16, color: P.text, marginBottom: 10, lineHeight: 1.8 }}>
         <strong style={{ color: P.pink }}>{L("Matris × vektör", "Matrix × vector", lang)}</strong> = {L("vektörü dönüştürme. Her satır bir dot product!", "transforming a vector. Each row is a dot product!", lang)}
+      </div>
+      {/* Matrix presets */}
+      <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 8 }}>
+        {matPresets.map((p, i) => {
+          const active = JSON.stringify(A) === JSON.stringify(p.m);
+          return <button key={i} onClick={() => setA(p.m)} style={{
+            padding: "4px 10px", borderRadius: 7, fontSize: 12, fontWeight: 600,
+            border: `1px solid ${active ? P.pink + "50" : P.border}`,
+            background: active ? P.pink + "12" : P.card,
+            color: active ? P.pink : P.muted, cursor: "pointer",
+          }}>{p.name}</button>;
+        })}
       </div>
 
       {/* Visual matrix multiplication */}
@@ -312,6 +374,12 @@ function TransposeViz({ lang }) {
   const [M, setM] = useState([[1, 2, 3], [4, 5, 6]]);
   const T = M[0].map((_, j) => M.map(row => row[j]));
   const [hovCell, setHovCell] = useState(null);
+  const randomize = () => {
+    const sizes = [[2,3],[3,2],[2,2],[3,3]];
+    const [r,cols] = sizes[Math.floor(Math.random()*sizes.length)];
+    setM(Array.from({length:r},()=>Array.from({length:cols},()=>Math.floor(Math.random()*9)+1)));
+    setHovCell(null);
+  };
 
   const Cell = ({ val, r, c, isT, highlighted }) => (
     <div
@@ -333,6 +401,11 @@ function TransposeViz({ lang }) {
       <div style={{ fontSize: 16, color: P.text, marginBottom: 10, lineHeight: 1.8 }}>
         <strong style={{ color: P.amber }}>{L("Transpoz", "Transpose", lang)}</strong> (Aᵀ): {L("satır ↔ sütun değiştirir. Attention'da Kᵀ için kullanılır.", "swaps rows ↔ columns. Used for Kᵀ in Attention.", lang)}
       </div>
+
+      <button onClick={randomize} style={{
+        marginBottom: 8, padding: "6px 14px", borderRadius: 8, border: `1px solid ${P.amber}30`,
+        background: P.amber + "08", color: P.amber, fontSize: 13, fontWeight: 600, cursor: "pointer",
+      }}>{L("🔀 Rastgele Matris","🔀 Random Matrix",lang)}</button>
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, flexWrap: "wrap" }}>
         {/* Original */}
@@ -458,6 +531,7 @@ const QS_TR = [
   { q: "2×3 matris ile 3×1 vektör çarpımının boyutu ne?", o: ["3×3", "2×1", "2×3", "3×1"], a: 1, e: "(2×3) × (3×1) = (2×1). İç boyutlar (3) eşleşmeli, dış boyutlar (2,1) sonuç." },
   { q: "Transpoz işlemi ne yapar?", o: ["Matrisi siler", "Satır↔sütun değiştirir", "Değerleri sıfırlar", "Matrisi büyütür"], a: 1, e: "Aᵀ[i][j] = A[j][i]. Satırlar sütun olur, sütunlar satır." },
   { q: "Attention'da Q·Kᵀ ne hesaplar?", o: ["Toplam parametre", "Token benzerlik skorları", "Loss değeri", "Gradient"], a: 1, e: "Q·Kᵀ her token çifti arasındaki benzerliği (uyum skoru) hesaplar." },
+  { q: "27 tokenlik bir model için embedding boyutu 16 ise, toplam embedding parametresi kaç?", o: ["27", "16", "432", "43"], a: 2, e: "27 token × 16 boyut = 432 parametre. Bu wte tablosudur." },
 ];
 const QS_EN = [
   { q: "What is the magnitude of vector [3, 4]?", o: ["7", "5", "12", "3.5"], a: 1, e: "√(3²+4²) = √(9+16) = √25 = 5. Pythagorean theorem!" },
@@ -466,6 +540,7 @@ const QS_EN = [
   { q: "What's the size of a 2×3 matrix times a 3×1 vector?", o: ["3×3", "2×1", "2×3", "3×1"], a: 1, e: "(2×3) × (3×1) = (2×1). Inner dims (3) must match, outer dims (2,1) give result." },
   { q: "What does transpose do?", o: ["Deletes matrix", "Swaps rows↔columns", "Zeros values", "Enlarges matrix"], a: 1, e: "Aᵀ[i][j] = A[j][i]. Rows become columns, columns become rows." },
   { q: "What does Q·Kᵀ compute in Attention?", o: ["Total parameters", "Token similarity scores", "Loss value", "Gradient"], a: 1, e: "Q·Kᵀ computes similarity (compatibility score) between every token pair." },
+  { q: "For a 27-token model with embedding dim 16, how many embedding parameters?", o: ["27", "16", "432", "43"], a: 2, e: "27 tokens × 16 dims = 432 parameters. This is the wte table." },
 ];
 
 function Quiz({ lang, onComplete }) {

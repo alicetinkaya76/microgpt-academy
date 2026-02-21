@@ -238,11 +238,21 @@ function WeightLab({ lang, onConverge }) {
   const Spark = () => {
     if (errors.length < 2) return null;
     const max = Math.max(...errors, 0.01);
-    const w = 200, h = 32;
-    const pts = errors.map((v, i) => `${(i / (errors.length - 1)) * w},${3 + (1 - v / max) * (h - 6)}`).join(" ");
-    return <svg viewBox={`0 0 ${w} ${h}`} style={{ width: "100%", maxWidth: w, display: "block", marginTop: 4 }}>
-      <polyline points={pts} fill="none" stroke={P.pink} strokeWidth="1.5" strokeLinecap="round" />
-    </svg>;
+    const w = 200, h = 60;
+    const pts = errors.map((v, i) => `${(i / (errors.length - 1)) * w},${4 + (1 - v / max) * (h - 8)}`).join(" ");
+    return <div style={{ marginTop: 6, background: P.card, borderRadius: 8, border: `1px solid ${P.border}`, padding: "6px 8px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+        <span style={{ color: P.dim, fontSize: 10, fontWeight: 700, letterSpacing: 1 }}>{L("LOSS GRAFİĞİ","LOSS GRAPH",lang)}</span>
+        <span style={{ color: P.pink, fontSize: 12, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>{errors[errors.length-1]?.toFixed(4)}</span>
+      </div>
+      <svg viewBox={`0 0 ${w} ${h}`} style={{ width: "100%", maxWidth: w, display: "block" }}>
+        <line x1={0} y1={h/2} x2={w} y2={h/2} stroke={P.border} strokeWidth="0.5" strokeDasharray="3 3" />
+        <polyline points={pts} fill="none" stroke={P.pink} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        {errors.length > 0 && <circle cx={w} cy={4 + (1 - errors[errors.length-1] / max) * (h - 8)} r="3" fill={P.pink} />}
+        <text x="2" y="10" fill={P.dim} fontSize="7" fontFamily="'JetBrains Mono', monospace">{max.toFixed(2)}</text>
+        <text x="2" y={h-2} fill={P.dim} fontSize="7" fontFamily="'JetBrains Mono', monospace">0</text>
+      </svg>
+    </div>;
   };
 
   return (
@@ -327,6 +337,7 @@ const QS_TR = [
   { q: "Öğrenme oranı (η) çok büyükse?", o: ["Daha iyi öğrenir", "Hedefi atlar, sallanır", "Değişmez", "Ağ sıfırlanır"], a: 1, e: "Çok büyük adım = hedefi atlarsın!" },
   { q: "Ağırlıklar neden rastgele başlar?", o: ["Hız için", "Farklılaşma için", "Gelenek", "Fark etmez"], a: 1, e: "Hepsi aynı başlarsa hiçbir zaman farklılaşamaz!" },
   { q: "Yakınsama ne demek?", o: ["1 epoch bitmiş", "Hata yeterince küçülmüş", "Ağırlıklar sıfır", "Süre dolmuş"], a: 1, e: "Hata artık anlamlı şekilde düşmüyor = öğrenme tamamlandı!" },
+  { q: "Zincir kuralı (chain rule) ne için kullanılır?", o: ["Veri yüklemek", "Her katmanın hataya katkısını hesaplamak", "Ağırlıkları sıfırlamak", "Sigmoid hesaplamak"], a: 1, e: "Zincir kuralı: ∂L/∂w = ∂L/∂o × ∂o/∂h × ∂h/∂w. Her katmanın 'payını' hesaplar." },
 ];
 const QS_EN = [
   { q: "In backpropagation, which direction does the error flow?", o: ["Input to output", "Output to input", "Random", "Nowhere"], a: 1, e: "Error propagates backward from output \u2014 hence 'backpropagation'!" },
@@ -334,6 +345,7 @@ const QS_EN = [
   { q: "What if learning rate (\u03b7) is too large?", o: ["Learns better", "Overshoots, oscillates", "No change", "Network resets"], a: 1, e: "Too large step = you overshoot the target!" },
   { q: "Why do weights start random?", o: ["Speed", "Differentiation", "Tradition", "Doesn't matter"], a: 1, e: "If all start the same, they never learn different things!" },
   { q: "What does convergence mean?", o: ["1 epoch done", "Error small enough", "Weights are zero", "Time's up"], a: 1, e: "Error no longer decreasing significantly = learning complete!" },
+  { q: "What is the chain rule used for?", o: ["Load data", "Compute each layer's error contribution", "Reset weights", "Compute sigmoid"], a: 1, e: "Chain rule: ∂L/∂w = ∂L/∂o × ∂o/∂h × ∂h/∂w. Computes each layer's 'share' of the error." },
 ];
 
 function Quiz({ lang, onComplete }) {
@@ -556,6 +568,21 @@ function Body({ step, net, result, onConverge, lang }) {
           </div>
         ))}
       </div>
+
+      {/* Everyday backprop examples */}
+      <div style={{ marginTop: 10, padding: "10px 12px", borderRadius: 10, background: P.teal + "06", border: `1px solid ${P.teal}15` }}>
+        <div style={{ color: P.teal, fontSize: 13, fontWeight: 700, marginBottom: 6 }}>{L("Günlük Hayatta Backpropagation","Backpropagation in Everyday Life",lang)}</div>
+        {[
+          ["🏀", L("Basket: Atan kaçırdın → Kolun açısını düzelt → Tekrar at","Basketball: You missed → Adjust your arm angle → Shoot again",lang)],
+          ["🍳", L("Yemek: Tuzlu oldu → Daha az tuz koy → Tekrar dene","Cooking: Too salty → Add less salt → Try again",lang)],
+          ["📚", L("Sınav: Yanlış cevap → Konuyu tekrar çalış → Sonraki sınavda düzelt","Exam: Wrong answer → Study the topic → Fix it on next exam",lang)],
+        ].map(([icon,text],i) => (
+          <div key={i} style={{ display: "flex", gap: 8, padding: "5px 0", fontSize: 14, color: P.muted, lineHeight: 1.6 }}>
+            <span style={{ fontSize: 16 }}>{icon}</span>
+            <span>{text}</span>
+          </div>
+        ))}
+      </div>
     </>;
     case 1: return <>
       <S emoji="🎲" color={P.teal} text={L("İlk gün yeni bir okula gittin — hiçbir şey bilmiyorsun! Ağırlıkları rastgele küçük sayılarla başlatıyoruz.","First day at a new school — you know nothing! We initialize weights with small random numbers.",lang)} />
@@ -570,6 +597,36 @@ function Body({ step, net, result, onConverge, lang }) {
       </div>
     
       {/* GPT Connection */}
+      {/* Chain Rule Flow */}
+      <div style={{ marginTop: 8, padding: "12px", borderRadius: 10, background: P.card, border: `1px solid ${P.border}` }}>
+        <div style={{ color: P.dim, fontSize: 10, fontWeight: 700, letterSpacing: 1.5, marginBottom: 8 }}>{L("ZİNCİR KURALI AKIŞI","CHAIN RULE FLOW",lang)}</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 4, flexWrap: "wrap", justifyContent: "center" }}>
+          {[
+            [L("Loss","Loss",lang), P.pink],
+            ["→", P.dim],
+            [L("Çıktı","Output",lang), P.blue],
+            ["→", P.dim],
+            [L("Gizli","Hidden",lang), P.teal],
+            ["→", P.dim],
+            [L("Ağırlıklar","Weights",lang), P.amber],
+          ].map(([text,color],i) => (
+            <span key={i} style={{
+              padding: text === "→" ? "0 2px" : "6px 10px",
+              borderRadius: text === "→" ? 0 : 8,
+              background: text === "→" ? "transparent" : color + "12",
+              border: text === "→" ? "none" : `1px solid ${color}25`,
+              color, fontSize: text === "→" ? 18 : 13, fontWeight: 700,
+            }}>{text}</span>
+          ))}
+        </div>
+        <div style={{ textAlign: "center", marginTop: 8, fontSize: 14, color: P.violet, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace" }}>
+          ∂L/∂w = ∂L/∂o × ∂o/∂h × ∂h/∂w
+        </div>
+        <div style={{ textAlign: "center", fontSize: 12, color: P.muted, marginTop: 4 }}>
+          {L("Her çarpım bir katmanın katkısını temsil eder","Each multiplication represents one layer's contribution",lang)}
+        </div>
+      </div>
+
       <div style={{ marginTop: 8, padding: "10px 12px", borderRadius: 10, background: P.indigo + "06", border: "1px solid " + P.indigo + "15" }}>
         <div style={{ color: P.indigo, fontSize: 11, fontWeight: 700, marginBottom: 4 }}>🔗 {L("microGPT Bağlantısı","microGPT Connection",lang)}</div>
         <div style={{ fontSize: 14, color: P.muted, lineHeight: 1.8 }}>
@@ -661,6 +718,36 @@ function Body({ step, net, result, onConverge, lang }) {
       <S emoji="🕵️" color={P.violet} text={L("Dedektiflik zamanı! Hatayı çıkıştan geriye gönderiyoruz. Her bağlantıya 'Bu hatada senin payın ne kadar?' diye soruyoruz.","Detective time! We send error backward from output. We ask each connection: How much did you contribute to this error?",lang)} />
       <S emoji="⛓️" color={P.violet} delay={0.1} text={L("Çok katkı yapan bağlantılar daha çok düzeltilecek. Buna 'zincir kuralı' deniyor — hatayı parçalara ayırıp geriye yolluyoruz.","Connections that contributed more get corrected more. This is the chain rule — breaking error into parts and sending backward.",lang)} />
     
+      {/* Chain Rule Flow */}
+      <div style={{ marginTop: 8, padding: "12px", borderRadius: 10, background: P.card, border: `1px solid ${P.border}` }}>
+        <div style={{ color: P.dim, fontSize: 10, fontWeight: 700, letterSpacing: 1.5, marginBottom: 8 }}>{L("ZİNCİR KURALI AKIŞI","CHAIN RULE FLOW",lang)}</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 4, flexWrap: "wrap", justifyContent: "center" }}>
+          {[
+            [L("Loss","Loss",lang), P.pink],
+            ["→", P.dim],
+            [L("Çıktı","Output",lang), P.blue],
+            ["→", P.dim],
+            [L("Gizli","Hidden",lang), P.teal],
+            ["→", P.dim],
+            [L("Ağırlıklar","Weights",lang), P.amber],
+          ].map(([text,color],i) => (
+            <span key={i} style={{
+              padding: text === "→" ? "0 2px" : "6px 10px",
+              borderRadius: text === "→" ? 0 : 8,
+              background: text === "→" ? "transparent" : color + "12",
+              border: text === "→" ? "none" : `1px solid ${color}25`,
+              color, fontSize: text === "→" ? 18 : 13, fontWeight: 700,
+            }}>{text}</span>
+          ))}
+        </div>
+        <div style={{ textAlign: "center", marginTop: 8, fontSize: 14, color: P.violet, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace" }}>
+          ∂L/∂w = ∂L/∂o × ∂o/∂h × ∂h/∂w
+        </div>
+        <div style={{ textAlign: "center", fontSize: 12, color: P.muted, marginTop: 4 }}>
+          {L("Her çarpım bir katmanın katkısını temsil eder","Each multiplication represents one layer's contribution",lang)}
+        </div>
+      </div>
+
       <div style={{ marginTop: 8, padding: "10px 12px", borderRadius: 10, background: P.indigo + "06", border: "1px solid " + P.indigo + "15" }}>
         <div style={{ color: P.indigo, fontSize: 11, fontWeight: 700, marginBottom: 4 }}>🔗 {L("microGPT Bağlantısı","microGPT Connection",lang)}</div>
         <div style={{ fontSize: 14, color: P.muted, lineHeight: 1.8 }}>
