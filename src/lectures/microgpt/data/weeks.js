@@ -42,7 +42,7 @@ $ python3 microgpt.py
       },
       {
         title: { tr: "Ön Koşullar & Kurulum", en: "Prerequisites & Setup" },
-        content: "Tek gereksinim: Python 3.6+. pip install gerekmez — sadece os, math, random kullanılır.",
+        content: "Tek gereksinim: Python 3.6+. pip install gerekmez — sadece os, math, random kullanılır. Kurulum istemiyorsanız Google Colab'da tarayıcıdan çalıştırabilirsiniz!",
         code: `# Python kontrol:
 $ python3 --version  # 3.6+ yeterli
 
@@ -54,7 +54,7 @@ import random  # rastgele sayılar`,
       },
       {
         title: { tr: "Kodu İndirme & İlk Çalıştırma", en: "Download & First Run" },
-        content: "GitHub Gist'ten tek dosya indirin ve çalıştırın. Loss düşüyorsa her şey doğru!",
+        content: "GitHub Gist'ten tek dosya indirin ve çalıştırın. Ya da Google Colab'da sıfır kurulumla başlayın → Kaynaklar bölümündeki 🟠 Colab linkine tıklayın! Loss düşüyorsa her şey doğru!",
         code: `# İndir:
 $ curl -o microgpt.py https://gist.githubusercontent.com/karpathy/.../microgpt.py
 

@@ -131,8 +131,8 @@ const ComparisonTableWidget = ({ data }) => { const lang = useLang(); return (
 ); };
 
 const ResourceLinks = ({ resources }) => {
-  const typeIcons = { video: "🎬", blog: "📝", kod: "💻", docs: "📖", paper: "📄" };
-  const typeColors = { video: "#EF4444", blog: "#0EA5E9", kod: "#10B981", docs: "#8B5CF6", paper: "#F59E0B" };
+  const typeIcons = { video: "🎬", blog: "📝", kod: "💻", docs: "📖", paper: "📄", colab: "🟠" };
+  const typeColors = { video: "#EF4444", blog: "#0EA5E9", kod: "#10B981", docs: "#8B5CF6", paper: "#F59E0B", colab: "#F97316" };
   return (
     <div style={{ margin: "14px 0", padding: 16, borderRadius: 14, background: "rgba(139,92,246,0.04)", border: "1px solid rgba(139,92,246,0.12)" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
