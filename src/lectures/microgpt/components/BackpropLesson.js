@@ -538,6 +538,24 @@ function Body({ step, net, result, onConverge, lang }) {
       <S emoji="🏀" color={P.indigo} text={L("Basketbol oynamayı düşün. İlk atışta potayı tutturmak zor. Ama her seferinde topu nereye attığına bakıp kolunu düzeltirsin. 10. atışta çok daha iyisin!","Think about shooting hoops. Hard to score on your first try. But each time you adjust your aim. By the 10th shot, you are much better!",lang)} />
       <S emoji="🤖" color={P.teal} delay={0.1} text={L("Yapay zekâ da böyle öğreniyor: tahmin yap → hatana bak → kendini düzelt → tekrarla. Bu döngüye Backpropagation (geri yayılım) diyoruz.","AI learns the same way: predict → check error → correct → repeat. This cycle is called Backpropagation.",lang)} />
       <S emoji="🕸️" color={P.violet} delay={0.2} text={L("Yukarıdaki şekil bir yapay sinir ağı. Daireler 'nöron', çizgiler 'bağlantı'. Her bağlantının bir ağırlığı var — bilginin ne kadar güçlü geçeceğini belirliyor.","The diagram above is a neural network. Circles are neurons, lines are connections. Each connection has a weight — determining how strongly info flows.",lang)} />
+      {/* Learning roadmap */}
+      <div style={{ marginTop: 10, padding: "12px", borderRadius: 10, background: P.surface, border: `1px solid ${P.border}` }}>
+        <div style={{ color: P.amber, fontSize: 13, fontWeight: 700, marginBottom: 8 }}>🗺️ {L("Bu Derste Öğreneceklerin","What You Will Learn",lang)}</div>
+        {[
+          ["🎲", L("Rastgele başlanma","Random init",lang), P.teal],
+          ["🔮", "Sigmoid", P.violet],
+          ["➤", L("İleri yayılım","Forward pass",lang), P.blue],
+          ["🎯", L("Hata hesabı","Error calc",lang), P.pink],
+          ["⬅️", L("Geri yayılım","Backpropagation",lang), P.violet],
+          ["🔧", L("Ağırlık güncelleme","Weight update",lang), P.amber],
+        ].map(([icon,label,color],i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "5px 0", borderBottom: i < 5 ? `1px solid ${P.border}` : "none" }}>
+            <span style={{ fontSize: 15, width: 24, textAlign: "center" }}>{icon}</span>
+            <span style={{ fontSize: 13, color }}>{label}</span>
+            <span style={{ marginLeft: "auto", fontSize: 11, color: P.dim }}>{i + 2}/{9}</span>
+          </div>
+        ))}
+      </div>
     </>;
     case 1: return <>
       <S emoji="🎲" color={P.teal} text={L("İlk gün yeni bir okula gittin — hiçbir şey bilmiyorsun! Ağırlıkları rastgele küçük sayılarla başlatıyoruz.","First day at a new school — you know nothing! We initialize weights with small random numbers.",lang)} />
@@ -550,6 +568,32 @@ function Body({ step, net, result, onConverge, lang }) {
           </div>
         ))}
       </div>
+    
+      {/* GPT Connection */}
+      <div style={{ marginTop: 8, padding: "10px 12px", borderRadius: 10, background: P.indigo + "06", border: "1px solid " + P.indigo + "15" }}>
+        <div style={{ color: P.indigo, fontSize: 11, fontWeight: 700, marginBottom: 4 }}>🔗 {L("microGPT Bağlantısı","microGPT Connection",lang)}</div>
+        <div style={{ fontSize: 14, color: P.muted, lineHeight: 1.8 }}>
+          {L("microGPT'de ağırlıklar nn.Linear(n_embd, n_embd) ile başlatılır. PyTorch otomatik olarak Kaiming initialization kullanır.","In microGPT, weights are initialized via nn.Linear(n_embd, n_embd). PyTorch automatically uses Kaiming initialization.",lang)}
+        </div>
+      </div>
+      {/* Random weight sample */}
+      <div style={{ marginTop: 8, padding: "10px", borderRadius: 10, background: P.card, border: "1px solid " + P.border }}>
+        <div style={{ color: P.dim, fontSize: 10, fontWeight: 700, letterSpacing: 1.5, marginBottom: 6 }}>{L("ÖRNEK RASTGELE AĞIRLIKLAR","SAMPLE RANDOM WEIGHTS",lang)}</div>
+        <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+          {Array.from({length: 12}, (_, i) => {
+            const w = (Math.random() * 2 - 1) * 0.3;
+            return <div key={i} style={{
+              padding: "4px 8px", borderRadius: 6, fontSize: 13, fontWeight: 700,
+              fontFamily: "'JetBrains Mono', monospace",
+              background: w > 0 ? P.teal + "12" : P.pink + "12",
+              color: w > 0 ? P.teal : P.pink,
+              border: "1px solid " + (w > 0 ? P.teal : P.pink) + "20",
+            }}>{w >= 0 ? "+" : ""}{w.toFixed(3)}</div>;
+          })}
+        </div>
+        <div style={{ fontSize: 12, color: P.muted, marginTop: 6 }}>{L("Küçük ve rastgele: -0.3 ile +0.3 arası","Small and random: between -0.3 and +0.3",lang)}</div>
+      </div>
+
     </>;
     case 2: return <SigmoidPlayground lang={lang} />;
     case 3: return <>
@@ -559,6 +603,23 @@ function Body({ step, net, result, onConverge, lang }) {
           <div key={i} style={{ flex: 1, background: c+"0d", border: `1px solid ${c}20`, borderRadius: 10, padding: "8px 4px", textAlign: "center" }}>
             <div style={{ color: c, fontSize: 11, fontWeight: 700 }}>{l}</div>
             <div style={{ color: P.white, fontSize: 20, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace", marginTop: 2 }}>{v.toFixed(3)}</div>
+          </div>
+        ))}
+      </div>}
+      {/* Step-by-step forward calculation */}
+      {r && <div style={{ marginTop: 8, padding: "10px 12px", borderRadius: 10, background: P.card, border: `1px solid ${P.border}` }}>
+        <div style={{ color: P.dim, fontSize: 10, fontWeight: 700, letterSpacing: 1.5, marginBottom: 6 }}>{L("İLERİ HESAPLAMA ADIMLARI","FORWARD PASS STEPS",lang)}</div>
+        {[
+          { step: "1", formula: `z₁ = x₁·w₁ + x₂·w₂ = 1·${net.w1.toFixed(2)} + 0·${net.w2.toFixed(2)}`, result: (1*net.w1).toFixed(3), color: P.teal },
+          { step: "2", formula: `h₁ = σ(z₁) = σ(${(1*net.w1).toFixed(2)})`, result: r.h1.toFixed(3), color: P.teal },
+          { step: "3", formula: `z₂ = x₁·w₃ + x₂·w₄ = 1·${net.w3.toFixed(2)} + 0·${net.w4.toFixed(2)}`, result: (1*net.w3).toFixed(3), color: P.teal },
+          { step: "4", formula: `h₂ = σ(z₂) = σ(${(1*net.w3).toFixed(2)})`, result: r.h2.toFixed(3), color: P.teal },
+          { step: "5", formula: `o = σ(h₁·wh₁ + h₂·wh₂)`, result: r.o.toFixed(3), color: P.blue },
+        ].map((s,i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "5px 0", borderBottom: i < 4 ? `1px solid ${P.border}` : "none" }}>
+            <span style={{ width: 20, height: 20, borderRadius: "50%", background: s.color + "15", color: s.color, fontSize: 11, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>{s.step}</span>
+            <span style={{ fontSize: 12, color: P.muted, fontFamily: "'JetBrains Mono', monospace", flex: 1 }}>{s.formula}</span>
+            <span style={{ color: s.color, fontSize: 14, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace" }}>{s.result}</span>
           </div>
         ))}
       </div>}
@@ -574,14 +635,75 @@ function Body({ step, net, result, onConverge, lang }) {
         </div>
       </div>}
       <S emoji="📊" color={P.amber} delay={0.1} text={L("Hata sinyali = çıktı × (1−çıktı) × hata. Sigmoid'in eğimini kullanıyoruz.","Error signal = output × (1−output) × error. We use sigmoid's slope — remember the Sigmoid chapter?",lang)} />
+    
+      {/* Error magnitude visualization */}
+      <div style={{ marginTop: 8, padding: "10px 12px", borderRadius: 10, background: P.card, border: "1px solid " + P.border }}>
+        <div style={{ color: P.dim, fontSize: 10, fontWeight: 700, letterSpacing: 1.5, marginBottom: 6 }}>{L("HATA BÜYÜKLÜĞÜ GÖRSELİ","ERROR MAGNITUDE VISUAL",lang)}</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 4 }}>
+              <span style={{ color: P.blue }}>{L("Tahmin","Prediction",lang)}: {r ? r.o.toFixed(3) : "?"}</span>
+              <span style={{ color: P.emerald }}>{L("Hedef","Target",lang)}: 1.000</span>
+            </div>
+            <div style={{ height: 10, borderRadius: 5, background: P.border, overflow: "hidden", position: "relative" }}>
+              <div style={{ height: "100%", width: r ? (r.o * 100) + "%" : "50%", background: "linear-gradient(90deg," + P.blue + "," + P.teal + ")", borderRadius: 5, transition: "width 0.5s" }} />
+              <div style={{ position: "absolute", right: 0, top: 0, width: 3, height: "100%", background: P.emerald, borderRadius: 2 }} />
+            </div>
+            <div style={{ fontSize: 14, color: P.pink, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", textAlign: "center", marginTop: 6 }}>
+              {L("Hata","Error",lang)} = {r ? (1 - r.o).toFixed(4) : "?"}
+            </div>
+          </div>
+        </div>
+      </div>
+
     </>;
     case 5: return <>
       <S emoji="🕵️" color={P.violet} text={L("Dedektiflik zamanı! Hatayı çıkıştan geriye gönderiyoruz. Her bağlantıya 'Bu hatada senin payın ne kadar?' diye soruyoruz.","Detective time! We send error backward from output. We ask each connection: How much did you contribute to this error?",lang)} />
       <S emoji="⛓️" color={P.violet} delay={0.1} text={L("Çok katkı yapan bağlantılar daha çok düzeltilecek. Buna 'zincir kuralı' deniyor — hatayı parçalara ayırıp geriye yolluyoruz.","Connections that contributed more get corrected more. This is the chain rule — breaking error into parts and sending backward.",lang)} />
+    
+      <div style={{ marginTop: 8, padding: "10px 12px", borderRadius: 10, background: P.indigo + "06", border: "1px solid " + P.indigo + "15" }}>
+        <div style={{ color: P.indigo, fontSize: 11, fontWeight: 700, marginBottom: 4 }}>🔗 {L("microGPT Bağlantısı","microGPT Connection",lang)}</div>
+        <div style={{ fontSize: 14, color: P.muted, lineHeight: 1.8 }}>
+          {L("microGPT'de loss.backward() tam olarak bunu yapar — her parametre için gradient hesaplayıp .grad alanına yazar. Zincir kuralı otomatik!","In microGPT, loss.backward() does exactly this — computes gradient for every parameter and stores it in .grad. Chain rule is automatic!",lang)}
+        </div>
+      </div>
+
     </>;
     case 6: return <>
       <S emoji="🔧" color={P.amber} text={L("Her ağırlığı biraz düzeltiyoruz: yeni = eski + öğrenme oranı × hata × girdi. Bu kadar!","We adjust each weight: new = old + learning_rate × error × input. That is it!",lang)} />
+      {/* Update formula visualization */}
+      <div style={{ marginTop: 8, padding: "12px", borderRadius: 10, background: P.card, border: `1px solid ${P.border}` }}>
+        <div style={{ color: P.dim, fontSize: 10, fontWeight: 700, letterSpacing: 1.5, marginBottom: 8 }}>{L("GÜNCELLEME FORMÜLÜ","UPDATE FORMULA",lang)}</div>
+        <div style={{ textAlign: "center", padding: "10px", borderRadius: 8, background: P.surface, marginBottom: 8 }}>
+          <span style={{ fontSize: 16, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace", color: P.amber }}>
+            w' = w + η × δ × x
+          </span>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
+          {[
+            ["η", L("Öğrenme oranı","Learning rate",lang), "0.5", P.amber],
+            ["δ", L("Hata sinyali","Error signal",lang), r ? (r.o*(1-r.o)*(1-r.o)).toFixed(4) : "?", P.pink],
+            ["x", L("Girdi değeri","Input value",lang), "1.0", P.teal],
+            ["Δw", L("Ağırlık değişimi","Weight change",lang), r ? (0.5*r.o*(1-r.o)*(1-r.o)*1).toFixed(4) : "?", P.emerald],
+          ].map(([sym,label,val,color],i) => (
+            <div key={i} style={{ padding: "8px", borderRadius: 8, background: color + "06", border: `1px solid ${color}15` }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ color, fontSize: 18, fontWeight: 900, fontFamily: "'JetBrains Mono', monospace" }}>{sym}</span>
+                <span style={{ color, fontSize: 15, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>{val}</span>
+              </div>
+              <div style={{ color: P.muted, fontSize: 11, marginTop: 2 }}>{label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
       <S emoji="🔁" color={P.emerald} delay={0.1} text={L("Bunu yüzlerce kez tekrarlıyoruz. Her seferinde hata küçülür. Sonunda ağ öğrenir — buna 'yakınsama' diyoruz.","We repeat this hundreds of times. Error shrinks each time. Eventually the network learns — we call this convergence.",lang)} />
+      {/* microGPT connection */}
+      <div style={{ marginTop: 8, padding: "10px 12px", borderRadius: 10, background: P.indigo + "06", border: `1px solid ${P.indigo}15` }}>
+        <div style={{ color: P.indigo, fontSize: 11, fontWeight: 700, marginBottom: 4 }}>🔗 {L("microGPT Bağlantısı","microGPT Connection",lang)}</div>
+        <div style={{ fontSize: 14, color: P.muted, lineHeight: 1.8 }}>
+          {L("microGPT'de optimizer.step() tam olarak bunu yapar. AdamW optimizer öğrenme oranını her parametre için otomatik ayarlar!","In microGPT, optimizer.step() does exactly this. AdamW optimizer automatically adjusts learning rate per parameter!",lang)}
+        </div>
+      </div>
     </>;
     case 7: return <WeightLab lang={lang} onConverge={onConverge} />;
     case 8: return <Quiz lang={lang} onComplete={onConverge} />;
@@ -607,15 +729,15 @@ const BackpropLesson = ({ embedded, externalStep, onStepChange }) => {
 
   return (
     <div style={{ minHeight: embedded ? "auto" : "100vh", background: P.bg, color: P.text, fontFamily: "'DM Sans', sans-serif", display: "flex", flexDirection: "column" }}>
-      <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-      <style>{`
+      {!embedded && <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />}
+      {!embedded && <style>{`
         @keyframes fadeSlideIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
         *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
         ::-webkit-scrollbar{width:3px} ::-webkit-scrollbar-thumb{background:${P.dim};border-radius:3px}
         input[type=range]{-webkit-appearance:none;background:transparent;width:100%}
         input[type=range]::-webkit-slider-track{height:3px;background:${P.border};border-radius:2px}
         input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:${P.teal};margin-top:-5.5px;cursor:pointer;border:2px solid ${P.bg}}
-      `}</style>
+      `}</style>}
       <Confetti active={confetti} />
 
       {/* Header */}

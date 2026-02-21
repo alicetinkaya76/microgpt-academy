@@ -431,7 +431,8 @@ const ProbabilityLesson=({ embedded, externalStep, onStepChange })=>{
   const CH=lang==="tr"?PR_CHAPTERS_TR:PR_CHAPTERS_EN;const ch=CH[step];
   return <div style={{minHeight:embedded?"auto":"100vh",background:P.bg,color:P.text,fontFamily:"'DM Sans',sans-serif",display:"flex",flexDirection:"column"}}>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-    <style>{`@keyframes fadeSlideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}} *{box-sizing:border-box} input[type=range]{-webkit-appearance:none;background:transparent;width:100%} input[type=range]::-webkit-slider-track{height:3px;background:${P.border};border-radius:2px} input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:${P.amber};margin-top:-5.5px;cursor:pointer;border:2px solid ${P.bg}}`}</style>
+    {!embedded && <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>}
+    {!embedded && <style>{`@keyframes fadeSlideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}} *{box-sizing:border-box} input[type=range]{-webkit-appearance:none;background:transparent;width:100%} input[type=range]::-webkit-slider-track{height:3px;background:${P.border};border-radius:2px} input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:${P.amber};margin-top:-5.5px;cursor:pointer;border:2px solid ${P.bg}}`}</style>}
     {!embedded && <header style={{padding:"14px 16px 10px",borderBottom:`1px solid ${P.border}`}}>
       <div style={{fontSize: 10,fontWeight:700,letterSpacing:3,color:P.dim,textTransform:"uppercase"}}>{L("İnteraktif Ders","Interactive Lesson",lang)}</div>
       <h1 style={{margin:"3px 0 0",fontSize: 26,fontWeight:900,letterSpacing:-0.5,background:`linear-gradient(135deg,${P.amber},${P.pink},${P.violet})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>{L("Olasılık & Bilgi Teorisi","Probability & Information Theory",lang)}</h1>
@@ -441,11 +442,11 @@ const ProbabilityLesson=({ embedded, externalStep, onStepChange })=>{
         <span style={{fontSize: 14}}>{c.icon}</span><span>{c.label}</span>
       </button>)}
     </nav>}
-    <div style={{padding:"8px 16px 2px"}}>
+    {!embedded && <div style={{padding:"8px 16px 2px"}}>
       <h2 style={{margin:0,fontSize: 18,fontWeight:800,color:ch.color,display:"flex",alignItems:"center",gap:6}}>
         <span>{ch.icon}</span>{ch.label}
       </h2>
-    </div>
+    </div>}
     <section style={{flex:1,padding:"6px 16px 10px",overflowY:"auto",minHeight:0}}>
       <Body step={step} lang={lang}/>
     </section>

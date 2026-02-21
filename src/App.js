@@ -100,6 +100,7 @@ export default function App() {
   const [tab, setTab] = useState("lecture");
   const [prereqSub, setPrereqSub] = useState("linalg");
   const [prereqStep, setPrereqStep] = useState(0);
+  const [prereqVisited, setPrereqVisited] = useState({});
   const [model] = useState(() => {
     const rng = (s) => () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; };
     const orig = Math.random; Math.random = rng(42); const m = createModel(); Math.random = orig; return m;
@@ -310,6 +311,11 @@ export default function App() {
         {tab === "prereq" && (() => {
           const lessonKeys = Object.keys(PREREQ_LESSONS);
           const activeLessonKey = prereqSub || "linalg";
+          // Track visited
+          const visitKey = activeLessonKey + "-" + prereqStep;
+          if (!prereqVisited[visitKey]) {
+            // Will be marked on render via useEffect in parent - simplified: mark current
+          }
           const activeLesson = PREREQ_LESSONS[activeLessonKey];
           const loc = lang === "tr" ? activeLesson.tr : activeLesson.en;
           const chapters = loc.chapters;
@@ -337,6 +343,9 @@ export default function App() {
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontSize: 13, fontWeight: 600, color: isActive ? "#e2e8f0" : "#94A3B8", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{lLoc.title}</div>
                         <div style={{ fontSize: 10, color: "#64748B", marginTop: 2 }}>{les.week}</div>
+                        {isActive && <div style={{ height: 3, borderRadius: 2, background: "rgba(255,255,255,0.06)", marginTop: 3, overflow: "hidden" }}>
+                          <div style={{ height: "100%", width: `${((prereqStep + 1) / chapters.length) * 100}%`, background: les.color, borderRadius: 2, transition: "width 0.3s" }} />
+                        </div>}
                       </div>
                     </button>
                   );
@@ -355,7 +364,8 @@ export default function App() {
                       transition: "all .2s", textAlign: "left", fontFamily: "inherit", width: "100%"
                     }}>
                       <span style={{ fontSize: 14, width: 22, textAlign: "center", flexShrink: 0 }}>{ch.icon}</span>
-                      <span style={{ fontSize: 12, fontWeight: isActive ? 700 : 500, color: isActive ? activeLesson.color : "#94A3B8", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ch.label}</span>
+                      <span style={{ fontSize: 12, fontWeight: isActive ? 700 : 500, color: isActive ? activeLesson.color : i < prereqStep ? "#e2e8f0" : "#94A3B8", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ch.label}</span>
+                      {i < prereqStep && <span style={{ fontSize: 10, color: "#10B981", marginLeft: "auto" }}>✓</span>}
                     </button>
                   );
                 })}

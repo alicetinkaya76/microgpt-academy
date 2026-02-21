@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { useState } from "react";
 import { useLang } from "../../../core/i18n";
 
 /* ═══════════════════════════════════════════
@@ -11,7 +11,7 @@ const P = {
   text: "#e2e8f0", muted: "#64748b", dim: "#374151", white: "#ffffff",
 };
 
-const t = (tr, en, lang) => lang === "tr" ? tr : en;
+const L = (tr, en, lang) => lang === "tr" ? tr : en;
 
 /* ═══════════════════════════════════════════
    CHAPTERS
@@ -69,7 +69,7 @@ function VectorPlayground({ lang }) {
   return (
     <div>
       <div style={{ fontSize: 16, color: P.text, marginBottom: 10, lineHeight: 1.8 }}>
-        <strong style={{ color: P.teal }}>{t("Vektör", "Vector", lang)}</strong> = {t("yön + büyüklük. Kaydırıcılarla vektörü değiştir!", "direction + magnitude. Drag the sliders to change!", lang)}
+        <strong style={{ color: P.teal }}>{L("Vektör", "Vector", lang)}</strong> = {L("yön + büyüklük. Kaydırıcılarla vektörü değiştir!", "direction + magnitude. Drag the sliders to change!", lang)}
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", maxWidth: W, display: "block", background: P.surface, borderRadius: 12, border: `1px solid ${P.border}` }}>
         {/* Grid */}
@@ -110,10 +110,10 @@ function VectorPlayground({ lang }) {
         marginTop: 8, padding: "7px 14px", borderRadius: 8, border: `1px solid ${showAdd ? P.emerald + "40" : P.border}`,
         background: showAdd ? P.emerald + "10" : "transparent", color: showAdd ? P.emerald : P.muted,
         fontSize: 13, fontWeight: 600, cursor: "pointer", width: "100%",
-      }}>{showAdd ? t("✓ Vektör Toplama Aktif","✓ Vector Addition Active",lang) : t("+ Vektör Toplama Göster","+ Show Vector Addition",lang)}</button>
+      }}>{showAdd ? L("✓ Vektör Toplama Aktif","✓ Vector Addition Active",lang) : L("+ Vektör Toplama Göster","+ Show Vector Addition",lang)}</button>
       {showAdd && (
         <div style={{ marginTop: 6, padding: "8px 10px", borderRadius: 8, background: P.pink + "08", border: `1px solid ${P.pink}15` }}>
-          <div style={{ fontSize: 13, color: P.pink, fontWeight: 700, marginBottom: 4 }}>b {t("vektörü","vector",lang)}</div>
+          <div style={{ fontSize: 13, color: P.pink, fontWeight: 700, marginBottom: 4 }}>b {L("vektörü","vector",lang)}</div>
           <div style={{ display: "flex", gap: 12 }}>
             {[["x", 0, P.pink], ["y", 1, P.violet]].map(([label, idx, color]) => (
               <div key={label} style={{ flex: 1 }}>
@@ -153,15 +153,15 @@ function DotProductViz({ lang }) {
 
   const sim = dot > 2 ? P.emerald : dot > 0 ? P.amber : dot > -2 ? P.pink : P.rose;
   const simLabel = dot > 2
-    ? t("Çok benzer ↗", "Very similar ↗", lang)
-    : dot > 0 ? t("Biraz benzer →", "Somewhat similar →", lang)
-    : dot > -2 ? t("Farklı yön ↙", "Different direction ↙", lang)
-    : t("Tam zıt ←", "Opposite ←", lang);
+    ? L("Çok benzer ↗", "Very similar ↗", lang)
+    : dot > 0 ? L("Biraz benzer →", "Somewhat similar →", lang)
+    : dot > -2 ? L("Farklı yön ↙", "Different direction ↙", lang)
+    : L("Tam zıt ←", "Opposite ←", lang);
 
   return (
     <div>
       <div style={{ fontSize: 16, color: P.text, marginBottom: 10, lineHeight: 1.8 }}>
-        <strong style={{ color: P.violet }}>Dot product</strong> = {t("iki vektörün ne kadar aynı yöne baktığını ölçer.", "measures how much two vectors point the same way.", lang)}
+        <strong style={{ color: P.violet }}>Dot product</strong> = {L("iki vektörün ne kadar aynı yöne baktığını ölçer.", "measures how much two vectors point the same way.", lang)}
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", maxWidth: W, display: "block", background: P.surface, borderRadius: 12, border: `1px solid ${P.border}` }}>
         <line x1={mid} y1={midY} x2={mid + a[0] * scale} y2={midY - a[1] * scale} stroke={P.teal} strokeWidth={2.5} strokeLinecap="round" />
@@ -174,17 +174,17 @@ function DotProductViz({ lang }) {
 
         {/* Result */}
         <rect x={W / 2 - 60} y={6} width={120} height={32} rx={10} fill={sim + "15"} stroke={sim + "40"} strokeWidth={1} />
-        <text x={W / 2} y={18} textAnchor="middle" fill={sim} fontSize="8" fontWeight="700">{t("dot product", "dot product", lang)}</text>
+        <text x={W / 2} y={18} textAnchor="middle" fill={sim} fontSize="8" fontWeight="700">{L("dot product", "dot product", lang)}</text>
         <text x={W / 2} y={31} textAnchor="middle" fill={P.white} fontSize="12" fontWeight="800" fontFamily="'JetBrains Mono', monospace">{dot.toFixed(1)}</text>
       </svg>
 
       <div style={{ display: "flex", gap: 6, marginTop: 8 }}>
         <div style={{ flex: 1, background: sim + "08", border: `1px solid ${sim}20`, borderRadius: 8, padding: "6px 10px", textAlign: "center" }}>
-          <div style={{ color: P.dim, fontSize: 10, fontWeight: 700 }}>{t("AÇI", "ANGLE", lang)}</div>
+          <div style={{ color: P.dim, fontSize: 10, fontWeight: 700 }}>{L("AÇI", "ANGLE", lang)}</div>
           <div style={{ color: sim, fontSize: 17, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace" }}>{angle.toFixed(0)}°</div>
         </div>
         <div style={{ flex: 2, background: sim + "08", border: `1px solid ${sim}20`, borderRadius: 8, padding: "6px 10px", textAlign: "center" }}>
-          <div style={{ color: P.dim, fontSize: 10, fontWeight: 700 }}>{t("YORUM", "INTERPRETATION", lang)}</div>
+          <div style={{ color: P.dim, fontSize: 10, fontWeight: 700 }}>{L("YORUM", "INTERPRETATION", lang)}</div>
           <div style={{ color: sim, fontSize: 15, fontWeight: 700 }}>{simLabel}</div>
         </div>
       </div>
@@ -209,7 +209,7 @@ function DotProductViz({ lang }) {
 
       <div style={{ marginTop: 8, padding: "8px 10px", borderRadius: 8, background: P.violet + "08", border: `1px solid ${P.violet}15`, fontSize: 14, color: P.muted, lineHeight: 1.6 }}>
         💡 a·b = ({a[0]}×{b[0]}) + ({a[1]}×{b[1]}) = <strong style={{ color: P.white }}>{dot.toFixed(1)}</strong>
-        {" "}{t("— Attention'da Q·K tam olarak bunu yapar!", "— This is exactly what Q·K does in Attention!", lang)}
+        {" "}{L("— Attention'da Q·K tam olarak bunu yapar!", "— This is exactly what Q·K does in Attention!", lang)}
       </div>
     </div>
   );
@@ -227,7 +227,7 @@ function MatMulViz({ lang }) {
   return (
     <div>
       <div style={{ fontSize: 16, color: P.text, marginBottom: 10, lineHeight: 1.8 }}>
-        <strong style={{ color: P.pink }}>{t("Matris × vektör", "Matrix × vector", lang)}</strong> = {t("vektörü dönüştürme. Her satır bir dot product!", "transforming a vector. Each row is a dot product!", lang)}
+        <strong style={{ color: P.pink }}>{L("Matris × vektör", "Matrix × vector", lang)}</strong> = {L("vektörü dönüştürme. Her satır bir dot product!", "transforming a vector. Each row is a dot product!", lang)}
       </div>
 
       {/* Visual matrix multiplication */}
@@ -299,7 +299,7 @@ function MatMulViz({ lang }) {
       </div>
 
       <div style={{ marginTop: 8, padding: "8px 10px", borderRadius: 8, background: P.pink + "08", border: `1px solid ${P.pink}15`, fontSize: 14, color: P.muted, lineHeight: 1.6 }}>
-        💡 {t("Embedding, Attention, MLP — hepsi matris çarpımıdır. y = Wx bu dersin en önemli formülü!", "Embedding, Attention, MLP — all are matrix multiplications. y = Wx is this course's most important formula!", lang)}
+        💡 {L("Embedding, Attention, MLP — hepsi matris çarpımıdır. y = Wx bu dersin en önemli formülü!", "Embedding, Attention, MLP — all are matrix multiplications. y = Wx is this course's most important formula!", lang)}
       </div>
     </div>
   );
@@ -331,7 +331,7 @@ function TransposeViz({ lang }) {
   return (
     <div>
       <div style={{ fontSize: 16, color: P.text, marginBottom: 10, lineHeight: 1.8 }}>
-        <strong style={{ color: P.amber }}>{t("Transpoz", "Transpose", lang)}</strong> (Aᵀ): {t("satır ↔ sütun değiştirir. Attention'da Kᵀ için kullanılır.", "swaps rows ↔ columns. Used for Kᵀ in Attention.", lang)}
+        <strong style={{ color: P.amber }}>{L("Transpoz", "Transpose", lang)}</strong> (Aᵀ): {L("satır ↔ sütun değiştirir. Attention'da Kᵀ için kullanılır.", "swaps rows ↔ columns. Used for Kᵀ in Attention.", lang)}
       </div>
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, flexWrap: "wrap" }}>
@@ -365,7 +365,7 @@ function TransposeViz({ lang }) {
       </div>
 
       <div style={{ marginTop: 10, padding: "8px 10px", borderRadius: 8, background: P.amber + "08", border: `1px solid ${P.amber}15`, fontSize: 14, color: P.muted, lineHeight: 1.6 }}>
-        💡 {t("A[i][j] = Aᵀ[j][i]. Attention'da score = Q × Kᵀ — K'yı transpose edip Q ile çarpmak benzerlik hesaplar!", "A[i][j] = Aᵀ[j][i]. In Attention, score = Q × Kᵀ — transposing K and multiplying with Q computes similarity!", lang)}
+        💡 {L("A[i][j] = Aᵀ[j][i]. Attention'da score = Q × Kᵀ — K'yı transpose edip Q ile çarpmak benzerlik hesaplar!", "A[i][j] = Aᵀ[j][i]. In Attention, score = Q × Kᵀ — transposing K and multiplying with Q computes similarity!", lang)}
       </div>
     </div>
   );
@@ -379,11 +379,11 @@ function LinAlgLab({ lang, onConverge }) {
   const [matrix, setMatrix] = useState([[1, 0], [0, 1]]);
   const result = [matrix[0][0] * v[0] + matrix[0][1] * v[1], matrix[1][0] * v[0] + matrix[1][1] * v[1]];
   const presets = [
-    { name: t("Birim", "Identity", lang), m: [[1, 0], [0, 1]] },
-    { name: t("Ölçekleme", "Scale 2×", lang), m: [[2, 0], [0, 2]] },
-    { name: t("90° Döndür", "Rotate 90°", lang), m: [[0, -1], [1, 0]] },
-    { name: t("Yansıma", "Reflect", lang), m: [[1, 0], [0, -1]] },
-    { name: t("Çarpıtma", "Shear", lang), m: [[1, 0.5], [0, 1]] },
+    { name: L("Birim", "Identity", lang), m: [[1, 0], [0, 1]] },
+    { name: L("Ölçekleme", "Scale 2×", lang), m: [[2, 0], [0, 2]] },
+    { name: L("90° Döndür", "Rotate 90°", lang), m: [[0, -1], [1, 0]] },
+    { name: L("Yansıma", "Reflect", lang), m: [[1, 0], [0, -1]] },
+    { name: L("Çarpıtma", "Shear", lang), m: [[1, 0.5], [0, 1]] },
   ];
 
   const W = 240, H = 240, mid = W / 2;
@@ -392,7 +392,7 @@ function LinAlgLab({ lang, onConverge }) {
   return (
     <div>
       <div style={{ fontSize: 16, color: P.text, marginBottom: 10, lineHeight: 1.8 }}>
-        🧪 <strong style={{ color: P.emerald }}>{t("Dönüşüm laboratuvarı!", "Transformation lab!", lang)}</strong> {t("Matris seçip vektörün nasıl dönüştüğünü gör.", "Pick a matrix and see how the vector transforms.", lang)}
+        🧪 <strong style={{ color: P.emerald }}>{L("Dönüşüm laboratuvarı!", "Transformation lab!", lang)}</strong> {L("Matris seçip vektörün nasıl dönüştüğünü gör.", "Pick a matrix and see how the vector transforms.", lang)}
       </div>
 
       {/* Presets */}
@@ -442,7 +442,7 @@ function LinAlgLab({ lang, onConverge }) {
       </div>
 
       <div style={{ marginTop: 8, padding: "8px 10px", borderRadius: 8, background: P.emerald + "08", border: `1px solid ${P.emerald}15`, fontSize: 14, color: P.muted, lineHeight: 1.6 }}>
-        💡 {t("Embedding = matris lookup. Attention = matris çarpımı. MLP = matris × aktivasyon × matris. HER ŞEY lineer cebirdir!", "Embedding = matrix lookup. Attention = matrix multiply. MLP = matrix × activation × matrix. EVERYTHING is linear algebra!", lang)}
+        💡 {L("Embedding = matris lookup. Attention = matris çarpımı. MLP = matris × aktivasyon × matris. HER ŞEY lineer cebirdir!", "Embedding = matrix lookup. Attention = matrix multiply. MLP = matrix × activation × matrix. EVERYTHING is linear algebra!", lang)}
       </div>
     </div>
   );
@@ -491,19 +491,19 @@ function Quiz({ lang, onComplete }) {
         <div style={{ fontSize: 48, marginBottom: 8 }}>{pct >= 80 ? "🏆" : pct >= 50 ? "👍" : "📚"}</div>
         <div style={{ fontSize: 22, fontWeight: 900, color: pct >= 80 ? P.emerald : P.amber }}>{score}/{QS.length}</div>
         <div style={{ fontSize: 16, color: P.muted, marginTop: 4 }}>
-          {pct >= 80 ? t("Harika! Lineer cebir hazır!", "Excellent! Linear algebra ready!", lang) : t("Tekrar denemelisin!", "Try again!", lang)}
+          {pct >= 80 ? L("Harika! Lineer cebir hazır!", "Excellent! Linear algebra ready!", lang) : L("Tekrar denemelisin!", "Try again!", lang)}
         </div>
         <button onClick={() => { setCur(0); setSel(null); setScore(0); setDone(false); }} style={{
           marginTop: 12, padding: "8px 20px", borderRadius: 8, border: `1px solid ${P.border}`,
           background: "transparent", color: P.text, fontSize: 15, fontWeight: 600, cursor: "pointer",
-        }}>{t("Tekrar Dene", "Try Again", lang)}</button>
+        }}>{L("Tekrar Dene", "Try Again", lang)}</button>
       </div>
     );
   }
 
   return (
     <div>
-      <div style={{ fontSize: 14, color: P.muted, marginBottom: 8 }}>{cur + 1}/{QS.length} • {t("Skor", "Score", lang)}: {score}</div>
+      <div style={{ fontSize: 14, color: P.muted, marginBottom: 8 }}>{cur + 1}/{QS.length} • {L("Skor", "Score", lang)}: {score}</div>
       <div style={{ fontSize: 17, fontWeight: 700, color: P.text, marginBottom: 10, lineHeight: 1.6 }}>{q.q}</div>
       <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
         {q.o.map((opt, i) => {
@@ -544,13 +544,13 @@ function Quiz({ lang, onComplete }) {
             border: `1px solid ${correct ? P.emerald : P.pink}18`,
             fontSize: 15, lineHeight: 1.6, animation: "fadeSlideIn 0.3s both",
           }}>
-            <strong style={{ color: correct ? P.emerald : P.pink }}>{correct ? "✓ " : "✕ "}{correct ? t("Doğru!", "Correct!", lang) : t("Yanlış!", "Wrong!", lang)} </strong>{q.e}
+            <strong style={{ color: correct ? P.emerald : P.pink }}>{correct ? "✓ " : "✕ "}{correct ? L("Doğru!", "Correct!", lang) : L("Yanlış!", "Wrong!", lang)} </strong>{q.e}
           </div>
           <button onClick={next} style={{
             marginTop: 8, width: "100%", padding: "9px", borderRadius: 8, border: "none",
             background: `linear-gradient(135deg, ${P.indigo}, ${P.violet})`,
             color: "#fff", fontSize: 15, fontWeight: 700, cursor: "pointer",
-          }}>{cur + 1 >= QS.length ? t("Sonuçlar", "Results", lang) : t("Sonraki →", "Next →", lang)}</button>
+          }}>{cur + 1 >= QS.length ? L("Sonuçlar", "Results", lang) : L("Sonraki →", "Next →", lang)}</button>
         </>
       )}
     </div>
@@ -575,6 +575,24 @@ function Body({ step, lang, onConverge }) {
         "Bu derste öğreneceklerin: vektör, dot product (benzerlik), matris çarpımı (dönüşüm), transpoz. Hepsi interaktif!",
         "What you'll learn: vectors, dot product (similarity), matrix multiplication (transformation), transpose. All interactive!"
       , lang)} />
+      {/* Learning roadmap */}
+      <div style={{ marginTop: 10, padding: "12px", borderRadius: 10, background: P.surface, border: `1px solid ${P.border}` }}>
+        <div style={{ color: P.amber, fontSize: 13, fontWeight: 700, marginBottom: 8 }}>🗺️ {L("GPT'de Nerede Kullanılır?","Where Is This Used in GPT?",lang)}</div>
+        {[
+          ["📍", L("Vektör","Vector",lang), L("Token embedding = 16/4096 boyutlu vektör","Token embedding = 16/4096 dim vector",lang), P.teal],
+          ["📐", "Dot Product", L("Attention skoru = Q·K benzerlik","Attention score = Q·K similarity",lang), P.violet],
+          ["🔢", L("Matris Çarpımı","Matrix Mul",lang), L("MLP katmanı = W × x dönüşüm","MLP layer = W × x transformation",lang), P.blue],
+          ["🔄", L("Transpoz","Transpose",lang), L("Attention: score = Q × Kᵀ","Attention: score = Q × Kᵀ",lang), P.amber],
+        ].map(([icon,label,desc,color],i) => (
+          <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8, padding: "6px 0", borderBottom: i < 3 ? `1px solid ${P.border}` : "none" }}>
+            <span style={{ fontSize: 15, width: 24, textAlign: "center", flexShrink: 0 }}>{icon}</span>
+            <div>
+              <span style={{ fontSize: 13, color, fontWeight: 700 }}>{label}</span>
+              <div style={{ fontSize: 12, color: P.muted, marginTop: 1 }}>{desc}</div>
+            </div>
+          </div>
+        ))}
+      </div>
     </>;
     case 1: return <VectorPlayground lang={lang} />;
     case 2: return <DotProductViz lang={lang} />;
@@ -589,8 +607,8 @@ function Body({ step, lang, onConverge }) {
       , lang)} />
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 4, margin: "8px 0" }}>
         {[
-          [t("Embedding","Embedding",lang), "wte[id]", P.teal],
-          [t("Attention Q/K/V","Attention Q/K/V",lang), "W_q × x", P.emerald],
+          [L("Embedding","Embedding",lang), "wte[id]", P.teal],
+          [L("Attention Q/K/V","Attention Q/K/V",lang), "W_q × x", P.emerald],
           ["MLP", "W₁ × x", P.pink],
         ].map(([label, formula, color]) => (
           <div key={label} style={{ background: color + "08", border: `1px solid ${color}20`, borderRadius: 8, padding: "8px 4px", textAlign: "center" }}>
@@ -598,6 +616,34 @@ function Body({ step, lang, onConverge }) {
             <div style={{ color: P.text, fontSize: 14, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", marginTop: 2 }}>{formula}</div>
           </div>
         ))}
+      </div>
+
+      {/* Interactive: Matrix Dimension Explorer */}
+      <div style={{ marginTop: 10, padding: "12px", borderRadius: 10, background: P.card, border: `1px solid ${P.border}` }}>
+        <div style={{ color: P.dim, fontSize: 10, fontWeight: 700, letterSpacing: 1.5, marginBottom: 6 }}>{L("MATRİS BOYUT HESAPLAYICI","MATRIX DIMENSION CALCULATOR",lang)}</div>
+        {(() => {
+          const examples = [
+            { name: "Embedding", dims: [27, 16], desc: L("27 token × 16 boyut","27 tokens × 16 dims",lang) },
+            { name: "W_q", dims: [16, 16], desc: L("giriş boyutu × head boyutu","input dim × head dim",lang) },
+            { name: "Attention", dims: [8, 8], desc: L("sekans × sekans","seq × seq",lang) },
+          ];
+          return <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            {examples.map((ex,i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", borderRadius: 8, background: P.surface }}>
+                <div style={{ color: P.blue, fontSize: 13, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", minWidth: 80 }}>{ex.name}</div>
+                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                  <span style={{ color: P.teal, fontSize: 18, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace" }}>{ex.dims[0]}</span>
+                  <span style={{ color: P.dim, fontSize: 13 }}>×</span>
+                  <span style={{ color: P.pink, fontSize: 18, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace" }}>{ex.dims[1]}</span>
+                </div>
+                <div style={{ color: P.muted, fontSize: 12, marginLeft: "auto" }}>= {ex.dims[0] * ex.dims[1]} {L("parametre","params",lang)}</div>
+              </div>
+            ))}
+            <div style={{ fontSize: 13, color: P.muted, marginTop: 4, lineHeight: 1.6 }}>
+              💡 {L("GPT-2: 768×768 = 589,824 parametre sadece 1 attention katmanında!","GPT-2: 768×768 = 589,824 parameters in just 1 attention layer!",lang)}
+            </div>
+          </div>;
+        })()}
       </div>
     </>;
     case 4: return <MatMulViz lang={lang} />;
@@ -621,23 +667,23 @@ const LinearAlgebraLesson = ({ embedded, externalStep, onStepChange }) => {
 
   return (
     <div style={{ minHeight: embedded ? "auto" : "100vh", background: P.bg, color: P.text, fontFamily: "'DM Sans', sans-serif", display: "flex", flexDirection: "column" }}>
-      <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-      <style>{`
+      {!embedded && <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />}
+      {!embedded && <style>{`
         @keyframes fadeSlideIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
         *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
         input[type=range]{-webkit-appearance:none;background:transparent;width:100%}
         input[type=range]::-webkit-slider-track{height:3px;background:${P.border};border-radius:2px}
         input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:${P.teal};margin-top:-5.5px;cursor:pointer;border:2px solid ${P.bg}}
-      `}</style>
+      `}</style>}
 
       {/* Header */}
       {!embedded && <header style={{ padding: "14px 16px 10px", borderBottom: `1px solid ${P.border}` }}>
-        <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 3, color: P.dim, textTransform: "uppercase" }}>{t("İnteraktif Ders", "Interactive Lesson", lang)}</div>
+        <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 3, color: P.dim, textTransform: "uppercase" }}>{L("İnteraktif Ders", "Interactive Lesson", lang)}</div>
         <h1 style={{
           margin: "3px 0 0", fontSize: 26, fontWeight: 900, letterSpacing: -0.5,
           background: `linear-gradient(135deg, ${P.teal}, ${P.blue}, ${P.pink})`,
           WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-        }}>{t("Lineer Cebir Temelleri", "Linear Algebra Basics", lang)}</h1>
+        }}>{L("Lineer Cebir Temelleri", "Linear Algebra Basics", lang)}</h1>
       </header>}
 
       {/* Nav */}
@@ -659,11 +705,11 @@ const LinearAlgebraLesson = ({ embedded, externalStep, onStepChange }) => {
       </nav>}
 
       {/* Title */}
-      <div style={{ padding: "8px 16px 2px" }}>
+      {!embedded && <div style={{ padding: "8px 16px 2px" }}>
         <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: ch.color, display: "flex", alignItems: "center", gap: 6 }}>
           <span>{ch.icon}</span>{ch.label}
         </h2>
-      </div>
+      </div>}
 
       {/* Content */}
       <section style={{ flex: 1, padding: "6px 16px 10px", overflowY: "auto", minHeight: 0 }}>
@@ -675,7 +721,7 @@ const LinearAlgebraLesson = ({ embedded, externalStep, onStepChange }) => {
         <div style={{ display: "flex", gap: 6 }}>
           <button onClick={() => setStep(s => Math.max(0, s - 1))} disabled={step === 0}
             style={{ flex: 1, padding: "10px", borderRadius: 8, border: `1px solid ${P.border}`, background: "transparent", color: step === 0 ? P.dim : P.text, fontSize: 15, fontWeight: 600, cursor: step === 0 ? "default" : "pointer" }}>
-            ‹ {t("Geri", "Back", lang)}
+            ‹ {L("Geri", "Back", lang)}
           </button>
           <button onClick={() => setStep(s => Math.min(CHAPTERS.length - 1, s + 1))} disabled={step === CHAPTERS.length - 1}
             style={{
@@ -684,7 +730,7 @@ const LinearAlgebraLesson = ({ embedded, externalStep, onStepChange }) => {
               color: step === CHAPTERS.length - 1 ? P.dim : P.white,
               fontSize: 15, fontWeight: 700, cursor: step === CHAPTERS.length - 1 ? "default" : "pointer",
             }}>
-            {t("İleri", "Next", lang)} ›
+            {L("İleri", "Next", lang)} ›
           </button>
         </div>
         <div style={{ display: "flex", justifyContent: "center", gap: 3, marginTop: 8 }}>
