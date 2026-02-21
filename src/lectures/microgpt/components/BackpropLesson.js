@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useLang } from "../../../core/i18n";
 
 /* ═══════════════════════════════════════════
    UTILS
@@ -24,10 +25,12 @@ const P = {
   white: "#ffffff",
 };
 
+const L = (tr, en, lang) => lang === "tr" ? tr : en;
+
 /* ═══════════════════════════════════════════
    CHAPTERS
    ═══════════════════════════════════════════ */
-const CHAPTERS = [
+const CH_TR = [
   { icon: "📖", label: "Hikâye", color: P.indigo },
   { icon: "🎲", label: "Başlat", color: P.teal },
   { icon: "🔮", label: "Sigmoid", color: P.violet },
@@ -36,6 +39,17 @@ const CHAPTERS = [
   { icon: "⬅", label: "Geri Yay", color: P.violet },
   { icon: "🔧", label: "Güncelle", color: P.amber },
   { icon: "🧪", label: "Laboratuvar", color: P.emerald },
+  { icon: "🏆", label: "Quiz", color: P.rose },
+];
+const CH_EN = [
+  { icon: "📖", label: "Story", color: P.indigo },
+  { icon: "🎲", label: "Init", color: P.teal },
+  { icon: "🔮", label: "Sigmoid", color: P.violet },
+  { icon: "➤", label: "Forward", color: P.blue },
+  { icon: "🎯", label: "Error", color: P.pink },
+  { icon: "⬅", label: "Backprop", color: P.violet },
+  { icon: "🔧", label: "Update", color: P.amber },
+  { icon: "🧪", label: "Lab", color: P.emerald },
   { icon: "🏆", label: "Quiz", color: P.rose },
 ];
 
@@ -121,7 +135,7 @@ function Confetti({ active }) {
 /* ═══════════════════════════════════════════
    SIGMOID PLAYGROUND
    ═══════════════════════════════════════════ */
-function SigmoidPlayground() {
+function SigmoidPlayground({ lang }) {
   const [val, setVal] = useState(0);
   const pts = useMemo(() => {
     const a = [];
@@ -136,7 +150,7 @@ function SigmoidPlayground() {
   return (
     <div>
       <div style={{ fontSize: 13, color: P.text, marginBottom: 10, lineHeight: 1.7 }}>
-        <strong style={{ color: P.violet }}>Sigmoid</strong> her sayıyı <strong>0 ile 1</strong> arasına sıkıştırır. Kaydırıcıyla dene!
+        {L("Sigmoid her sayıyı 0 ile 1 arasına sıkıştırır. Kaydırıcıyla dene!","Sigmoid squeezes any number between 0 and 1. Try the slider!",lang)}
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", maxWidth: W, display: "block" }}>
         {[0, 0.5, 1].map(y => {
@@ -160,7 +174,7 @@ function SigmoidPlayground() {
         background: P.violet + "08", border: `1px solid ${P.violet}15`,
         fontSize: 12, color: P.muted, lineHeight: 1.6,
       }}>
-        💡 Ortada (0 civarı) eğri en dik — ağ burada en çok öğreniyor. Uçlarda neredeyse düz — öğrenme duruyor.
+        {L("💡 Ortada (0 civarı) eğri en dik — ağ burada en çok öğreniyor. Uçlarda neredeyse düz — öğrenme duruyor.","💡 Near 0 the curve is steepest — the network learns most here. At the extremes it is nearly flat — learning stalls.",lang)}
       </div>
     </div>
   );
@@ -169,7 +183,7 @@ function SigmoidPlayground() {
 /* ═══════════════════════════════════════════
    WEIGHT LABORATORY
    ═══════════════════════════════════════════ */
-function WeightLab({ onConverge }) {
+function WeightLab({ lang, onConverge }) {
   const [net, setNet] = useState(initNet);
   const [x1, setX1] = useState(1);
   const [x2, setX2] = useState(0);
@@ -235,13 +249,13 @@ function WeightLab({ onConverge }) {
     <div>
       <Confetti active={showConf} />
       <div style={{ fontSize: 13, color: P.text, marginBottom: 12, lineHeight: 1.7 }}>
-        🧪 <strong style={{ color: P.emerald }}>Deney zamanı!</strong> Ağırlıkları kaydırarak tahmini hedefe yaklaştır. Ya da otomatik eğitimi başlat!
+        {L("🧪 Deney zamanı! Ağırlıkları kaydırarak tahmini hedefe yaklaştır. Ya da otomatik eğitimi başlat!","🧪 Experiment time! Drag weights to bring prediction closer to target. Or start auto-training!",lang)}
       </div>
 
       {/* Input + Output */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginBottom: 10 }}>
         <div style={{ background: P.card, border: `1px solid ${P.border}`, borderRadius: 10, padding: 10 }}>
-          <div style={{ color: P.dim, fontSize: 8, fontWeight: 700, letterSpacing: 1.5, marginBottom: 6 }}>GİRİŞLER</div>
+          <div style={{ color: P.dim, fontSize: 8, fontWeight: 700, letterSpacing: 1.5, marginBottom: 6 }}>{L("GİRİŞLER","INPUTS",lang)}</div>
           {[["x₁", x1, setX1], ["x₂", x2, setX2]].map(([l, v, set]) => (
             <div key={l} style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 3 }}>
               <span style={{ color: P.indigo, fontSize: 10, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>{l}</span>
@@ -251,13 +265,13 @@ function WeightLab({ onConverge }) {
           ))}
         </div>
         <div style={{ background: P.card, border: `1px solid ${P.border}`, borderRadius: 10, padding: 10, textAlign: "center" }}>
-          <div style={{ color: P.dim, fontSize: 8, fontWeight: 700, letterSpacing: 1.5, marginBottom: 3 }}>TAHMİN</div>
+          <div style={{ color: P.dim, fontSize: 8, fontWeight: 700, letterSpacing: 1.5, marginBottom: 3 }}>{L("TAHMİN","PREDICTION",lang)}</div>
           <div style={{
             fontSize: 24, fontWeight: 900, fontFamily: "'JetBrains Mono', monospace",
             color: error < 0.05 ? P.emerald : error < 0.2 ? P.amber : P.pink,
             transition: "color 0.3s",
           }}>{result.o.toFixed(3)}</div>
-          <div style={{ fontSize: 9, color: P.muted }}>hedef: 1.000</div>
+          <div style={{ fontSize: 9, color: P.muted }}>{L("hedef: 1.000","target: 1.000",lang)}</div>
           <div style={{ marginTop: 4, height: 3, borderRadius: 2, background: P.border, overflow: "hidden" }}>
             <div style={{
               height: "100%", width: `${(1 - error) * 100}%`,
@@ -270,7 +284,7 @@ function WeightLab({ onConverge }) {
 
       {/* Weights */}
       <div style={{ background: P.card, border: `1px solid ${P.border}`, borderRadius: 10, padding: 10, marginBottom: 8 }}>
-        <div style={{ color: P.dim, fontSize: 8, fontWeight: 700, letterSpacing: 1.5, marginBottom: 6 }}>AĞIRLIKLAR</div>
+        <div style={{ color: P.dim, fontSize: 8, fontWeight: 700, letterSpacing: 1.5, marginBottom: 6 }}>{L("AĞIRLIKLAR","WEIGHTS",lang)}</div>
         {[["w₁", "w1", P.teal], ["w₂", "w2", P.teal], ["w₃", "w3", P.teal], ["w₄", "w4", P.teal], ["wh₁", "wh1", P.blue], ["wh₂", "wh2", P.blue]].map(([l, k, c]) => (
           <WSlider key={k} label={l} value={net[k]} onChange={v => setNet(n => ({ ...n, [k]: v }))} color={c} />
         ))}
@@ -279,7 +293,7 @@ function WeightLab({ onConverge }) {
       {/* Auto train */}
       <div style={{ background: P.card, border: `1px solid ${P.border}`, borderRadius: 10, padding: 10 }}>
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-          <span style={{ color: P.dim, fontSize: 8, fontWeight: 700, letterSpacing: 1.5 }}>OTOMATİK EĞİTİM</span>
+          <span style={{ color: P.dim, fontSize: 8, fontWeight: 700, letterSpacing: 1.5 }}>{L("OTOMATİK EĞİTİM","AUTO TRAINING",lang)}</span>
           {epochs > 0 && <span style={{ color: P.amber, fontSize: 10, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>Epoch {epochs}</span>}
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
@@ -293,7 +307,7 @@ function WeightLab({ onConverge }) {
             flex: 1, padding: "9px", borderRadius: 8, border: "none",
             background: running ? `linear-gradient(135deg, ${P.pink}, ${P.rose})` : `linear-gradient(135deg, ${P.indigo}, ${P.teal})`,
             color: "#fff", fontSize: 12, fontWeight: 800, cursor: "pointer",
-          }}>{running ? "■ Durdur" : "▶ Eğit"}</button>
+          }}>{running ? L("■ Durdur","■ Stop",lang) : L("▶ Eğit","▶ Train",lang)}</button>
           <button onClick={reset} style={{
             padding: "9px 14px", borderRadius: 8, border: `1px solid ${P.border}`,
             background: "transparent", color: P.muted, fontSize: 11, fontWeight: 600, cursor: "pointer",
@@ -307,15 +321,22 @@ function WeightLab({ onConverge }) {
 /* ═══════════════════════════════════════════
    QUIZ
    ═══════════════════════════════════════════ */
-const QS = [
+const QS_TR = [
   { q: "Backpropagation'da hata hangi yöne gider?", o: ["Girişten çıkışa", "Çıkıştan girişe", "Rastgele", "Hiçbir yere"], a: 1, e: "Hata çıkıştan geriye yayılır — adı 'geri yayılım'!" },
   { q: "Sigmoid ne yapar?", o: ["Sayıyı 2'ye böler", "0-1 arasına sıkıştırır", "Negatif yapar", "Yuvarlar"], a: 1, e: "Sigmoid her sayıyı 0 ile 1 arasına çevirir." },
   { q: "Öğrenme oranı (η) çok büyükse?", o: ["Daha iyi öğrenir", "Hedefi atlar, sallanır", "Değişmez", "Ağ sıfırlanır"], a: 1, e: "Çok büyük adım = hedefi atlarsın!" },
   { q: "Ağırlıklar neden rastgele başlar?", o: ["Hız için", "Farklılaşma için", "Gelenek", "Fark etmez"], a: 1, e: "Hepsi aynı başlarsa hiçbir zaman farklılaşamaz!" },
   { q: "Yakınsama ne demek?", o: ["1 epoch bitmiş", "Hata yeterince küçülmüş", "Ağırlıklar sıfır", "Süre dolmuş"], a: 1, e: "Hata artık anlamlı şekilde düşmüyor = öğrenme tamamlandı!" },
 ];
+const QS_EN = [
+  { q: "In backpropagation, which direction does the error flow?", o: ["Input to output", "Output to input", "Random", "Nowhere"], a: 1, e: "Error propagates backward from output \u2014 hence 'backpropagation'!" },
+  { q: "What does sigmoid do?", o: ["Divides by 2", "Squeezes to 0-1 range", "Makes negative", "Rounds"], a: 1, e: "Sigmoid converts any number to a value between 0 and 1." },
+  { q: "What if learning rate (\u03b7) is too large?", o: ["Learns better", "Overshoots, oscillates", "No change", "Network resets"], a: 1, e: "Too large step = you overshoot the target!" },
+  { q: "Why do weights start random?", o: ["Speed", "Differentiation", "Tradition", "Doesn't matter"], a: 1, e: "If all start the same, they never learn different things!" },
+  { q: "What does convergence mean?", o: ["1 epoch done", "Error small enough", "Weights are zero", "Time's up"], a: 1, e: "Error no longer decreasing significantly = learning complete!" },
+];
 
-function Quiz({ onComplete }) {
+function Quiz({ lang, onComplete }) {
   const [cur, setCur] = useState(0);
   const [sel, setSel] = useState(null);
   const [score, setScore] = useState(0);
@@ -336,13 +357,13 @@ function Quiz({ onComplete }) {
         <div style={{ fontSize: 48, marginBottom: 10 }}>{score >= 4 ? "🏆" : score >= 3 ? "🎉" : "📚"}</div>
         <div style={{ fontSize: 22, fontWeight: 900, fontFamily: "'JetBrains Mono', monospace" }}>{score} / {QS.length}</div>
         <div style={{ color: P.muted, fontSize: 13, marginTop: 6 }}>
-          {score >= 4 ? "Mükemmel! Backpropagation ustası!" : score >= 3 ? "Harika! Neredeyse tam!" : "Tekrar dene, yaparsın!"}
+          {score >= 4 ? L("Mükemmel! Backpropagation ustası!","Excellent! Backpropagation master!",lang) : score >= 3 ? L("Harika! Neredeyse tam!","Great! Almost perfect!",lang) : L("Tekrar dene, yaparsın!","Try again, you can do it!",lang)}
         </div>
         <button onClick={() => { setCur(0); setSel(null); setScore(0); setDone(false); }} style={{
           marginTop: 14, padding: "9px 20px", borderRadius: 8,
           border: `1px solid ${P.border}`, background: P.card,
           color: P.text, fontSize: 12, fontWeight: 600, cursor: "pointer",
-        }}>Tekrar Dene</button>
+        }}>{L("Tekrar Dene","Try Again",lang)}</button>
       </div>
     );
   }
@@ -393,13 +414,13 @@ function Quiz({ onComplete }) {
             border: `1px solid ${correct ? P.emerald : P.pink}18`,
             fontSize: 12, lineHeight: 1.6, animation: "fadeSlideIn 0.3s both",
           }}>
-            <strong style={{ color: correct ? P.emerald : P.pink }}>{correct ? "✓ Doğru! " : "✕ Yanlış! "}</strong>{q.e}
+            <strong style={{ color: correct ? P.emerald : P.pink }}>{correct ? L("✓ Doğru! ","✓ Correct! ",lang) : L("✕ Yanlış! ","✕ Wrong! ",lang)}</strong>{q.e}
           </div>
           <button onClick={next} style={{
             marginTop: 10, width: "100%", padding: "9px", borderRadius: 8, border: "none",
             background: `linear-gradient(135deg, ${P.indigo}, ${P.violet})`,
             color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer",
-          }}>{cur + 1 >= QS.length ? "Sonuçlar" : "Sonraki →"}</button>
+          }}>{cur + 1 >= QS.length ? L("Sonuçlar","Results",lang) : L("Sonraki →","Next →",lang)}</button>
         </>
       )}
     </div>
@@ -409,7 +430,7 @@ function Quiz({ onComplete }) {
 /* ═══════════════════════════════════════════
    MINI NETWORK VIZ
    ═══════════════════════════════════════════ */
-function MiniNet({ net, result, step }) {
+function MiniNet({ net, result, step, lang }) {
   const N = { x1: [50, 65], x2: [50, 175], h1: [190, 50], h2: [190, 190], out: [330, 120] };
   const edges = [
     { f: "x1", t: "h1", w: net.w1 }, { f: "x1", t: "h2", w: net.w3 },
@@ -432,7 +453,7 @@ function MiniNet({ net, result, step }) {
       <defs>
         <filter id="gl"><feGaussianBlur stdDeviation="2" result="b" /><feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
       </defs>
-      {[["50","GİRİŞ"],["190","GİZLİ"],["330","ÇIKIŞ"]].map(([x,t]) =>
+      {[["50",L("GİRİŞ","INPUT",lang)],["190",L("GİZLİ","HIDDEN",lang)],["330",L("ÇIKIŞ","OUTPUT",lang)]].map(([x,t]) =>
         <text key={t} x={x} y="232" textAnchor="middle" fill={P.dim} fontSize="7" fontWeight="700" letterSpacing="1.5">{t}</text>
       )}
       {edges.map((e, i) => {
@@ -481,7 +502,7 @@ function MiniNet({ net, result, step }) {
       })}
       {step >= 4 && (
         <g>
-          <text x="375" y="115" textAnchor="middle" fill={P.pink} fontSize="7" fontWeight="700">hedef</text>
+          <text x="375" y="115" textAnchor="middle" fill={P.pink} fontSize="7" fontWeight="700">{L("hedef","target",lang)}</text>
           <text x="375" y="130" textAnchor="middle" fill={P.pink} fontSize="10" fontWeight="800" fontFamily="'JetBrains Mono', monospace">1.0</text>
         </g>
       )}
@@ -509,17 +530,17 @@ function S({ emoji, text, color, delay = 0 }) {
 /* ═══════════════════════════════════════════
    CHAPTER BODY
    ═══════════════════════════════════════════ */
-function Body({ step, net, result, onConverge }) {
+function Body({ step, net, result, onConverge, lang }) {
   const r = result;
   switch (step) {
     case 0: return <>
-      <S emoji="🏀" color={P.indigo} text="Basketbol oynamayı düşün. İlk atışta potayı tutturmak zor. Ama her seferinde topu nereye attığına bakıp kolunu düzeltirsin. 10. atışta çok daha iyisin!" />
-      <S emoji="🤖" color={P.teal} delay={0.1} text="Yapay zekâ da böyle öğreniyor: tahmin yap → hatana bak → kendini düzelt → tekrarla. Bu döngüye Backpropagation (geri yayılım) diyoruz." />
-      <S emoji="🕸️" color={P.violet} delay={0.2} text="Yukarıdaki şekil bir yapay sinir ağı. Daireler 'nöron', çizgiler 'bağlantı'. Her bağlantının bir ağırlığı var — bilginin ne kadar güçlü geçeceğini belirliyor." />
+      <S emoji="🏀" color={P.indigo} text={L("Basketbol oynamayı düşün. İlk atışta potayı tutturmak zor. Ama her seferinde topu nereye attığına bakıp kolunu düzeltirsin. 10. atışta çok daha iyisin!","Think about shooting hoops. Hard to score on your first try. But each time you adjust your aim. By the 10th shot, you are much better!",lang)} />
+      <S emoji="🤖" color={P.teal} delay={0.1} text={L("Yapay zekâ da böyle öğreniyor: tahmin yap → hatana bak → kendini düzelt → tekrarla. Bu döngüye Backpropagation (geri yayılım) diyoruz.","AI learns the same way: predict → check error → correct → repeat. This cycle is called Backpropagation.",lang)} />
+      <S emoji="🕸️" color={P.violet} delay={0.2} text={L("Yukarıdaki şekil bir yapay sinir ağı. Daireler 'nöron', çizgiler 'bağlantı'. Her bağlantının bir ağırlığı var — bilginin ne kadar güçlü geçeceğini belirliyor.","The diagram above is a neural network. Circles are neurons, lines are connections. Each connection has a weight — determining how strongly info flows.",lang)} />
     </>;
     case 1: return <>
-      <S emoji="🎲" color={P.teal} text="İlk gün yeni bir okula gittin — hiçbir şey bilmiyorsun! Ağırlıkları rastgele küçük sayılarla başlatıyoruz." />
-      <S emoji="💡" color={P.amber} delay={0.1} text="Neden rastgele? Hepsi aynı olursa, hepsi aynı şeyi öğrenir! Rastgelelik her nöronun farklı şeyler keşfetmesini sağlıyor." />
+      <S emoji="🎲" color={P.teal} text={L("İlk gün yeni bir okula gittin — hiçbir şey bilmiyorsun! Ağırlıkları rastgele küçük sayılarla başlatıyoruz.","First day at a new school — you know nothing! We initialize weights with small random numbers.",lang)} />
+      <S emoji="💡" color={P.amber} delay={0.1} text={L("Neden rastgele? Hepsi aynı olursa, hepsi aynı şeyi öğrenir! Rastgelelik her nöronun farklı şeyler keşfetmesini sağlıyor.","Why random? If all identical, all learn the same thing! Randomness lets each neuron discover different features.",lang)} />
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 5, marginTop: 6 }}>
         {[["w₁",net.w1],["w₂",net.w2],["w₃",net.w3],["w₄",net.w4],["wh₁",net.wh1],["wh₂",net.wh2]].map(([l,v],i) => (
           <div key={i} style={{ background: P.card, border: `1px solid ${P.border}`, borderRadius: 8, padding: "5px 4px", textAlign: "center" }}>
@@ -529,9 +550,9 @@ function Body({ step, net, result, onConverge }) {
         ))}
       </div>
     </>;
-    case 2: return <SigmoidPlayground />;
+    case 2: return <SigmoidPlayground lang={lang} />;
     case 3: return <>
-      <S emoji="🏭" color={P.blue} text="Veri giriş kapısından giriyor, her bağlantıdan geçerek ilerliyor. Her nöron sinyalleri toplar ve sigmoid'den geçirir." />
+      <S emoji="🏭" color={P.blue} text={L("Veri giriş kapısından giriyor, her bağlantıdan geçerek ilerliyor. Her nöron sinyalleri toplar ve sigmoid'den geçirir.","Data enters through input, flowing through each connection. Each neuron sums signals and passes through sigmoid.",lang)} />
       {r && <div style={{ display: "flex", gap: 6, marginTop: 6 }}>
         {[["h₁",r.h1,P.teal],["h₂",r.h2,P.teal],["ŷ",r.o,P.blue]].map(([l,v,c],i) => (
           <div key={i} style={{ flex: 1, background: c+"0d", border: `1px solid ${c}20`, borderRadius: 10, padding: "8px 4px", textAlign: "center" }}>
@@ -540,29 +561,29 @@ function Body({ step, net, result, onConverge }) {
           </div>
         ))}
       </div>}
-      <S emoji="🎯" color={P.pink} delay={0.1} text={`Ağ ${r?r.o.toFixed(3):"?"} tahmin etti ama doğru cevap 1. Farkı düzeltmemiz lazım!`} />
+      <S emoji="🎯" color={P.pink} delay={0.1} text={L(`Ağ ${r?r.o.toFixed(3):"?"} tahmin etti ama doğru cevap 1. Farkı düzeltmemiz lazım!`,`Network predicted ${r?r.o.toFixed(3):"?"} but correct answer is 1. We need to fix this gap!`,lang)} />
     </>;
     case 4: return <>
-      <S emoji="🎯" color={P.pink} text={`Hata = Hedef − Tahmin = ${r?(1-r.o).toFixed(4):"?"}. Bu fark ne kadar büyükse, o kadar çok düzeltme yapacağız.`} />
+      <S emoji="🎯" color={P.pink} text={L(`Hata = Hedef − Tahmin = ${r?(1-r.o).toFixed(4):"?"}. Bu fark ne kadar büyükse, o kadar çok düzeltme yapacağız.`,`Error = Target − Prediction = ${r?(1-r.o).toFixed(4):"?"}. The larger the gap, the more correction we apply.`,lang)} />
       {r && <div style={{ background: P.pink+"08", border: `1px solid ${P.pink}18`, borderRadius: 10, padding: 14, textAlign: "center", margin: "6px 0 8px" }}>
-        <div style={{ color: P.pink, fontSize: 9, fontWeight: 700, letterSpacing: 2 }}>HATA</div>
+        <div style={{ color: P.pink, fontSize: 9, fontWeight: 700, letterSpacing: 2 }}>{L("HATA","ERROR",lang)}</div>
         <div style={{ color: P.white, fontSize: 28, fontWeight: 900, fontFamily: "'JetBrains Mono', monospace", marginTop: 3 }}>{Math.abs(1-r.o).toFixed(4)}</div>
         <div style={{ marginTop: 8, height: 3, borderRadius: 2, background: P.border, overflow: "hidden" }}>
           <div style={{ height: "100%", width: `${Math.abs(1-r.o)*100}%`, background: `linear-gradient(90deg, ${P.pink}, ${P.amber})`, borderRadius: 2 }} />
         </div>
       </div>}
-      <S emoji="📊" color={P.amber} delay={0.1} text="Hata sinyali = çıktı × (1−çıktı) × hata. Sigmoid'in eğimini kullanıyoruz — Sigmoid bölümünü hatırlıyor musun?" />
+      <S emoji="📊" color={P.amber} delay={0.1} text={L("Hata sinyali = çıktı × (1−çıktı) × hata. Sigmoid'in eğimini kullanıyoruz.","Error signal = output × (1−output) × error. We use sigmoid's slope — remember the Sigmoid chapter?",lang)} />
     </>;
     case 5: return <>
-      <S emoji="🕵️" color={P.violet} text="Dedektiflik zamanı! Hatayı çıkıştan geriye gönderiyoruz. Her bağlantıya 'Bu hatada senin payın ne kadar?' diye soruyoruz." />
-      <S emoji="⛓️" color={P.violet} delay={0.1} text="Çok katkı yapan bağlantılar daha çok düzeltilecek. Buna 'zincir kuralı' deniyor — hatayı parçalara ayırıp geriye yolluyoruz." />
+      <S emoji="🕵️" color={P.violet} text={L("Dedektiflik zamanı! Hatayı çıkıştan geriye gönderiyoruz. Her bağlantıya 'Bu hatada senin payın ne kadar?' diye soruyoruz.","Detective time! We send error backward from output. We ask each connection: How much did you contribute to this error?",lang)} />
+      <S emoji="⛓️" color={P.violet} delay={0.1} text={L("Çok katkı yapan bağlantılar daha çok düzeltilecek. Buna 'zincir kuralı' deniyor — hatayı parçalara ayırıp geriye yolluyoruz.","Connections that contributed more get corrected more. This is the chain rule — breaking error into parts and sending backward.",lang)} />
     </>;
     case 6: return <>
-      <S emoji="🔧" color={P.amber} text="Her ağırlığı biraz düzeltiyoruz: yeni = eski + öğrenme oranı × hata × girdi. Bu kadar!" />
-      <S emoji="🔁" color={P.emerald} delay={0.1} text="Bunu yüzlerce kez tekrarlıyoruz. Her seferinde hata küçülür. Sonunda ağ öğrenir — buna 'yakınsama' diyoruz." />
+      <S emoji="🔧" color={P.amber} text={L("Her ağırlığı biraz düzeltiyoruz: yeni = eski + öğrenme oranı × hata × girdi. Bu kadar!","We adjust each weight: new = old + learning_rate × error × input. That is it!",lang)} />
+      <S emoji="🔁" color={P.emerald} delay={0.1} text={L("Bunu yüzlerce kez tekrarlıyoruz. Her seferinde hata küçülür. Sonunda ağ öğrenir — buna 'yakınsama' diyoruz.","We repeat this hundreds of times. Error shrinks each time. Eventually the network learns — we call this convergence.",lang)} />
     </>;
-    case 7: return <WeightLab onConverge={onConverge} />;
-    case 8: return <Quiz onComplete={onConverge} />;
+    case 7: return <WeightLab lang={lang} onConverge={onConverge} />;
+    case 8: return <Quiz lang={lang} onComplete={onConverge} />;
     default: return null;
   }
 }
@@ -571,6 +592,7 @@ function Body({ step, net, result, onConverge }) {
    MAIN
    ═══════════════════════════════════════════ */
 const BackpropLesson = () => {
+  const lang = useLang();
   const [step, setStep] = useState(0);
   const [net] = useState(initNet);
   const result = useMemo(() => fwdPass(net, 1, 0), [net]);
@@ -594,7 +616,7 @@ const BackpropLesson = () => {
 
       {/* Header */}
       <header style={{ padding: "14px 16px 10px", borderBottom: `1px solid ${P.border}` }}>
-        <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: 3, color: P.dim, textTransform: "uppercase" }}>İnteraktif Ders</div>
+        <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: 3, color: P.dim, textTransform: "uppercase" }}>{L("İnteraktif Ders","Interactive Lesson",lang)}</div>
         <h1 style={{
           margin: "3px 0 0", fontSize: 21, fontWeight: 900, letterSpacing: -0.5,
           background: `linear-gradient(135deg, ${P.indigo}, ${P.teal}, ${P.violet})`,
@@ -625,7 +647,7 @@ const BackpropLesson = () => {
       {/* Network */}
       {step <= 6 && (
         <section style={{ margin: "0 12px", background: P.surface, border: `1px solid ${P.border}`, borderRadius: 12, overflow: "hidden", padding: "4px 4px 0" }}>
-          <MiniNet net={net} result={result} step={step} />
+          <MiniNet net={net} result={result} step={step} lang={lang} />
         </section>
       )}
 
@@ -638,7 +660,7 @@ const BackpropLesson = () => {
 
       {/* Content */}
       <section style={{ flex: 1, padding: "6px 16px 10px", overflowY: "auto", minHeight: 0 }}>
-        <Body step={step} net={net} result={result} onConverge={onConverge} />
+        <Body step={step} net={net} result={result} onConverge={onConverge} lang={lang} />
       </section>
 
       {/* Footer */}
@@ -646,7 +668,7 @@ const BackpropLesson = () => {
         <div style={{ display: "flex", gap: 6 }}>
           <button onClick={() => setStep(s => Math.max(0, s - 1))} disabled={step === 0}
             style={{ flex: 1, padding: "10px", borderRadius: 8, border: `1px solid ${P.border}`, background: "transparent", color: step === 0 ? P.dim : P.text, fontSize: 12, fontWeight: 600, cursor: step === 0 ? "default" : "pointer" }}>
-            ‹ Geri
+            ‹ {L("Geri","Back",lang)}
           </button>
           <button onClick={() => setStep(s => Math.min(CHAPTERS.length - 1, s + 1))} disabled={step === CHAPTERS.length - 1}
             style={{
@@ -656,7 +678,7 @@ const BackpropLesson = () => {
               fontSize: 12, fontWeight: 700, cursor: step === CHAPTERS.length - 1 ? "default" : "pointer",
               boxShadow: step < CHAPTERS.length - 1 ? `0 3px 12px ${CHAPTERS[step + 1]?.color}20` : "none",
             }}>
-            İleri ›
+            {L("İleri","Next",lang)} ›
           </button>
         </div>
         <div style={{ display: "flex", justifyContent: "center", gap: 3, marginTop: 8 }}>
